@@ -22,7 +22,7 @@ def display_spread_images(prompt, seed, num_inference_steps, num_images, differe
 
 if __name__ == "__main__":
     
-    HF_ACCESS_TOKEN = "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"                      # Add your HuggingFace access token
+    HF_ACCESS_TOKEN = ""                      # Add your HuggingFace access token
 
     model_path = "segmind/tiny-sd"                                                 # Huggingface model path
     imageHeight, imageWidth = 512, 512                                             # Image size
