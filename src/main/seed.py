@@ -3,7 +3,8 @@ import matplotlib.pyplot as plt
 import torch
 from transformers import CLIPTextModel, CLIPTokenizer
 from diffusers import AutoencoderKL, UNet2DConditionModel, LMSDiscreteScheduler
-from utils import get_text_embeddings, generate_latents, generate_images 
+# from utils import get_text_embeddings, generate_latents, generate_images 
+from src.main.utils import get_text_embeddings, generate_latents, generate_images
 
 torch_device = "cuda" if torch.cuda.is_available() else "cpu"
 
