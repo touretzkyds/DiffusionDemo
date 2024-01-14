@@ -1,7 +1,9 @@
 import torch
+import numpy as np
 from PIL import Image
 from tqdm.auto import tqdm
 from src.util.params import *
+from src.util.clip_config import *
 
 def get_text_embeddings(prompt, tokenizer=tokenizer, text_encoder=text_encoder, torch_device=torch_device, batch_size=1):
     text_input = tokenizer(prompt, padding="max_length", max_length=tokenizer.model_max_length, truncation=True, return_tensors="pt")
@@ -80,3 +82,56 @@ def generate_images(latents, text_embeddings, num_inference_steps, unet=unet, gu
         images = convert_to_pil_image(image)
 
     return images
+
+def get_word_embeddings(prompt, tokenizer=tokenizer, text_encoder=text_encoder, torch_device=torch_device):
+    text_input = tokenizer(prompt, padding="max_length", max_length=tokenizer.model_max_length, truncation=True, return_tensors="pt").to(torch_device)
+    
+    with torch.no_grad():
+        text_embeddings = text_encoder(text_input.input_ids)[0].reshape(1,-1)   
+    
+    text_embeddings = text_embeddings.cpu().numpy()
+    return text_embeddings/np.linalg.norm(text_embeddings)
+
+def get_concat_embeddings(names):
+    embeddings = []
+
+    for name in names:
+        embedding = get_word_embeddings(name)
+        embeddings.append(embedding)
+
+    embeddings = np.vstack(embeddings)
+    return embeddings
+
+def get_axis_embeddings(A, B):
+    emb = []
+
+    for a,b in zip(A,B):
+        e = get_word_embeddings(a) - get_word_embeddings(b)
+        emb.append(e)
+
+    emb = np.vstack(emb)
+    ax = np.average(emb, axis=0).reshape(1,-1)
+
+    return ax
+
+def calculate_residual(axis, axis_names, from_words=None, to_words=None):
+    if axis_names[0] in axis_combinations:
+        xembeddings = get_concat_embeddings(axis_combinations[axis_names[0]])
+    else:
+        xembeddings = get_concat_embeddings(from_words + to_words)
+
+    if axis_names[2] in axis_combinations:
+        zembeddings = get_concat_embeddings(axis_combinations[axis_names[2]])
+    else:
+        zembeddings = get_concat_embeddings(from_words + to_words)
+
+    xprojections = xembeddings @ axis[0].T
+    zprojections = zembeddings @ axis[2].T
+
+    partial_residual = xembeddings - (xprojections.reshape(-1,1)*xembeddings)
+    residual = partial_residual - (zprojections.reshape(-1,1)*zembeddings)
+
+    residual = np.average(residual, axis=0).reshape(1,-1)
+    residual = residual/np.linalg.norm(residual)
+
+    return residual
