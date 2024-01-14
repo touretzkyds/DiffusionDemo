@@ -91,3 +91,18 @@ axisMap = {
     "Y - Axis": 1,
     "Z - Axis": 2,
 }
+
+__all__ = [
+    "axisMap", 
+    "axis_names", 
+    "axis_combinations", 
+    "examples", 
+    "masculine", 
+    "feminine", 
+    "young", 
+    "old", 
+    "common", 
+    "elite", 
+    "singular", 
+    "plural"
+]

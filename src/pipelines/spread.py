@@ -1,4 +1,3 @@
-import random
 from src.util.base import *
 from src.util.params import *
 
@@ -8,8 +7,12 @@ def display_spread_images(prompt, seed, num_inference_steps, num_images, differe
 
     images = []
     for i in range(num_images):
-        latent = ilatent + differentiation*generate_latents(seed + random.randint(0, 1000))
+        latent = ilatent + differentiation*generate_latents(seed + i)
         image = generate_images(latent, text_embeddings, num_inference_steps)
         images.append((image,i+1))
 
     return images  
+
+__all__ = [
+    "display_spread_images"
+]

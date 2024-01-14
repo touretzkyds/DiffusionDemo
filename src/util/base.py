@@ -135,3 +135,14 @@ def calculate_residual(axis, axis_names, from_words=None, to_words=None):
     residual = residual/np.linalg.norm(residual)
 
     return residual
+
+__all__ = [
+    "get_text_embeddings", 
+    "generate_latents", 
+    "generate_modified_latents", 
+    "generate_images", 
+    "get_word_embeddings", 
+    "get_concat_embeddings", 
+    "get_axis_embeddings", 
+    "calculate_residual"
+]  

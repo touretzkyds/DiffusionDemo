@@ -23,3 +23,7 @@ def display_circular_images(prompt, seed, num_inference_steps, num_images, diffe
         images.append((image,i+1))
 
     return images    
+
+__all__ = [
+    "display_circular_images"
+]

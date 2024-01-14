@@ -145,3 +145,18 @@ fig.update_layout(
 )
 
 fig.update_traces(hoverinfo="none", hovertemplate=None)
+
+__all__ = [
+    "fig",
+    "update_fig",
+    "coords",
+    "images",
+    "examples",
+    "add_word",
+    "remove_word", 
+    "add_rem_word", 
+    "change_word", 
+    "clear_words", 
+    "set_axis",
+    "axis"
+]

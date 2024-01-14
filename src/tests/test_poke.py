@@ -2,7 +2,7 @@ from src.util.params import *
 from src.pipelines.poke import *
 import matplotlib.pyplot as plt
 
-images, modImages = display_poke_images(prompt, seed, num_inference_steps, poke=True, pokeX=pokeX, pokeY=pokeY, heightPoke=pokeHeight, widthPoke=pokeWidth, intermediate=intermediate)
+images, modImages = display_poke_images(prompt, seed, num_inference_steps, poke=True, pokeX=pokeX, pokeY=pokeY, pokeHeight=pokeHeight, pokeWidth=pokeWidth, intermediate=intermediate)
 
 if intermediate:
     fig, ax = plt.subplots(2, num_inference_steps, dpi=200, figsize=(num_inference_steps, 3))

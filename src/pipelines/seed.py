@@ -11,3 +11,7 @@ def display_seed_images(prompt, num_inference_steps, num_images):
         images.append((image,i+1))
 
     return images     
+
+__all__ = [
+    "display_seed_images"
+]

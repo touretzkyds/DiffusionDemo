@@ -13,7 +13,7 @@ guidance_scale = 8                                                             #
 prompt = "red balloon in the sky"
 num_images = 5                                                                  # Number of images to generate
 differentiation = 0.1                                                           # Differentiation factor
-num_inference_steps = 20                                                        # 20+ for good results
+num_inference_steps = 8                                                        # 20+ for good results
 seed = 69420                                                                    # Any integer
 intermediate = False                           
 
@@ -28,3 +28,29 @@ text_encoder = CLIPTextModel.from_pretrained(model_path, subfolder="text_encoder
 scheduler = LMSDiscreteScheduler.from_pretrained(model_path, subfolder="scheduler")
 unet = UNet2DConditionModel.from_pretrained(model_path, subfolder="unet").to(torch_device)
 vae = AutoencoderKL.from_pretrained(model_path, subfolder="vae").to(torch_device)
+
+__all__ = [
+    "prompt", 
+    "num_images", 
+    "differentiation", 
+    "num_inference_steps", 
+    "seed", 
+    "intermediate", 
+    "pokeX", 
+    "pokeY", 
+    "pokeHeight", 
+    "pokeWidth", 
+    "promptA", 
+    "promptB", 
+    "tokenizer", 
+    "text_encoder", 
+    "scheduler", 
+    "unet", 
+    "vae", 
+    "torch_device", 
+    "imageHeight", 
+    "imageWidth", 
+    "guidance_scale", 
+    "HF_ACCESS_TOKEN",
+    "model_path"
+]

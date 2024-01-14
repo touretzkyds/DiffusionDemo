@@ -24,3 +24,7 @@ def display_interpolate_images(seed, promptA, promptB, num_inference_steps, num_
         images.append((image,i+1))
         
     return images
+
+__all__ = [
+    "display_interpolate_images"
+]
