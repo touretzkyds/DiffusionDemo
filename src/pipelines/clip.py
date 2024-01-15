@@ -59,7 +59,7 @@ def add_word(new_example):
     new_coord[:, 1] = 5*(1.0 - new_coord[:, 1])
     coords = np.vstack([coords, new_coord])
 
-    image = pipe(prompt=example, num_inference_steps=num_inference_steps, guidance_scale=guidance_scale).images[0]
+    image = pipe(prompt=new_example, num_inference_steps=num_inference_steps, guidance_scale=guidance_scale).images[0]
     buffer = BytesIO()
     image.save(buffer, format='JPEG')
     encoded_image = base64.b64encode(buffer.getvalue()).decode('utf-8')
