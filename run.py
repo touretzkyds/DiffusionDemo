@@ -206,14 +206,7 @@ with gr.Blocks() as demo:
             with gr.Column():
                 original_images_output_0 = gr.Gallery(label="Original Images", selected_index=0)
                 poked_images_output_0 = gr.Gallery(label="Poked Images", selected_index=0)
-
-    # with gr.Tab("Dataset Peek"):
-    #     with gr.Row():
-    #         with gr.Column():
-    #             prompt_3 = gr.Textbox(lines=1, label="Prompt", value="dog")
-    #             retrieve_images_button = gr.Button("Retrieve Images")
-    #             retrieved_images_output = gr.Gallery(label="Image", selected_index=0)
-                
+               
     generate_images_button_seed.click(fn=display_seed_images, inputs=[prompt_seed, num_inference_steps_seed, num_images_seed], outputs=[images_output_seed])
     generate_images_button_spread.click(fn=display_spread_images, inputs=[prompt_spread, seed_spread, num_inference_steps_spread, num_images_spread, differentiation_spread], outputs=images_output_spread)
     generate_images_button_circular.click(fn=display_circular_images, inputs=[prompt_circular, seed_circular, num_inference_steps_circular, num_images_circular, differentiation_circular], outputs=images_output_circular)
@@ -225,7 +218,6 @@ with gr.Blocks() as demo:
         return images, modImages
     
     generate_images_button_1.click(fn=display_interpolate_images, inputs=[seed_1, promptA, promptB, num_inference_steps_1, num_images_1], outputs=images_output_1)
-    # retrieve_images_button.click(fn=retrieve_images, inputs=[prompt_3], outputs=retrieved_images_output)
     
 def run_dash():
     app.run(host="127.0.0.1", port="8000")

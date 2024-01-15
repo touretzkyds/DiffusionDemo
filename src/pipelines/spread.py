@@ -7,7 +7,7 @@ def display_spread_images(prompt, seed, num_inference_steps, num_images, differe
 
     images = []
     for i in range(num_images):
-        latent = ilatent + differentiation*generate_latents(seed + i)
+        latent = (1 - differentiation)*ilatent + differentiation*generate_latents(seed + i)
         image = generate_images(latent, text_embeddings, num_inference_steps)
         images.append((image,i+1))
 
