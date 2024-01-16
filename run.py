@@ -224,7 +224,7 @@ def run_dash():
 
 def run_gradio():
     demo.queue()
-    demo.launch()
+    demo.launch(share=True)
 
 if __name__ == "__main__":
     Thread(target=run_dash).start()
