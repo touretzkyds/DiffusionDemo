@@ -5,3 +5,4 @@ plotly
 dash
 pandas
 peft
+pycloudflared

@@ -45,7 +45,7 @@ with gr.Blocks() as demo:
     with gr.Tab("CLIP"):
         with gr.Row():
             output = gr.HTML(f'''
-                    <iframe id="html" src="http://127.0.0.1:8000" style="width:100%; height:750px;"></iframe>
+                    <iframe id="html" src={dash_tunnel} style="width:100%; height:750px;"></iframe>
                     ''')
         with gr.Row():
             clear_words_button = gr.Button(value="Clear words")

@@ -50,7 +50,7 @@ def update_fig():
             <script>
                 document.getElementById("html").src += "?rand={random.random()}"
             </script>
-            <iframe id="html" src="http://127.0.0.1:8000" style="width:100%; height:750px;"></iframe>
+            <iframe id="html" src={dash_tunnel} style="width:100%; height:750px;"></iframe>
             ''')
 
 def add_word(new_example):

@@ -1,6 +1,7 @@
 import torch
 from transformers import CLIPTextModel, CLIPTokenizer
 from diffusers import AutoencoderKL, UNet2DConditionModel, LCMScheduler, LMSDiscreteScheduler
+from pycloudflared import try_cloudflare
 
 torch_device = "cuda" if torch.cuda.is_available() else "cpu"
 
@@ -29,6 +30,8 @@ scheduler = LMSDiscreteScheduler.from_pretrained(model_path, subfolder="schedule
 unet = UNet2DConditionModel.from_pretrained(model_path, subfolder="unet").to(torch_device)
 vae = AutoencoderKL.from_pretrained(model_path, subfolder="vae").to(torch_device)
 
+dash_tunnel = try_cloudflare(8000).tunnel
+
 __all__ = [
     "prompt", 
     "num_images", 
@@ -52,5 +55,6 @@ __all__ = [
     "imageWidth", 
     "guidance_scale", 
     "HF_ACCESS_TOKEN",
-    "model_path"
+    "model_path",
+    "dash_tunnel"
 ]
