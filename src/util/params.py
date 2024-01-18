@@ -5,21 +5,21 @@ import tntn
 
 torch_device = "cuda" if torch.cuda.is_available() else "cpu"
 
-HF_ACCESS_TOKEN = ""                                                           # Add your HuggingFace access token
+HF_ACCESS_TOKEN = ""                                                           
 
-model_path = "segmind/tiny-sd"                                                 # Huggingface model path
-imageHeight, imageWidth = 512, 512                                             # Image size
-guidance_scale = 8                                                             # Guidance scale
+model_path = "Lykon/dreamshaper-8"                                             
+imageHeight, imageWidth = 512, 512                                           
+guidance_scale = 8                                                             
 
 prompt = "red balloon in the sky"
-num_images = 5                                                                  # Number of images to generate
-differentiation = 0.1                                                           # Differentiation factor
-num_inference_steps = 8                                                        # 20+ for good results
-seed = 69420                                                                    # Any integer
+num_images = 5                                                                  
+differentiation = 0.1                                                           
+num_inference_steps = 8                                                        
+seed = 69420                                                                    
 intermediate = False                           
 
-pokeX, pokeY = 256, 256                                                         # Poke coordinates
-pokeHeight, pokeWidth = 128, 128                                                # Poke size
+pokeX, pokeY = 256, 256                                                         
+pokeHeight, pokeWidth = 128, 128                                                
 
 promptA = "a car driving on a highway in a city"
 promptB = "a truck driving on a highway in a city"
