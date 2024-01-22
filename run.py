@@ -191,10 +191,9 @@ with gr.Blocks() as demo:
                 pokeY = gr.Slider(label="pokeY", minimum=0, maximum=imageHeight, step=1, value=256, info= "Y coordinate of poke center")
                 pokeHeight = gr.Slider(label="pokeHeight", minimum=0, maximum=imageHeight, step=8, value=128, info= "Height of the poke")
                 pokeWidth = gr.Slider(label="pokeWidth", minimum=0, maximum=imageWidth, step=8, value=128, info= "Width of the poke")
-                visualize_poke_button = gr.Button("Visualize Poke")
 
             with gr.Column():
-                visualize_poke_output = gr.Image(label="Poke Visualization")
+                visualize_poke_output = gr.Image(value=visualize_poke(256,256,128,128), label="Poke Visualization")
                     
         with gr.Row():
             with gr.Column():
@@ -210,7 +209,11 @@ with gr.Blocks() as demo:
     generate_images_button_seed.click(fn=display_seed_images, inputs=[prompt_seed, num_inference_steps_seed, num_images_seed], outputs=[images_output_seed])
     generate_images_button_spread.click(fn=display_spread_images, inputs=[prompt_spread, seed_spread, num_inference_steps_spread, num_images_spread, differentiation_spread], outputs=images_output_spread)
     generate_images_button_circular.click(fn=display_circular_images, inputs=[prompt_circular, seed_circular, num_inference_steps_circular, num_images_circular, differentiation_circular], outputs=images_output_circular)
-    visualize_poke_button.click(fn=visualize_poke, inputs=[pokeX, pokeY, pokeHeight, pokeWidth], outputs=visualize_poke_output)
+    
+    pokeX.change(visualize_poke, inputs=[pokeX, pokeY, pokeHeight, pokeWidth], outputs=visualize_poke_output)
+    pokeY.change(visualize_poke, inputs=[pokeX, pokeY, pokeHeight, pokeWidth], outputs=visualize_poke_output)
+    pokeHeight.change(visualize_poke, inputs=[pokeX, pokeY, pokeHeight, pokeWidth], outputs=visualize_poke_output)
+    pokeWidth.change(visualize_poke, inputs=[pokeX, pokeY, pokeHeight, pokeWidth], outputs=visualize_poke_output)
 
     @generate_images_button_0.click(inputs=[prompt_0, seed_0, num_inference_steps_0, pokeX, pokeY, pokeHeight, pokeWidth, ], outputs=[original_images_output_0, poked_images_output_0])
     def generate_images_wrapper(prompt, seed, num_inference_steps, pokeX=pokeX, pokeY=pokeY, pokeHeight=pokeHeight, pokeWidth=pokeWidth):
