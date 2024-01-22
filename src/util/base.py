@@ -1,5 +1,6 @@
 import torch
 import numpy as np
+import gradio as gr
 from PIL import Image
 from tqdm.auto import tqdm
 from src.util.params import *
@@ -52,12 +53,15 @@ def convert_to_pil_image(image):
     pil_images = [Image.fromarray(image) for image in images]
     return pil_images[0]
 
-def generate_images(latents, text_embeddings, num_inference_steps, unet=unet, guidance_scale=guidance_scale, vae=vae, scheduler=scheduler, intermediate=False):
+def generate_images(latents, text_embeddings, num_inference_steps, unet=unet, guidance_scale=guidance_scale, vae=vae, scheduler=scheduler, intermediate=False, progress=gr.Progress()):
     scheduler.set_timesteps(num_inference_steps)
     latents = latents * scheduler.init_noise_sigma
     images = []
     
     for t in tqdm(scheduler.timesteps):
+        if intermediate:
+            progress(((1000 - t)/1000))
+
         latent_model_input = torch.cat([latents] * 2)
         latent_model_input = scheduler.scale_model_input(latent_model_input, t)
 

@@ -1,8 +1,9 @@
 import torch
+import gradio as gr
 from src.util.base import *
 from src.util.params import *
 
-def display_circular_images(prompt, seed, num_inference_steps, num_images, differentiation):
+def display_circular_images(prompt, seed, num_inference_steps, num_images, differentiation, progress=gr.Progress()):
     text_embeddings = get_text_embeddings(prompt)
 
     latents_x = generate_latents(seed)
@@ -17,8 +18,10 @@ def display_circular_images(prompt, seed, num_inference_steps, num_images, diffe
     noise = noise_x + noise_y
     batched_noise = torch.split(noise, num_images)
 
+    progress(0)
     images = []
-    for i in range(num_images):   
+    for i in range(num_images):  
+        progress(i/num_images) 
         image = generate_images(batched_noise[0][i], text_embeddings, num_inference_steps)
         images.append((image,i+1))
 
