@@ -95,10 +95,10 @@ def set_axis(axis_name, which_axis, from_words, to_words):
 
         for i, name in enumerate(axis_names):
             if name == "residual":
-                axis[i] = calculate_residual(axis, axis_names, from_words, to_words)
+                axis[i] = calculate_residual(axis, axis_names, from_words, to_words, i)
                 axis_names[i] = "residual"
     else:
-        residual = calculate_residual(axis, axis_names, from_words, to_words)
+        residual = calculate_residual(axis, axis_names, residual_axis=axisMap[which_axis])
         axis[axisMap[which_axis]] = residual
         axis_names[axisMap[which_axis]] = axis_name
 
