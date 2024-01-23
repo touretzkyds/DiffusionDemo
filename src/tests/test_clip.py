@@ -49,13 +49,13 @@ with gr.Blocks() as demo:
     with gr.Tab("CLIP"):
         with gr.Row():
             output = gr.HTML(f'''
-                    <iframe id="html" src="http://127.0.0.1:8000" style="width:100%; height:750px;"></iframe>
+                    <iframe id="html" src="{dash_tunnel}" style="width:100%; height:750px;"></iframe>
                     ''')
         with gr.Row():
             clear_words_button = gr.Button(value="Clear words")
         with gr.Row():
-            word2add_rem = gr.Textbox(lines=2, label="Add/Remove word")
-            word2change = gr.Textbox(lines=2, label="Change image for word")
+            word2add_rem = gr.Textbox(lines=1, label="Add/Remove word")
+            word2change = gr.Textbox(lines=1, label="Change image for word")
         with gr.Row():
             add_rem_word_button = gr.Button(value="Add/Remove")
             change_word_button = gr.Button(value="Change")
@@ -68,80 +68,58 @@ with gr.Blocks() as demo:
                     set_axis_button_1 = gr.Button(value="Submit")
                 with gr.Accordion("Words", open=False):
                     with gr.Row():
-                        from_words_1 = gr.Textbox(lines=10, label="", value=f"""prince
-husband
-father
-son
-uncle""")
-                        to_words_1 = gr.Textbox(lines=10, label="", value=f"""princess
-wife
-mother
-daughter
-aunt""")
+                        from_words_1 = gr.Textbox(lines=1, label="", value="prince husband father son uncle")
+                        to_words_1 = gr.Textbox(lines=1, label="", value="princess wife mother daughter aunt")
             with gr.Accordion("Built-In Dimension 2"):
                 with gr.Row():
-                    axis_name_2 = gr.Textbox(label="Axis name", value="number")
+                    axis_name_2 = gr.Textbox(label="Axis name", value="age")
                     which_axis_2 = gr.Dropdown(choices=["X - Axis", "Y - Axis", "Z - Axis"], value="Z - Axis", label="Axis direction")
                 with gr.Row():
                     set_axis_button_2 = gr.Button(value="Submit")
                 with gr.Accordion("Words", open=False):
                     with gr.Row():
-                        from_words_2 = gr.Textbox(lines=10, label="", value=f"""boys
-girls
-cats
-puppies
-computers""")
-                        to_words_2 = gr.Textbox(lines=10, label="", value=f"""boy
-girl
-cat
-puppy
-computer""")
+                        from_words_2 = gr.Textbox(lines=1, label="", value="man woman king queen father")
+                        to_words_2 = gr.Textbox(lines=1, label="", value="boy girl prince princess son")
             with gr.Accordion("Built-In Dimension 3"):
                 with gr.Row():
-                    axis_name_3 = gr.Textbox(label="Axis name", value="age")
-                    which_axis_3 = gr.Dropdown(choices=["X - Axis", "Y - Axis", "Z - Axis"], label="Axis direction")
+                    axis_name_3 = gr.Textbox(label="Axis name", value="residual")
+                    which_axis_3 = gr.Dropdown(choices=["X - Axis", "Y - Axis", "Z - Axis"], value="Y - Axis", label="Axis direction")
                 with gr.Row():
                     set_axis_button_3 = gr.Button(value="Submit")
                 with gr.Accordion("Words", open=False):
                     with gr.Row():
-                        from_words_3 = gr.Textbox(lines=10, label="", value=f"""man
-woman
-king
-queen
-father""")
-                        to_words_3 = gr.Textbox(lines=10, label="", value=f"""boy
-girl
-prince
-princess
-son""")
-            with gr.Accordion("Built-In Dimension 4"):
+                        from_words_3 = gr.Textbox(lines=1, label="")
+                        to_words_3 = gr.Textbox(lines=1, label="")
+            with gr.Accordion("Custom Dimension"):
                 with gr.Row():
-                    axis_name_4 = gr.Textbox(label="Axis name", value="royalty")
+                    axis_name_4 = gr.Textbox(label="Axis name", value="number")
                     which_axis_4 = gr.Dropdown(choices=["X - Axis", "Y - Axis", "Z - Axis"], label="Axis direction")
                 with gr.Row():
                     set_axis_button_4 = gr.Button(value="Submit")
                 with gr.Accordion("Words", open=False):
                     with gr.Row():
-                        from_words_4 = gr.Textbox(lines=10, label="", value=f"""king
-queen
-prince
-princess
-woman""")
-                        to_words_4 = gr.Textbox(lines=10, label="", value=f"""man
-woman
-boy
-girl
-duchess""")
-            with gr.Accordion("Built-In Dimension 5"):
+                        from_words_4 = gr.Textbox(lines=1, label="", value="boys girls cats puppies computers")
+                        to_words_4 = gr.Textbox(lines=1, label="", value="boy girl cat puppy computer")
+            with gr.Accordion("Custom Dimension"):
                 with gr.Row():
-                    axis_name_5 = gr.Textbox(label="Axis name", value="")
+                    axis_name_5 = gr.Textbox(label="Axis name", value="royalty")
                     which_axis_5 = gr.Dropdown(choices=["X - Axis", "Y - Axis", "Z - Axis"], label="Axis direction")
                 with gr.Row():
                     set_axis_button_5 = gr.Button(value="Submit")
                 with gr.Accordion("Words", open=False):
                     with gr.Row():
-                        from_words_5 = gr.Textbox(lines=10, label="")
-                        to_words_5 = gr.Textbox(lines=10, label="")
+                        from_words_5 = gr.Textbox(lines=1, label="", value="king queen prince princess duchess")
+                        to_words_5 = gr.Textbox(lines=1, label="", value="man woman boy girl woman")
+            with gr.Accordion("Custom Dimension"):
+                with gr.Row():
+                    axis_name_6 = gr.Textbox(label="Axis name")
+                    which_axis_6 = gr.Dropdown(choices=["X - Axis", "Y - Axis", "Z - Axis"], label="Axis direction")
+                with gr.Row():
+                    set_axis_button_6 = gr.Button(value="Submit")
+                with gr.Accordion("Words", open=False):
+                    with gr.Row():
+                        from_words_6 = gr.Textbox(lines=1, label="")
+                        to_words_6 = gr.Textbox(lines=1, label="")
 
     
     add_rem_word_button.click(fn=add_rem_word, inputs=[word2add_rem], outputs=[output])
@@ -153,6 +131,7 @@ duchess""")
     set_axis_button_3.click(fn=set_axis, inputs=[axis_name_3, which_axis_3, from_words_3, to_words_3], outputs=[output])
     set_axis_button_4.click(fn=set_axis, inputs=[axis_name_4, which_axis_4, from_words_4, to_words_4], outputs=[output])
     set_axis_button_5.click(fn=set_axis, inputs=[axis_name_5, which_axis_5, from_words_5, to_words_5], outputs=[output])
+    set_axis_button_6.click(fn=set_axis, inputs=[axis_name_6, which_axis_6, from_words_6, to_words_6], outputs=[output])
 
 def run_dash():
     app.run(host="127.0.0.1", port="8000")
@@ -162,5 +141,10 @@ def run_gradio():
     demo.launch()
 
 if __name__ == "__main__":
-    Thread(target=run_dash).start()
-    run_gradio()
+    thread = Thread(target=run_dash)
+    thread.daemon = True
+    thread.start()
+    try:
+        run_gradio()
+    except KeyboardInterrupt:
+        print("Server closed")
