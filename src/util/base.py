@@ -120,25 +120,27 @@ def get_axis_embeddings(A, B):
 
     return ax
 
-def calculate_residual(axis, axis_names, from_words=None, to_words=None):
-    if axis_names[0] in axis_combinations:
-        xembeddings = get_concat_embeddings(axis_combinations[axis_names[0]])
+def calculate_residual(axis, axis_names, from_words=None, to_words=None, residual_axis=1):
+    axis_indices = [0, 1, 2]
+    axis_indices.remove(residual_axis)
+    
+    if axis_names[axis_indices[0]] in axis_combinations:
+        fembeddings = get_concat_embeddings(axis_combinations[axis_names[axis_indices[0]]], merge=True)
     else:
-        xembeddings = get_concat_embeddings(from_words + to_words)
+        axis_combinations[axis_names[axis_indices[0]]] = from_words + to_words
+        fembeddings = get_concat_embeddings(from_words + to_words, merge=True)
 
-    if axis_names[2] in axis_combinations:
-        zembeddings = get_concat_embeddings(axis_combinations[axis_names[2]])
+    if axis_names[axis_indices[1]] in axis_combinations:
+        sembeddings = get_concat_embeddings(axis_combinations[axis_names[axis_indices[1]]], merge=True)
     else:
-        zembeddings = get_concat_embeddings(from_words + to_words)
+        axis_combinations[axis_names[axis_indices[1]]] = from_words + to_words
+        sembeddings = get_concat_embeddings(from_words + to_words, merge=True)
 
-    xprojections = xembeddings @ axis[0].T
-    zprojections = zembeddings @ axis[2].T
+    fprojections = fembeddings @ axis[axis_indices[0]].T
+    sprojections = sembeddings @ axis[axis_indices[1]].T
 
-    partial_residual = xembeddings - (xprojections.reshape(-1,1)*xembeddings)
-    residual = partial_residual - (zprojections.reshape(-1,1)*zembeddings)
-
-    residual = np.average(residual, axis=0).reshape(1,-1)
-    residual = residual/np.linalg.norm(residual)
+    partial_residual = fembeddings - (fprojections.reshape(-1,1)*fembeddings)
+    residual = partial_residual - (sprojections.reshape(-1,1)*sembeddings)
 
     return residual
 
