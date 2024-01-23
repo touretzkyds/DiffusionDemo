@@ -94,7 +94,7 @@ def get_word_embeddings(prompt, tokenizer=tokenizer, text_encoder=text_encoder, 
     text_embeddings = text_embeddings.cpu().numpy()
     return text_embeddings/np.linalg.norm(text_embeddings)
 
-def get_concat_embeddings(names):
+def get_concat_embeddings(names, merge=False):
     embeddings = []
 
     for name in names:
@@ -102,6 +102,10 @@ def get_concat_embeddings(names):
         embeddings.append(embedding)
 
     embeddings = np.vstack(embeddings)
+    
+    if merge:
+        embeddings = np.average(embeddings, axis=0).reshape(1,-1)
+        
     return embeddings
 
 def get_axis_embeddings(A, B):
