@@ -230,5 +230,10 @@ def run_gradio():
     demo.launch(share=True)
 
 if __name__ == "__main__":
-    Thread(target=run_dash).start()
-    run_gradio()
+    thread = Thread(target=run_dash)
+    thread.daemon = True
+    thread.start()
+    try:
+        run_gradio()
+    except KeyboardInterrupt:
+        print("Server closed")
