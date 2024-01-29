@@ -156,6 +156,8 @@ with gr.Blocks() as demo:
             with gr.Column():
                 images_output_seed = gr.Gallery(label="Images", selected_index=0)
 
+    generate_images_button_seed.click(fn=display_seed_images, inputs=[prompt_seed, num_inference_steps_seed, num_images_seed], outputs=[images_output_seed])
+
     with gr.Tab("Spread"):
         with gr.Row():
             with gr.Column():
@@ -169,13 +171,18 @@ with gr.Blocks() as demo:
             with gr.Column():
                 images_output_spread = gr.Gallery(label="Image", selected_index=0)    
 
+    generate_images_button_spread.click(fn=display_spread_images, inputs=[prompt_spread, seed_spread, num_inference_steps_spread, num_images_spread, differentiation_spread], outputs=images_output_spread)
+
     with gr.Tab("Circular"):
         with gr.Row():
             with gr.Column():
                 prompt_circular = gr.Textbox(lines=1, label="Prompt", value="Self-portrait oil painting, a beautiful cyborg with golden hair, 8k")
+                num_images_circular = gr.Slider(minimum=0, maximum=100, step=1, value=5, label="Number of Steps around the Circle")
+
                 with gr.Row():
                     differentiation_circular = gr.Slider(minimum=0, maximum=360, step=1, value=360, label="Proportion of Circle", info="Enter the value in degrees")
                     step_size_circular = gr.Textbox(label="Step Size")
+
                 num_inference_steps_circular = gr.Slider(minimum=0, maximum=100, step=1, value=8, label="Number of Inference Steps per Image")
                 seed_circular = gr.Slider(minimum=0, maximum=100, step=1, value=69, label="Seed")
                 generate_images_button_circular = gr.Button("Generate Images")
@@ -183,6 +190,10 @@ with gr.Blocks() as demo:
             with gr.Column():
                 images_output_circular = gr.Gallery(label="Image", selected_index=0)   
                 gif_circular = gr.Image(label="GIF", ) 
+
+    num_images_circular.change(fn=calculate_step_size, inputs=[num_images_circular, differentiation_circular], outputs=[step_size_circular])
+    differentiation_circular.change(fn=calculate_step_size, inputs=[num_images_circular, differentiation_circular], outputs=[step_size_circular])
+    generate_images_button_circular.click(fn=display_circular_images, inputs=[prompt_circular, seed_circular, num_inference_steps_circular, num_images_circular, differentiation_circular], outputs=[images_output_circular, gif_circular])
 
     with gr.Tab("Interpolate"):
         with gr.Row():
@@ -196,6 +207,8 @@ with gr.Blocks() as demo:
 
             with gr.Column():
                 images_output_1 = gr.Gallery(label="Interpolated Images", selected_index=0)
+
+    generate_images_button_1.click(fn=display_interpolate_images, inputs=[seed_1, promptA, promptB, num_inference_steps_1, num_images_1], outputs=images_output_1)
     
     with gr.Tab("Poke"):
         with gr.Row():
@@ -218,10 +231,6 @@ with gr.Blocks() as demo:
             with gr.Column():
                 original_images_output_0 = gr.Gallery(label="Original Images", selected_index=0)
                 poked_images_output_0 = gr.Gallery(label="Poked Images", selected_index=0)
-               
-    generate_images_button_seed.click(fn=display_seed_images, inputs=[prompt_seed, num_inference_steps_seed, num_images_seed], outputs=[images_output_seed])
-    generate_images_button_spread.click(fn=display_spread_images, inputs=[prompt_spread, seed_spread, num_inference_steps_spread, num_images_spread, differentiation_spread], outputs=images_output_spread)
-    generate_images_button_circular.click(fn=display_circular_images, inputs=[prompt_circular, seed_circular, num_inference_steps_circular, num_images_circular, differentiation_circular], outputs=[images_output_circular, gif_circular])
 
     pokeX.change(visualize_poke, inputs=[pokeX, pokeY, pokeHeight, pokeWidth], outputs=visualize_poke_output)
     pokeY.change(visualize_poke, inputs=[pokeX, pokeY, pokeHeight, pokeWidth], outputs=visualize_poke_output)
@@ -232,8 +241,6 @@ with gr.Blocks() as demo:
     def generate_images_wrapper(prompt, seed, num_inference_steps, pokeX=pokeX, pokeY=pokeY, pokeHeight=pokeHeight, pokeWidth=pokeWidth):
         images, modImages = display_poke_images(prompt, seed, num_inference_steps, poke=True, pokeX=pokeX, pokeY=pokeY, pokeHeight=pokeHeight, pokeWidth=pokeWidth, intermediate=True)
         return images, modImages
-    
-    generate_images_button_1.click(fn=display_interpolate_images, inputs=[seed_1, promptA, promptB, num_inference_steps_1, num_images_1], outputs=images_output_1)
     
 def run_dash():
     app.run(host="127.0.0.1", port="8000")
