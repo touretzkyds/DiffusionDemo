@@ -173,8 +173,9 @@ with gr.Blocks() as demo:
         with gr.Row():
             with gr.Column():
                 prompt_circular = gr.Textbox(lines=1, label="Prompt", value="Self-portrait oil painting, a beautiful cyborg with golden hair, 8k")
-                num_images_circular = gr.Slider(minimum=0, maximum=100, step=1, value=5, label="Number of Images")
-                differentiation_circular = gr.Slider(minimum=0, maximum=1, step=0.1, value=0.1, label="Differentiation", info="The higher the differentiation, the more different the images will be")
+                with gr.Row():
+                    differentiation_circular = gr.Slider(minimum=0, maximum=360, step=1, value=360, label="Proportion of Circle", info="Enter the value in degrees")
+                    step_size_circular = gr.Textbox(label="Step Size")
                 num_inference_steps_circular = gr.Slider(minimum=0, maximum=100, step=1, value=8, label="Number of Inference Steps per Image")
                 seed_circular = gr.Slider(minimum=0, maximum=100, step=1, value=69, label="Seed")
                 generate_images_button_circular = gr.Button("Generate Images")

@@ -144,6 +144,9 @@ def calculate_residual(axis, axis_names, from_words=None, to_words=None, residua
 
     return residual
 
+def calculate_step_size(num_images, differentiation):
+    return differentiation / num_images
+
 __all__ = [
     "get_text_embeddings", 
     "generate_latents", 
@@ -152,5 +155,6 @@ __all__ = [
     "get_word_embeddings", 
     "get_concat_embeddings", 
     "get_axis_embeddings", 
-    "calculate_residual"
+    "calculate_residual",
+    "calculate_step_size"
 ]  
