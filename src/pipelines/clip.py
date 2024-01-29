@@ -1,5 +1,6 @@
 import random
 import numpy as np
+import gradio as gr
 from diffusers import StableDiffusionPipeline
 
 import base64
@@ -77,12 +78,19 @@ def remove_word(new_example):
     examples.pop(index)
     return update_fig()
 
-def add_rem_word(new_example):
+def add_rem_word(new_examples):
     global examples
-    if new_example in examples:
-        return remove_word(new_example)
-    else:
-        return add_word(new_example)
+    new_examples = new_examples.split()
+
+    for new_example in new_examples:
+        if new_example in examples:
+            remove_word(new_example)
+            gr.Info("Removed {}".format(new_example))
+        else:
+            add_word(new_example)
+            gr.Info("Added {}".format(new_example))
+
+    return update_fig()
 
 def set_axis(axis_name, which_axis, from_words, to_words):
     global coords, examples, fig, axis_names
