@@ -178,9 +178,10 @@ with gr.Blocks() as demo:
                 num_inference_steps_circular = gr.Slider(minimum=0, maximum=100, step=1, value=8, label="Number of Inference Steps per Image")
                 seed_circular = gr.Slider(minimum=0, maximum=100, step=1, value=69, label="Seed")
                 generate_images_button_circular = gr.Button("Generate Images")
-
+           
             with gr.Column():
-                images_output_circular = gr.Gallery(label="Image", selected_index=0)    
+                images_output_circular = gr.Gallery(label="Image", selected_index=0)   
+                gif_circular = gr.Image(label="GIF", ) 
 
     with gr.Tab("Interpolate"):
         with gr.Row():
@@ -219,8 +220,8 @@ with gr.Blocks() as demo:
                
     generate_images_button_seed.click(fn=display_seed_images, inputs=[prompt_seed, num_inference_steps_seed, num_images_seed], outputs=[images_output_seed])
     generate_images_button_spread.click(fn=display_spread_images, inputs=[prompt_spread, seed_spread, num_inference_steps_spread, num_images_spread, differentiation_spread], outputs=images_output_spread)
-    generate_images_button_circular.click(fn=display_circular_images, inputs=[prompt_circular, seed_circular, num_inference_steps_circular, num_images_circular, differentiation_circular], outputs=images_output_circular)
-    
+    generate_images_button_circular.click(fn=display_circular_images, inputs=[prompt_circular, seed_circular, num_inference_steps_circular, num_images_circular, differentiation_circular], outputs=[images_output_circular, gif_circular])
+
     pokeX.change(visualize_poke, inputs=[pokeX, pokeY, pokeHeight, pokeWidth], outputs=visualize_poke_output)
     pokeY.change(visualize_poke, inputs=[pokeX, pokeY, pokeHeight, pokeWidth], outputs=visualize_poke_output)
     pokeHeight.change(visualize_poke, inputs=[pokeX, pokeY, pokeHeight, pokeWidth], outputs=visualize_poke_output)
