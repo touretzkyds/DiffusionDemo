@@ -15,7 +15,7 @@ promptA = "Self-portrait oil painting, a beautiful man with golden hair, 8k"
 promptB = "Self-portrait oil painting, a beautiful woman with golden hair, 8k"
 
 num_images = 5                                                                  
-differentiation = 1                                                           
+differentiation = 360                                                           
 num_inference_steps = 8                                                        
 seed = 69420                                                              
 

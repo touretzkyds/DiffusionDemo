@@ -9,8 +9,8 @@ def display_circular_images(prompt, seed, num_inference_steps, num_images, diffe
     latents_x = generate_latents(seed)
     latents_y = generate_latents(seed*180)
 
-    scale_x = torch.cos(torch.linspace(0, 2, num_images)*torch.pi*differentiation).to(torch_device)
-    scale_y = torch.sin(torch.linspace(0, 2, num_images)*torch.pi*differentiation).to(torch_device)
+    scale_x = torch.cos(torch.linspace(0, 2, num_images)*torch.pi*(differentiation/360)).to(torch_device)
+    scale_y = torch.sin(torch.linspace(0, 2, num_images)*torch.pi*(differentiation/360)).to(torch_device)
 
     noise_x = torch.tensordot(scale_x, latents_x, dims=0)
     noise_y = torch.tensordot(scale_y, latents_y, dims=0)
