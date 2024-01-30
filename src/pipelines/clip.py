@@ -1,6 +1,7 @@
 import random
 import numpy as np
 import gradio as gr
+import matplotlib.pyplot as plt
 from diffusers import StableDiffusionPipeline
 
 import base64
@@ -51,7 +52,7 @@ def update_fig():
             <script>
                 document.getElementById("html").src += "?rand={random.random()}"
             </script>
-            <iframe id="html" src={dash_tunnel} style="width:100%; height:750px;"></iframe>
+            <iframe id="html" src={dash_tunnel} style="width:100%; height:725px;"></iframe>
             ''')
 
 def add_word(new_example):
@@ -133,6 +134,13 @@ def clear_words():
         remove_word(examples[-1])
     return update_fig()
 
+def generate_word_emb_vis(prompt):
+    buf = BytesIO()
+    emb = get_word_embeddings(prompt).reshape(77, 768)[1]
+    plt.imsave(buf, [emb], cmap="inferno")
+    img = "data:image/jpeg;base64, " + base64.b64encode(buf.getvalue()).decode('utf-8')
+    return img
+
 fig = px.scatter_3d(
                     x=coords[:,0], 
                     y=coords[:,1], 
@@ -166,6 +174,7 @@ __all__ = [
     "add_rem_word", 
     "change_word", 
     "clear_words", 
+    "generate_word_emb_vis",
     "set_axis",
     "axis"
 ]

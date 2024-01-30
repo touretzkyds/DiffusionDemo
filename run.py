@@ -9,8 +9,9 @@ app = Dash(__name__)
 app.layout = html.Div(
     className="container",
     children=[
-        dcc.Graph(id="graph", figure=fig, clear_on_unhover=True),
+        dcc.Graph(id="graph", figure=fig, clear_on_unhover=True, style={"height": "93.5vh"}),
         dcc.Tooltip(id="tooltip"),
+        html.Div(id="word-emb-vis")
     ],
 )
 
@@ -19,12 +20,13 @@ app.layout = html.Div(
     Output("tooltip", "bbox"),
     Output("tooltip", "children"),
     Output("tooltip", "direction"),
+    Output("word-emb-vis", "children"),
 
     Input("graph", "hoverData"),
 )
 def display_hover(hoverData):
     if hoverData is None:
-        return False, no_update, no_update, no_update
+        return False, no_update, no_update, no_update, no_update
 
     hover_data = hoverData["points"][0]
     bbox = hover_data["bbox"]
@@ -38,14 +40,22 @@ def display_hover(hoverData):
         ),
     ]
 
-    return True, bbox, children, direction
+    emb_children = [
+        html.Img(
+            src=generate_word_emb_vis(hover_data["text"]),
+            style={"width": "100%", "height": "25px"},
+        ),
+    ]
+
+
+    return True, bbox, children, direction, emb_children
 
 with gr.Blocks() as demo:
     gr.Markdown("## Stable Diffusion Demo")
     with gr.Tab("CLIP"):
         with gr.Row():
             output = gr.HTML(f'''
-                    <iframe id="html" src="{dash_tunnel}" style="width:100%; height:750px;"></iframe>
+                    <iframe id="html" src="{dash_tunnel}" style="width:100%; height:700px;"></iframe>
                     ''')
         with gr.Row():
             clear_words_button = gr.Button(value="Clear words")
@@ -185,7 +195,7 @@ with gr.Blocks() as demo:
 
                 with gr.Row():
                     differentiation_circular = gr.Slider(minimum=0, maximum=360, step=1, value=360, label="Proportion of Circle", info="Enter the value in degrees")
-                    step_size_circular = gr.Textbox(label="Step Size")
+                    step_size_circular = gr.Textbox(label="Step Size", value=360/5)
 
                 num_inference_steps_circular = gr.Slider(minimum=0, maximum=100, step=1, value=8, label="Number of Inference Steps per Image")
                 seed_circular = gr.Slider(minimum=0, maximum=100, step=1, value=69, label="Seed")
