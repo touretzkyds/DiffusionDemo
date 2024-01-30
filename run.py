@@ -52,9 +52,7 @@ with gr.Blocks() as demo:
         with gr.Row():
             word2add_rem = gr.Textbox(lines=1, label="Add/Remove word")
             word2change = gr.Textbox(lines=1, label="Change image for word")
-        with gr.Row():
-            add_rem_word_button = gr.Button(value="Add/Remove")
-            change_word_button = gr.Button(value="Change")
+
         with gr.Accordion("Custom Semantic Dimensions", open=False):
             with gr.Accordion("Built-In Dimension 1"):
                 with gr.Row():
@@ -118,8 +116,14 @@ with gr.Blocks() as demo:
                         to_words_6 = gr.Textbox(lines=1, label="")
 
     
-    add_rem_word_button.click(fn=add_rem_word, inputs=[word2add_rem], outputs=[output])
-    change_word_button.click(fn=change_word, inputs=[word2change], outputs=[output])
+    @word2add_rem.submit(inputs=[word2add_rem], outputs=[output, word2add_rem])
+    def add_rem_word_and_clear(words):
+        return add_rem_word(words), ""
+
+    @word2change.submit(inputs=[word2change], outputs=[output, word2change])
+    def change_word_and_clear(word):
+        return change_word(word), ""
+    
     clear_words_button.click(fn=clear_words, outputs=[output])
     
     set_axis_button_1.click(fn=set_axis, inputs=[axis_name_1, which_axis_1, from_words_1, to_words_1], outputs=[output])

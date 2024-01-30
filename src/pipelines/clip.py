@@ -125,6 +125,7 @@ def set_axis(axis_name, which_axis, from_words, to_words):
 def change_word(example):
     remove_word(example)
     add_word(example)
+    gr.Info("Changed image for {}".format(example))
     return update_fig()
 
 def clear_words():
