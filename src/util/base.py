@@ -5,6 +5,7 @@ from PIL import Image
 from tqdm.auto import tqdm
 from src.util.params import *
 from src.util.clip_config import *
+import matplotlib.pyplot as plt
 
 def get_text_embeddings(prompt, tokenizer=tokenizer, text_encoder=text_encoder, torch_device=torch_device, batch_size=1):
     text_input = tokenizer(prompt, padding="max_length", max_length=tokenizer.model_max_length, truncation=True, return_tensors="pt")
@@ -147,6 +148,16 @@ def calculate_residual(axis, axis_names, from_words=None, to_words=None, residua
 def calculate_step_size(num_images, differentiation):
     return differentiation / num_images
 
+def generate_seed_vis(seed):
+    np.random.seed(seed)
+    emb = np.random.rand(7)
+    plt.close()
+    plt.switch_backend('agg')
+    plt.figure(figsize=(7,1))
+    plt.imshow([emb], cmap="viridis")
+    plt.axis("off")
+    return plt
+
 __all__ = [
     "get_text_embeddings", 
     "generate_latents", 
@@ -156,5 +167,6 @@ __all__ = [
     "get_concat_embeddings", 
     "get_axis_embeddings", 
     "calculate_residual",
-    "calculate_step_size"
+    "calculate_step_size",
+    "generate_seed_vis"
 ]  
