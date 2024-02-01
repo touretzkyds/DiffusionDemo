@@ -250,13 +250,13 @@ with gr.Blocks() as demo:
         gr.Markdown("See how a small modification in the latent space can lead to a different generation.")
         with gr.Row():
             with gr.Column():
-                pokeX = gr.Slider(label="pokeX", minimum=0, maximum=imageWidth, step=1, value=256, info= "X coordinate of poke center")
-                pokeY = gr.Slider(label="pokeY", minimum=0, maximum=imageHeight, step=1, value=256, info= "Y coordinate of poke center")
-                pokeHeight = gr.Slider(label="pokeHeight", minimum=0, maximum=imageHeight, step=8, value=128, info= "Height of the poke")
-                pokeWidth = gr.Slider(label="pokeWidth", minimum=0, maximum=imageWidth, step=8, value=128, info= "Width of the poke")
+                pokeX = gr.Slider(label="pokeX", minimum=0, maximum=64, step=1, value=32, info= "X coordinate of poke center")
+                pokeY = gr.Slider(label="pokeY", minimum=0, maximum=64, step=1, value=32, info= "Y coordinate of poke center")
+                pokeHeight = gr.Slider(label="pokeHeight", minimum=0, maximum=64, step=1, value=8, info= "Height of the poke")
+                pokeWidth = gr.Slider(label="pokeWidth", minimum=0, maximum=64, step=1, value=8, info= "Width of the poke")
 
             with gr.Column():
-                visualize_poke_output = gr.Image(value=visualize_poke(256,256,128,128), label="Poke Visualization")
+                visualize_poke_output = gr.Image(value=visualize_poke(32,32,8,8), label="Poke Visualization")
                     
         with gr.Row():
             with gr.Column():

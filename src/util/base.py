@@ -35,13 +35,14 @@ def generate_latents(seed, height=imageHeight, width=imageWidth, torch_device=to
 def generate_modified_latents(poke, seed, pokeX=None, pokeY=None, pokeHeight=None, pokeWidth=None, imageHeight=imageHeight, imageWidth=imageWidth):
     original_latents = generate_latents(seed, height=imageHeight, width=imageWidth)
     if poke:
-        poke_latents = generate_latents(seed, height=pokeHeight, width=pokeWidth)
+        np.random.seed(seed)
+        poke_latents = generate_latents(np.random.randint(0, 100000), height=pokeHeight*8, width=pokeWidth*8)
 
-        x_origin = pokeX // 8 - poke_latents.shape[2] // 2          
-        y_origin = pokeY // 8 - poke_latents.shape[3] // 2
+        x_origin = pokeX - pokeWidth // 2          
+        y_origin = pokeY - pokeHeight // 2
 
         modified_latents = original_latents.clone()
-        modified_latents[:,:,x_origin:x_origin+poke_latents.shape[2],y_origin:y_origin+poke_latents.shape[3]] = poke_latents
+        modified_latents[:,:,y_origin:y_origin+pokeHeight,x_origin:x_origin+pokeWidth] = poke_latents
     else:
         modified_latents = None
 
