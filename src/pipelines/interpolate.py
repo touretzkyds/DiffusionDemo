@@ -24,7 +24,7 @@ def display_interpolate_images(seed, promptA, promptB, num_inference_steps, num_
     for i in range(num_images):   
         progress(i/num_images)
         image = generate_images(latents, text_embeddings[i], num_inference_steps)
-        images.append((image,i+1))
+        images.append((image,"{}".format(i)))
         
     return images
 

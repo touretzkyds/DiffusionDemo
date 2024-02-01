@@ -12,9 +12,9 @@ def display_seed_images(prompt, num_inference_steps, num_images, progress=gr.Pro
         progress(i/num_images)
         latents = generate_latents(i)
         image = generate_images(latents, text_embeddings, num_inference_steps)
-        images.append((image,i+1))
+        images.append((image,"{}".format(i)))
 
-    return images     
+    return images
 
 __all__ = [
     "display_seed_images"
