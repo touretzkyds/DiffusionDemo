@@ -4,9 +4,9 @@ from src.util.params import *
 from PIL import Image, ImageDraw
 
 def visualize_poke(pokeX, pokeY, pokeHeight, pokeWidth, imageHeight=imageHeight, imageWidth=imageWidth):
-    if ((pokeX - pokeWidth // 2 <= 0) or (pokeX + pokeWidth // 2 >= imageWidth) or (pokeY - pokeHeight // 2 <= 0) or (pokeY + pokeHeight // 2 >= imageHeight)):
+    if ((pokeX - pokeWidth // 2 < 0) or (pokeX + pokeWidth // 2 > imageWidth//8) or (pokeY - pokeHeight // 2 < 0) or (pokeY + pokeHeight // 2 > imageHeight//8)):
         gr.Warning("Modification outside image")
-    shape = [(pokeX - pokeWidth // 2, pokeY - pokeHeight // 2), (pokeX + pokeWidth // 2, pokeY + pokeHeight // 2)] 
+    shape = [(pokeX * 8 - pokeWidth * 8 // 2, pokeY * 8 - pokeHeight * 8 // 2), (pokeX * 8 + pokeWidth * 8 // 2, pokeY * 8 + pokeHeight * 8 // 2)] 
     img = Image.new("RGB", (imageHeight, imageWidth))
     rec = ImageDraw.Draw(img) 
     rec.rectangle(shape, outline ="white") 
