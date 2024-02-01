@@ -4,7 +4,7 @@ import gradio as gr
 from src.util.base import *
 from src.util.params import *
 
-def display_spread_images(prompt, seed, num_inference_steps, num_images, perturbation_size, progress=gr.Progress()):
+def display_perturb_images(prompt, seed, num_inference_steps, num_images, perturbation_size, progress=gr.Progress()):
     text_embeddings = get_text_embeddings(prompt)
 
     latents_x = generate_latents(seed)
@@ -29,5 +29,5 @@ def display_spread_images(prompt, seed, num_inference_steps, num_images, perturb
     return images   
 
 __all__ = [
-    "display_spread_images"
+    "display_perturb_images"
 ]
