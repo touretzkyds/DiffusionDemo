@@ -10,13 +10,13 @@ To run the demo, click "Open in Colab". Follow the instructions to execute the c
 
 ## Demo Tabs Overview
 
-1. Clip: Visualize text embedding space in 3D with input texts and output images based on the chosen axis.
-2. Animation: Observe the intermediate images in the refinement process.
-3. Seed: Understand how different points in latent space can lead to different generations.
-4. Spread: Explore different paths from a point in latent space. Stop to observe the resulting image.
+1. Embeddings: Visualize text embedding space in 3D with input texts and output images based on the chosen axis.
+2. Denoising: Observe the intermediate images during denoising.
+3. Seeds: Understand how different points in latent space can lead to different generations.
+4. Perturbations: Explore different perturbations from a point in latent space.
 5. Circular: Complete a full circular path in latent space and observe how the images vary along the circular path.
-6. Interpolation: Walk between the prompts and observe how the output changes.
-7. Poke: Modify the latent space by poking and observe its influence.
+6. Interpolate: Walk between the prompts and observe how the output changes.
+7. Poke: See how a small modification in the latent space can lead to a different generation.
 
 ## References
 
