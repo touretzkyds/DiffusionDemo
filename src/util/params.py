@@ -15,7 +15,8 @@ promptA = "Self-portrait oil painting, a beautiful man with golden hair, 8k"
 promptB = "Self-portrait oil painting, a beautiful woman with golden hair, 8k"
 
 num_images = 5                                                                  
-differentiation = 360                                                           
+degree = 360  
+perturbation_size = 0.1                                                            
 num_inference_steps = 8                                                        
 seed = 69420                                                              
 
@@ -44,7 +45,8 @@ else:
 __all__ = [
     "prompt", 
     "num_images", 
-    "differentiation", 
+    "degree",
+    "perturbation_size", 
     "num_inference_steps", 
     "seed", 
     "intermediate", 
