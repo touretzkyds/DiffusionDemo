@@ -2,7 +2,7 @@ from src.util.params import *
 from src.pipelines.circular import *
 import matplotlib.pyplot as plt
 
-images = display_circular_images(prompt, seed, num_inference_steps, num_images, differentiation)
+images = display_circular_images(prompt, seed, num_inference_steps, num_images, degree)
 
 fig, ax = plt.subplots(1, num_images, dpi=200, figsize=(num_images, 2))
 fig.suptitle("Circular Images")
