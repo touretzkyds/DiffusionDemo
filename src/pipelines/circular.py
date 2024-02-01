@@ -16,15 +16,15 @@ def export_as_gif(images, frames_per_second=2):
         loop=0,
     )
 
-def display_circular_images(prompt, seed, num_inference_steps, num_images, differentiation, progress=gr.Progress()):
+def display_circular_images(prompt, seed, num_inference_steps, num_images, degree, progress=gr.Progress()):
     np.random.seed(seed)
     text_embeddings = get_text_embeddings(prompt)
 
     latents_x = generate_latents(seed)
     latents_y = generate_latents(seed*np.random.randint(0, 100000))
 
-    scale_x = torch.cos(torch.linspace(0, 2, num_images)*torch.pi*(differentiation/360)).to(torch_device)
-    scale_y = torch.sin(torch.linspace(0, 2, num_images)*torch.pi*(differentiation/360)).to(torch_device)
+    scale_x = torch.cos(torch.linspace(0, 2, num_images)*torch.pi*(degree/360)).to(torch_device)
+    scale_y = torch.sin(torch.linspace(0, 2, num_images)*torch.pi*(degree/360)).to(torch_device)
 
     noise_x = torch.tensordot(scale_x, latents_x, dims=0)
     noise_y = torch.tensordot(scale_y, latents_y, dims=0)
