@@ -52,78 +52,53 @@ def display_hover(hoverData):
 
 with gr.Blocks() as demo:
     gr.Markdown("## Stable Diffusion Demo")
-    with gr.Tab("CLIP"):
+    with gr.Tab("Embeddings"):
+        gr.Markdown("Visualize text embedding space in 3D with input texts and output images based on the chosen axis.")
         with gr.Row():
             output = gr.HTML(f'''
                     <iframe id="html" src="{dash_tunnel}" style="width:100%; height:700px;"></iframe>
                     ''')
         with gr.Row():
-            clear_words_button = gr.Button(value="Clear words")
-        with gr.Row():
             word2add_rem = gr.Textbox(lines=1, label="Add/Remove word")
             word2change = gr.Textbox(lines=1, label="Change image for word")
+            clear_words_button = gr.Button(value="Clear words")
 
         with gr.Accordion("Custom Semantic Dimensions", open=False):
-            with gr.Accordion("Built-In Dimension 1"):
-                with gr.Row():
-                    axis_name_1 = gr.Textbox(label="Axis name", value="gender")
-                    which_axis_1 = gr.Dropdown(choices=["X - Axis", "Y - Axis", "Z - Axis"], value="X - Axis", label="Axis direction")
-                with gr.Row():
-                    set_axis_button_1 = gr.Button(value="Submit")
-                with gr.Accordion("Words", open=False):
-                    with gr.Row():
-                        from_words_1 = gr.Textbox(lines=1, label="", value="prince husband father son uncle")
-                        to_words_1 = gr.Textbox(lines=1, label="", value="princess wife mother daughter aunt")
-            with gr.Accordion("Built-In Dimension 2"):
-                with gr.Row():
-                    axis_name_2 = gr.Textbox(label="Axis name", value="age")
-                    which_axis_2 = gr.Dropdown(choices=["X - Axis", "Y - Axis", "Z - Axis"], value="Z - Axis", label="Axis direction")
-                with gr.Row():
-                    set_axis_button_2 = gr.Button(value="Submit")
-                with gr.Accordion("Words", open=False):
-                    with gr.Row():
-                        from_words_2 = gr.Textbox(lines=1, label="", value="man woman king queen father")
-                        to_words_2 = gr.Textbox(lines=1, label="", value="boy girl prince princess son")
-            with gr.Accordion("Built-In Dimension 3"):
-                with gr.Row():
-                    axis_name_3 = gr.Textbox(label="Axis name", value="residual")
-                    which_axis_3 = gr.Dropdown(choices=["X - Axis", "Y - Axis", "Z - Axis"], value="Y - Axis", label="Axis direction")
-                with gr.Row():
-                    set_axis_button_3 = gr.Button(value="Submit")
-                with gr.Accordion("Words", open=False):
-                    with gr.Row():
-                        from_words_3 = gr.Textbox(lines=1, label="")
-                        to_words_3 = gr.Textbox(lines=1, label="")
-            with gr.Accordion("Custom Dimension"):
-                with gr.Row():
-                    axis_name_4 = gr.Textbox(label="Axis name", value="number")
-                    which_axis_4 = gr.Dropdown(choices=["X - Axis", "Y - Axis", "Z - Axis"], label="Axis direction")
-                with gr.Row():
-                    set_axis_button_4 = gr.Button(value="Submit")
-                with gr.Accordion("Words", open=False):
-                    with gr.Row():
-                        from_words_4 = gr.Textbox(lines=1, label="", value="boys girls cats puppies computers")
-                        to_words_4 = gr.Textbox(lines=1, label="", value="boy girl cat puppy computer")
-            with gr.Accordion("Custom Dimension"):
-                with gr.Row():
-                    axis_name_5 = gr.Textbox(label="Axis name", value="royalty")
-                    which_axis_5 = gr.Dropdown(choices=["X - Axis", "Y - Axis", "Z - Axis"], label="Axis direction")
-                with gr.Row():
-                    set_axis_button_5 = gr.Button(value="Submit")
-                with gr.Accordion("Words", open=False):
-                    with gr.Row():
-                        from_words_5 = gr.Textbox(lines=1, label="", value="king queen prince princess duchess")
-                        to_words_5 = gr.Textbox(lines=1, label="", value="man woman boy girl woman")
-            with gr.Accordion("Custom Dimension"):
-                with gr.Row():
-                    axis_name_6 = gr.Textbox(label="Axis name")
-                    which_axis_6 = gr.Dropdown(choices=["X - Axis", "Y - Axis", "Z - Axis"], label="Axis direction")
-                with gr.Row():
-                    set_axis_button_6 = gr.Button(value="Submit")
-                with gr.Accordion("Words", open=False):
-                    with gr.Row():
-                        from_words_6 = gr.Textbox(lines=1, label="")
-                        to_words_6 = gr.Textbox(lines=1, label="")
+            with gr.Row():
+                axis_name_1 = gr.Textbox(label="Axis name", value="gender")
+                which_axis_1 = gr.Dropdown(choices=["X - Axis", "Y - Axis", "Z - Axis"], value="X - Axis", label="Axis direction")
+                from_words_1 = gr.Textbox(lines=1, label="From", value="prince husband father son uncle")
+                to_words_1 = gr.Textbox(lines=1, label="To", value="princess wife mother daughter aunt")
+
+            with gr.Row():
+                axis_name_2 = gr.Textbox(label="Axis name", value="age")
+                which_axis_2 = gr.Dropdown(choices=["X - Axis", "Y - Axis", "Z - Axis"], value="Z - Axis", label="Axis direction")
+                from_words_2 = gr.Textbox(lines=1, label="From", value="man woman king queen father")
+                to_words_2 = gr.Textbox(lines=1, label="To", value="boy girl prince princess son")
+
+            with gr.Row():
+                axis_name_3 = gr.Textbox(label="Axis name", value="residual")
+                which_axis_3 = gr.Dropdown(choices=["X - Axis", "Y - Axis", "Z - Axis"], value="Y - Axis", label="Axis direction")
+                from_words_3 = gr.Textbox(lines=1, label="From")
+                to_words_3 = gr.Textbox(lines=1, label="To")
+
+            with gr.Row():
+                axis_name_4 = gr.Textbox(label="Axis name", value="number")
+                which_axis_4 = gr.Dropdown(choices=["X - Axis", "Y - Axis", "Z - Axis"], label="Axis direction")
+                from_words_4 = gr.Textbox(lines=1, label="From", value="boys girls cats puppies computers")
+                to_words_4 = gr.Textbox(lines=1, label="To", value="boy girl cat puppy computer")
+
+            with gr.Row():
+                axis_name_5 = gr.Textbox(label="Axis name", value="royalty")
+                which_axis_5 = gr.Dropdown(choices=["X - Axis", "Y - Axis", "Z - Axis"], label="Axis direction")
+                from_words_5 = gr.Textbox(lines=1, label="From", value="king queen prince princess duchess")
+                to_words_5 = gr.Textbox(lines=1, label="To", value="man woman boy girl woman")
+
+            with gr.Row():
+                axis_name_6 = gr.Textbox(label="Axis name")
+                which_axis_6 = gr.Dropdown(choices=["X - Axis", "Y - Axis", "Z - Axis"], label="Axis direction")
+                from_words_6 = gr.Textbox(lines=1, label="From")
+                to_words_6 = gr.Textbox(lines=1, label="To")
 
     
     @word2add_rem.submit(inputs=[word2add_rem], outputs=[output, word2add_rem])
@@ -135,41 +110,64 @@ with gr.Blocks() as demo:
         return change_word(word), ""
     
     clear_words_button.click(fn=clear_words, outputs=[output])
-    
-    set_axis_button_1.click(fn=set_axis, inputs=[axis_name_1, which_axis_1, from_words_1, to_words_1], outputs=[output])
-    set_axis_button_2.click(fn=set_axis, inputs=[axis_name_2, which_axis_2, from_words_2, to_words_2], outputs=[output])
-    set_axis_button_3.click(fn=set_axis, inputs=[axis_name_3, which_axis_3, from_words_3, to_words_3], outputs=[output])
-    set_axis_button_4.click(fn=set_axis, inputs=[axis_name_4, which_axis_4, from_words_4, to_words_4], outputs=[output])
-    set_axis_button_5.click(fn=set_axis, inputs=[axis_name_5, which_axis_5, from_words_5, to_words_5], outputs=[output])
-    set_axis_button_6.click(fn=set_axis, inputs=[axis_name_6, which_axis_6, from_words_6, to_words_6], outputs=[output])
 
-    with gr.Tab("Animation"):
+    axis_name_1.submit(fn=set_axis, inputs=[axis_name_1, which_axis_1, from_words_1, to_words_1], outputs=[output])
+    axis_name_2.submit(fn=set_axis, inputs=[axis_name_2, which_axis_2, from_words_2, to_words_2], outputs=[output])
+    axis_name_3.submit(fn=set_axis, inputs=[axis_name_3, which_axis_3, from_words_3, to_words_3], outputs=[output])
+    axis_name_4.submit(fn=set_axis, inputs=[axis_name_4, which_axis_4, from_words_4, to_words_4], outputs=[output])
+    axis_name_5.submit(fn=set_axis, inputs=[axis_name_5, which_axis_5, from_words_5, to_words_5], outputs=[output])
+    axis_name_6.submit(fn=set_axis, inputs=[axis_name_6, which_axis_6, from_words_6, to_words_6], outputs=[output])
+
+    which_axis_1.change(fn=set_axis, inputs=[axis_name_1, which_axis_1, from_words_1, to_words_1], outputs=[output])
+    which_axis_2.change(fn=set_axis, inputs=[axis_name_2, which_axis_2, from_words_2, to_words_2], outputs=[output])
+    which_axis_3.change(fn=set_axis, inputs=[axis_name_3, which_axis_3, from_words_3, to_words_3], outputs=[output])
+    which_axis_4.change(fn=set_axis, inputs=[axis_name_4, which_axis_4, from_words_4, to_words_4], outputs=[output])
+    which_axis_5.change(fn=set_axis, inputs=[axis_name_5, which_axis_5, from_words_5, to_words_5], outputs=[output])
+    which_axis_6.change(fn=set_axis, inputs=[axis_name_6, which_axis_6, from_words_6, to_words_6], outputs=[output])
+
+    from_words_1.submit(fn=set_axis, inputs=[axis_name_1, which_axis_1, from_words_1, to_words_1], outputs=[output])
+    from_words_2.submit(fn=set_axis, inputs=[axis_name_2, which_axis_2, from_words_2, to_words_2], outputs=[output])
+    from_words_3.submit(fn=set_axis, inputs=[axis_name_3, which_axis_3, from_words_3, to_words_3], outputs=[output])
+    from_words_4.submit(fn=set_axis, inputs=[axis_name_4, which_axis_4, from_words_4, to_words_4], outputs=[output])
+    from_words_5.submit(fn=set_axis, inputs=[axis_name_5, which_axis_5, from_words_5, to_words_5], outputs=[output])
+    from_words_6.submit(fn=set_axis, inputs=[axis_name_6, which_axis_6, from_words_6, to_words_6], outputs=[output])
+    
+    to_words_1.submit(fn=set_axis, inputs=[axis_name_1, which_axis_1, from_words_1, to_words_1], outputs=[output])
+    to_words_2.submit(fn=set_axis, inputs=[axis_name_2, which_axis_2, from_words_2, to_words_2], outputs=[output])
+    to_words_3.submit(fn=set_axis, inputs=[axis_name_3, which_axis_3, from_words_3, to_words_3], outputs=[output])
+    to_words_4.submit(fn=set_axis, inputs=[axis_name_4, which_axis_4, from_words_4, to_words_4], outputs=[output])
+    to_words_5.submit(fn=set_axis, inputs=[axis_name_5, which_axis_5, from_words_5, to_words_5], outputs=[output])
+    to_words_6.submit(fn=set_axis, inputs=[axis_name_6, which_axis_6, from_words_6, to_words_6], outputs=[output])
+
+    with gr.Tab("Denoising"):
+        gr.Markdown("Observe the intermediate images during denoising.")
         with gr.Row():
             with gr.Column():
-                prompt_anim = gr.Textbox(lines=1, label="Prompt", value="Self-portrait oil painting, a beautiful cyborg with golden hair, 8k")
-                num_inference_steps_anim = gr.Slider(minimum=0, maximum=100, step=1, value=5, label="Number of Inference Steps")
+                prompt_denoise = gr.Textbox(lines=1, label="Prompt", value="Self-portrait oil painting, a beautiful cyborg with golden hair, 8k")
+                num_inference_steps_denoise = gr.Slider(minimum=0, maximum=100, step=1, value=8, label="Number of Inference Steps")
                 
                 with gr.Row():
-                    seed_anim = gr.Slider(minimum=0, maximum=100, step=1, value=69, label="Seed")
-                    seed_vis_anim = gr.Plot(value=generate_seed_vis(69))
+                    seed_denoise = gr.Slider(minimum=0, maximum=100, step=1, value=14, label="Seed")
+                    seed_vis_denoise = gr.Plot(value=generate_seed_vis(69))
 
-                generate_images_button_anim = gr.Button("Generate Images")
+                generate_images_button_denoise = gr.Button("Generate Images")
             
             with gr.Column():
-                images_output_anim = gr.Gallery(label="Images", selected_index=0)
+                images_output_denoise = gr.Gallery(label="Images", selected_index=0)
     
-    @generate_images_button_anim.click(inputs=[prompt_anim, seed_anim, num_inference_steps_anim], outputs=[images_output_anim])
+    @generate_images_button_denoise.click(inputs=[prompt_denoise, seed_denoise, num_inference_steps_denoise], outputs=[images_output_denoise])
     def generate_images_wrapper(prompt, seed, num_inference_steps):
         images, _ = display_poke_images(prompt, seed, num_inference_steps, poke=False, intermediate=True)
         return images
     
-    seed_anim.change(fn=generate_seed_vis, inputs=[seed_anim], outputs=[seed_vis_anim])
+    seed_denoise.change(fn=generate_seed_vis, inputs=[seed_denoise], outputs=[seed_vis_denoise])
     
-    with gr.Tab("Seed"):
+    with gr.Tab("Seeds"):
+        gr.Markdown("Understand how different points in latent space can lead to different generations.")
         with gr.Row():
             with gr.Column():
                 prompt_seed = gr.Textbox(lines=1, label="Prompt", value="Self-portrait oil painting, a beautiful cyborg with golden hair, 8k")
-                num_images_seed = gr.Slider(minimum=0, maximum=100, step=1, value=5, label="Number of Images")
+                num_images_seed = gr.Slider(minimum=0, maximum=100, step=1, value=5, label="Number of Seeds")
                 num_inference_steps_seed = gr.Slider(minimum=0, maximum=100, step=1, value=8, label="Number of Inference Steps per Image")
                 generate_images_button_seed = gr.Button("Generate Images")
             
@@ -178,64 +176,67 @@ with gr.Blocks() as demo:
 
     generate_images_button_seed.click(fn=display_seed_images, inputs=[prompt_seed, num_inference_steps_seed, num_images_seed], outputs=[images_output_seed])
 
-    with gr.Tab("Spread"):
+    with gr.Tab("Perturbations"):
+        gr.Markdown("Explore different perturbations from a point in latent space.")
         with gr.Row():
             with gr.Column():
-                prompt_spread = gr.Textbox(lines=1, label="Prompt", value="Self-portrait oil painting, a beautiful cyborg with golden hair, 8k")
-                num_images_spread = gr.Slider(minimum=0, maximum=100, step=1, value=5, label="Number of Images")
-                differentiation_spread = gr.Slider(minimum=0, maximum=1, step=0.1, value=0.1, label="Differentiation", info="The higher the differentiation, the more different the images will be")
-                num_inference_steps_spread = gr.Slider(minimum=0, maximum=100, step=1, value=8, label="Number of Inference Steps per Image")
+                prompt_perturb = gr.Textbox(lines=1, label="Prompt", value="Self-portrait oil painting, a beautiful cyborg with golden hair, 8k")
+                num_images_perturb = gr.Slider(minimum=0, maximum=100, step=1, value=5, label="Number of Perturbations")
+                perturbation_size_perturb = gr.Slider(minimum=0, maximum=1, step=0.1, value=0.1, label="Perturbation Size")
+                num_inference_steps_perturb = gr.Slider(minimum=0, maximum=100, step=1, value=8, label="Number of Inference Steps per Image")
                 
                 with gr.Row():
-                    seed_spread = gr.Slider(minimum=0, maximum=100, step=1, value=69, label="Seed")
-                    seed_vis_spread = gr.Plot(value=generate_seed_vis(69))
+                    seed_perturb = gr.Slider(minimum=0, maximum=100, step=1, value=14, label="Seed")
+                    seed_vis_perturb = gr.Plot(value=generate_seed_vis(14))
 
-                generate_images_button_spread = gr.Button("Generate Images")
+                generate_images_button_perturb = gr.Button("Generate Images")
 
             with gr.Column():
-                images_output_spread = gr.Gallery(label="Image", selected_index=0)    
+                images_output_perturb = gr.Gallery(label="Image", selected_index=0)    
 
-    generate_images_button_spread.click(fn=display_spread_images, inputs=[prompt_spread, seed_spread, num_inference_steps_spread, num_images_spread, differentiation_spread], outputs=images_output_spread)
-    seed_spread.change(fn=generate_seed_vis, inputs=[seed_spread], outputs=[seed_vis_spread])
+    generate_images_button_perturb.click(fn=display_perturb_images, inputs=[prompt_perturb, seed_perturb, num_inference_steps_perturb, num_images_perturb, perturbation_size_perturb], outputs=images_output_perturb)
+    seed_perturb.change(fn=generate_seed_vis, inputs=[seed_perturb], outputs=[seed_vis_perturb])
 
     with gr.Tab("Circular"):
+        gr.Markdown("Complete a full circular path in latent space and observe how the images vary along the circular path.")
         with gr.Row():
             with gr.Column():
                 prompt_circular = gr.Textbox(lines=1, label="Prompt", value="Self-portrait oil painting, a beautiful cyborg with golden hair, 8k")
                 num_images_circular = gr.Slider(minimum=0, maximum=100, step=1, value=5, label="Number of Steps around the Circle")
 
                 with gr.Row():
-                    differentiation_circular = gr.Slider(minimum=0, maximum=360, step=1, value=360, label="Proportion of Circle", info="Enter the value in degrees")
+                    degree_circular = gr.Slider(minimum=0, maximum=360, step=1, value=360, label="Proportion of Circle", info="Enter the value in degrees")
                     step_size_circular = gr.Textbox(label="Step Size", value=360/5)
 
                 num_inference_steps_circular = gr.Slider(minimum=0, maximum=100, step=1, value=8, label="Number of Inference Steps per Image")
                 
                 with gr.Row():
-                    seed_circular = gr.Slider(minimum=0, maximum=100, step=1, value=69, label="Seed")
-                    seed_vis_circular = gr.Plot(value=generate_seed_vis(69))
+                    seed_circular = gr.Slider(minimum=0, maximum=100, step=1, value=14, label="Seed")
+                    seed_vis_circular = gr.Plot(value=generate_seed_vis(14))
 
                 generate_images_button_circular = gr.Button("Generate Images")
            
             with gr.Column():
                 images_output_circular = gr.Gallery(label="Image", selected_index=0)   
-                gif_circular = gr.Image(label="GIF", ) 
+                gif_circular = gr.Image(label="GIF", progress_bar=False) 
 
-    num_images_circular.change(fn=calculate_step_size, inputs=[num_images_circular, differentiation_circular], outputs=[step_size_circular])
-    differentiation_circular.change(fn=calculate_step_size, inputs=[num_images_circular, differentiation_circular], outputs=[step_size_circular])
-    generate_images_button_circular.click(fn=display_circular_images, inputs=[prompt_circular, seed_circular, num_inference_steps_circular, num_images_circular, differentiation_circular], outputs=[images_output_circular, gif_circular])
+    num_images_circular.change(fn=calculate_step_size, inputs=[num_images_circular, degree_circular], outputs=[step_size_circular])
+    degree_circular.change(fn=calculate_step_size, inputs=[num_images_circular, degree_circular], outputs=[step_size_circular])
+    generate_images_button_circular.click(fn=display_circular_images, inputs=[prompt_circular, seed_circular, num_inference_steps_circular, num_images_circular, degree_circular], outputs=[images_output_circular, gif_circular])
     seed_circular.change(fn=generate_seed_vis, inputs=[seed_circular], outputs=[seed_vis_circular])
 
     with gr.Tab("Interpolate"):
+        gr.Markdown("Walk between the prompts and observe how the output changes.")
         with gr.Row():
             with gr.Column():
                 promptA = gr.Textbox(lines=1, label="Prompt from", value="Self-portrait oil painting, a beautiful man with golden hair, 8k")
                 promptB = gr.Textbox(lines=1, label="Prompt to", value="Self-portrait oil painting, a beautiful woman with golden hair, 8k")
-                num_images_1 = gr.Slider(minimum=0, maximum=100, step=1, value=5, label="Number of Images")
+                num_images_1 = gr.Slider(minimum=0, maximum=100, step=1, value=5, label="Number of Steps")
                 num_inference_steps_1 = gr.Slider(minimum=0, maximum=100, step=1, value=8, label="Number of Inference Steps per Image")
                 
                 with gr.Row():
-                    seed_1 = gr.Slider(minimum=0, maximum=100, step=1, value=69, label="Seed")
-                    seed_vis_1 = gr.Plot(value=generate_seed_vis(69))
+                    seed_1 = gr.Slider(minimum=0, maximum=100, step=1, value=14, label="Seed")
+                    seed_vis_1 = gr.Plot(value=generate_seed_vis(14))
 
                 generate_images_button_1 = gr.Button("Generate Images")
 
@@ -246,6 +247,7 @@ with gr.Blocks() as demo:
     seed_1.change(fn=generate_seed_vis, inputs=[seed_1], outputs=[seed_vis_1])
 
     with gr.Tab("Poke"):
+        gr.Markdown("See how a small modification in the latent space can lead to a different generation.")
         with gr.Row():
             with gr.Column():
                 pokeX = gr.Slider(label="pokeX", minimum=0, maximum=imageWidth, step=1, value=256, info= "X coordinate of poke center")
@@ -259,11 +261,11 @@ with gr.Blocks() as demo:
         with gr.Row():
             with gr.Column():
                 prompt_0 = gr.Textbox(lines=1, label="Prompt", value="Self-portrait oil painting, a beautiful cyborg with golden hair, 8k")
-                num_inference_steps_0 = gr.Slider(minimum=0, maximum=100, step=1, value=5, label="Number of Inference Steps per Image")
+                num_inference_steps_0 = gr.Slider(minimum=0, maximum=100, step=1, value=8, label="Number of Inference Steps per Image")
                 
                 with gr.Row():
-                    seed_0 = gr.Slider(minimum=0, maximum=100, step=1, value=69, label="Seed")
-                    seed_vis_0 = gr.Plot(value=generate_seed_vis(69))
+                    seed_0 = gr.Slider(minimum=0, maximum=100, step=1, value=14, label="Seed")
+                    seed_vis_0 = gr.Plot(value=generate_seed_vis(14))
 
                 generate_images_button_0 = gr.Button("Generate Images")
             
