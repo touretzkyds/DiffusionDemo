@@ -1,12 +1,12 @@
 import torch
+import secrets
+from gradio.networking import setup_tunnel
 from transformers import CLIPTextModel, CLIPTokenizer
 from diffusers import AutoencoderKL, UNet2DConditionModel, LCMScheduler, LMSDiscreteScheduler
-import tntn
 
 torch_device = "cuda" if torch.cuda.is_available() else "cpu"
 
 isLCM = False
-isLocal = False
 HF_ACCESS_TOKEN = ""        
 
 model_path = "segmind/small-sd"    
@@ -37,10 +37,7 @@ else:
 unet = UNet2DConditionModel.from_pretrained(model_path, subfolder="unet").to(torch_device)
 vae = AutoencoderKL.from_pretrained(model_path, subfolder="vae").to(torch_device)
 
-if isLocal: 
-    dash_tunnel = "http://127.0.0.1:8000/"
-else:
-    dash_tunnel = tntn.bore(8000).tunnel
+dash_tunnel = setup_tunnel('0.0.0.0', 8000, secrets.token_urlsafe(32))
 
 __all__ = [
     "prompt", 
