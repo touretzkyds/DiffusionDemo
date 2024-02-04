@@ -12,11 +12,11 @@ To run the demo, click "Open in Colab". Follow the instructions to execute the c
 
 1. Embeddings: Visualize text embedding space in 3D with input texts and output images based on the chosen axis.
 2. Denoising: Observe the intermediate images during denoising.
-3. Seeds: Understand how different points in latent space can lead to different generations.
+3. Seeds: Understand how different starting points in latent space can lead to different images.
 4. Perturbations: Explore different perturbations from a point in latent space.
-5. Circular: Complete a full circular path in latent space and observe how the images vary along the circular path.
-6. Interpolate: Walk between the prompts and observe how the output changes.
-7. Poke: See how a small modification in the latent space can lead to a different generation.
+5. Circular: Generate a circular path in latent space and observe how the images vary along the path.
+6. Interpolate: Interpolate between the first and the second prompt, and observe how the output changes.
+7. Poke: Perturb a region in the image and observe the effect.
 
 ## References
 
