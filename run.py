@@ -67,38 +67,38 @@ with gr.Blocks() as demo:
             with gr.Row():
                 axis_name_1 = gr.Textbox(label="Axis name", value="gender")
                 which_axis_1 = gr.Dropdown(choices=["X - Axis", "Y - Axis", "Z - Axis"], value="X - Axis", label="Axis direction")
-                from_words_1 = gr.Textbox(lines=1, label="From", value="prince husband father son uncle")
-                to_words_1 = gr.Textbox(lines=1, label="To", value="princess wife mother daughter aunt")
+                from_words_1 = gr.Textbox(lines=1, label="Positive", value="prince husband father son uncle")
+                to_words_1 = gr.Textbox(lines=1, label="Negative", value="princess wife mother daughter aunt")
 
             with gr.Row():
                 axis_name_2 = gr.Textbox(label="Axis name", value="age")
                 which_axis_2 = gr.Dropdown(choices=["X - Axis", "Y - Axis", "Z - Axis"], value="Z - Axis", label="Axis direction")
-                from_words_2 = gr.Textbox(lines=1, label="From", value="man woman king queen father")
-                to_words_2 = gr.Textbox(lines=1, label="To", value="boy girl prince princess son")
+                from_words_2 = gr.Textbox(lines=1, label="Positive", value="man woman king queen father")
+                to_words_2 = gr.Textbox(lines=1, label="Negative", value="boy girl prince princess son")
 
             with gr.Row():
                 axis_name_3 = gr.Textbox(label="Axis name", value="residual")
                 which_axis_3 = gr.Dropdown(choices=["X - Axis", "Y - Axis", "Z - Axis"], value="Y - Axis", label="Axis direction")
-                from_words_3 = gr.Textbox(lines=1, label="From")
-                to_words_3 = gr.Textbox(lines=1, label="To")
+                from_words_3 = gr.Textbox(lines=1, label="Positive")
+                to_words_3 = gr.Textbox(lines=1, label="Negative")
 
             with gr.Row():
                 axis_name_4 = gr.Textbox(label="Axis name", value="number")
                 which_axis_4 = gr.Dropdown(choices=["X - Axis", "Y - Axis", "Z - Axis"], label="Axis direction")
-                from_words_4 = gr.Textbox(lines=1, label="From", value="boys girls cats puppies computers")
-                to_words_4 = gr.Textbox(lines=1, label="To", value="boy girl cat puppy computer")
+                from_words_4 = gr.Textbox(lines=1, label="Positive", value="boys girls cats puppies computers")
+                to_words_4 = gr.Textbox(lines=1, label="Negative", value="boy girl cat puppy computer")
 
             with gr.Row():
                 axis_name_5 = gr.Textbox(label="Axis name", value="royalty")
                 which_axis_5 = gr.Dropdown(choices=["X - Axis", "Y - Axis", "Z - Axis"], label="Axis direction")
-                from_words_5 = gr.Textbox(lines=1, label="From", value="king queen prince princess duchess")
-                to_words_5 = gr.Textbox(lines=1, label="To", value="man woman boy girl woman")
+                from_words_5 = gr.Textbox(lines=1, label="Positive", value="king queen prince princess duchess")
+                to_words_5 = gr.Textbox(lines=1, label="Negative", value="man woman boy girl woman")
 
             with gr.Row():
                 axis_name_6 = gr.Textbox(label="Axis name")
                 which_axis_6 = gr.Dropdown(choices=["X - Axis", "Y - Axis", "Z - Axis"], label="Axis direction")
-                from_words_6 = gr.Textbox(lines=1, label="From")
-                to_words_6 = gr.Textbox(lines=1, label="To")
+                from_words_6 = gr.Textbox(lines=1, label="Positive")
+                to_words_6 = gr.Textbox(lines=1, label="Negative")
 
     
     @word2add_rem.submit(inputs=[word2add_rem], outputs=[output, word2add_rem])
@@ -163,7 +163,7 @@ with gr.Blocks() as demo:
     seed_denoise.change(fn=generate_seed_vis, inputs=[seed_denoise], outputs=[seed_vis_denoise])
     
     with gr.Tab("Seeds"):
-        gr.Markdown("Understand how different points in latent space can lead to different generations.")
+        gr.Markdown("Understand how different starting points in latent space can lead to different images.")
         with gr.Row():
             with gr.Column():
                 prompt_seed = gr.Textbox(lines=1, label="Prompt", value="Self-portrait oil painting, a beautiful cyborg with golden hair, 8k")
@@ -198,7 +198,7 @@ with gr.Blocks() as demo:
     seed_perturb.change(fn=generate_seed_vis, inputs=[seed_perturb], outputs=[seed_vis_perturb])
 
     with gr.Tab("Circular"):
-        gr.Markdown("Complete a full circular path in latent space and observe how the images vary along the circular path.")
+        gr.Markdown("Generate a circular path in latent space and observe how the images vary along the path.")
         with gr.Row():
             with gr.Column():
                 prompt_circular = gr.Textbox(lines=1, label="Prompt", value="Self-portrait oil painting, a beautiful cyborg with golden hair, 8k")
@@ -226,12 +226,12 @@ with gr.Blocks() as demo:
     seed_circular.change(fn=generate_seed_vis, inputs=[seed_circular], outputs=[seed_vis_circular])
 
     with gr.Tab("Interpolate"):
-        gr.Markdown("Walk between the prompts and observe how the output changes.")
+        gr.Markdown("Interpolate between the first and the second prompt, and observe how the output changes.")
         with gr.Row():
             with gr.Column():
-                promptA = gr.Textbox(lines=1, label="Prompt from", value="Self-portrait oil painting, a beautiful man with golden hair, 8k")
-                promptB = gr.Textbox(lines=1, label="Prompt to", value="Self-portrait oil painting, a beautiful woman with golden hair, 8k")
-                num_images_1 = gr.Slider(minimum=0, maximum=100, step=1, value=5, label="Number of Steps")
+                promptA = gr.Textbox(lines=1, label="First Prompt", value="Self-portrait oil painting, a beautiful man with golden hair, 8k")
+                promptB = gr.Textbox(lines=1, label="Second Prompt", value="Self-portrait oil painting, a beautiful woman with golden hair, 8k")
+                num_images_1 = gr.Slider(minimum=0, maximum=100, step=1, value=5, label="Number of Interpolation Steps")
                 num_inference_steps_1 = gr.Slider(minimum=0, maximum=100, step=1, value=8, label="Number of Inference Steps per Image")
                 
                 with gr.Row():
@@ -247,7 +247,7 @@ with gr.Blocks() as demo:
     seed_1.change(fn=generate_seed_vis, inputs=[seed_1], outputs=[seed_vis_1])
 
     with gr.Tab("Poke"):
-        gr.Markdown("See how a small modification in the latent space can lead to a different generation.")
+        gr.Markdown("Perturb a region in the image and observe the effect.")
         with gr.Row():
             with gr.Column():
                 pokeX = gr.Slider(label="pokeX", minimum=0, maximum=64, step=1, value=32, info= "X coordinate of poke center")
@@ -270,8 +270,8 @@ with gr.Blocks() as demo:
                 generate_images_button_0 = gr.Button("Generate Images")
             
             with gr.Column():
-                original_images_output_0 = gr.Gallery(label="Original Images", selected_index=0)
-                poked_images_output_0 = gr.Gallery(label="Poked Images", selected_index=0)
+                original_images_output_0 = gr.Gallery(label="Original Images")
+                poked_images_output_0 = gr.Gallery(label="Poked Images")
 
     pokeX.change(visualize_poke, inputs=[pokeX, pokeY, pokeHeight, pokeWidth], outputs=visualize_poke_output)
     pokeY.change(visualize_poke, inputs=[pokeX, pokeY, pokeHeight, pokeWidth], outputs=visualize_poke_output)
