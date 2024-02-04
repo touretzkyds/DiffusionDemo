@@ -59,6 +59,7 @@ def generate_images(latents, text_embeddings, num_inference_steps, unet=unet, gu
     scheduler.set_timesteps(num_inference_steps)
     latents = latents * scheduler.init_noise_sigma
     images = []
+    i = 0
     
     for t in tqdm(scheduler.timesteps):          
         latent_model_input = torch.cat([latents] * 2)
@@ -75,9 +76,10 @@ def generate_images(latents, text_embeddings, num_inference_steps, unet=unet, gu
             Latents = 1 / 0.18215 * latents
             with torch.no_grad():
                 image = vae.decode(Latents).sample
-                images.append(convert_to_pil_image(image))
+                images.append((convert_to_pil_image(image),"{}".format(i)))
 
         latents = scheduler.step(noise_pred, t, latents).prev_sample
+        i += 1
 
     if not intermediate:
         Latents = 1 / 0.18215 * latents
