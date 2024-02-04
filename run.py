@@ -148,7 +148,7 @@ with gr.Blocks() as demo:
                 
                 with gr.Row():
                     seed_denoise = gr.Slider(minimum=0, maximum=100, step=1, value=14, label="Seed")
-                    seed_vis_denoise = gr.Plot(value=generate_seed_vis(69))
+                    seed_vis_denoise = gr.Plot(value=generate_seed_vis(14), label="Seed")
 
                 generate_images_button_denoise = gr.Button("Generate Images")
             
@@ -187,7 +187,7 @@ with gr.Blocks() as demo:
                 
                 with gr.Row():
                     seed_perturb = gr.Slider(minimum=0, maximum=100, step=1, value=14, label="Seed")
-                    seed_vis_perturb = gr.Plot(value=generate_seed_vis(14))
+                    seed_vis_perturb = gr.Plot(value=generate_seed_vis(14), label="Seed")
 
                 generate_images_button_perturb = gr.Button("Generate Images")
 
@@ -212,7 +212,7 @@ with gr.Blocks() as demo:
                 
                 with gr.Row():
                     seed_circular = gr.Slider(minimum=0, maximum=100, step=1, value=14, label="Seed")
-                    seed_vis_circular = gr.Plot(value=generate_seed_vis(14))
+                    seed_vis_circular = gr.Plot(value=generate_seed_vis(14), label="Seed")
 
                 generate_images_button_circular = gr.Button("Generate Images")
            
@@ -236,7 +236,7 @@ with gr.Blocks() as demo:
                 
                 with gr.Row():
                     seed_1 = gr.Slider(minimum=0, maximum=100, step=1, value=14, label="Seed")
-                    seed_vis_1 = gr.Plot(value=generate_seed_vis(14))
+                    seed_vis_1 = gr.Plot(value=generate_seed_vis(14), label="Seed")
 
                 generate_images_button_1 = gr.Button("Generate Images")
 
@@ -265,7 +265,7 @@ with gr.Blocks() as demo:
                 
                 with gr.Row():
                     seed_0 = gr.Slider(minimum=0, maximum=100, step=1, value=14, label="Seed")
-                    seed_vis_0 = gr.Plot(value=generate_seed_vis(14))
+                    seed_vis_0 = gr.Plot(value=generate_seed_vis(14), label="Seed")
 
                 generate_images_button_0 = gr.Button("Generate Images")
             
