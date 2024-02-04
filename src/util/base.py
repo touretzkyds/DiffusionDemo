@@ -151,10 +151,10 @@ def calculate_step_size(num_images, differentiation):
 
 def generate_seed_vis(seed):
     np.random.seed(seed)
-    emb = np.random.rand(7)
+    emb = np.random.rand(15)
     plt.close()
     plt.switch_backend('agg')
-    plt.figure(figsize=(7,1))
+    plt.figure(figsize=(10,0.5))
     plt.imshow([emb], cmap="viridis")
     plt.axis("off")
     return plt
