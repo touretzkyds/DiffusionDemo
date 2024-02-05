@@ -25,8 +25,10 @@ def display_interpolate_images(seed, promptA, promptB, num_inference_steps, num_
         progress(i/num_images)
         image = generate_images(latents, text_embeddings[i], num_inference_steps)
         images.append((image,"{}".format(i)))
-        
-    return images
+
+    progress(1, desc="Exporting as gif")
+    export_as_gif(images, filename="interpolate.gif", reverse=True)
+    return images, "interpolate.gif"
 
 __all__ = [
     "display_interpolate_images"
