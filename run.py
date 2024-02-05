@@ -9,8 +9,9 @@ app = Dash(__name__)
 app.layout = html.Div(
     className="container",
     children=[
-        dcc.Graph(id="graph", figure=fig, clear_on_unhover=True, style={"height": "93.5vh"}),
+        dcc.Graph(id="graph", figure=fig, clear_on_unhover=True, style={"height": "90vh"}),
         dcc.Tooltip(id="tooltip"),
+        html.Div(id="word-emb-txt", style={"background-color": "white"}),
         html.Div(id="word-emb-vis")
     ],
 )
@@ -20,13 +21,14 @@ app.layout = html.Div(
     Output("tooltip", "bbox"),
     Output("tooltip", "children"),
     Output("tooltip", "direction"),
+    Output("word-emb-txt", "children"),
     Output("word-emb-vis", "children"),
 
     Input("graph", "hoverData"),
 )
 def display_hover(hoverData):
     if hoverData is None:
-        return False, no_update, no_update, no_update, no_update
+        return False, no_update, no_update, no_update, no_update, no_update
 
     hover_data = hoverData["points"][0]
     bbox = hover_data["bbox"]
@@ -48,7 +50,7 @@ def display_hover(hoverData):
     ]
 
 
-    return True, bbox, children, direction, emb_children
+    return True, bbox, children, direction, hover_data["text"], emb_children
 
 with gr.Blocks() as demo:
     gr.Markdown("## Stable Diffusion Demo")
