@@ -161,6 +161,21 @@ def generate_seed_vis(seed):
     plt.axis("off")
     return plt
 
+def export_as_gif(images, filename, frames_per_second=2, reverse=False):
+    imgs = [img[0] for img in images]
+
+    if reverse:
+        imgs += imgs[2:-1][::-1]
+
+    imgs[0].save(
+        "{}".format(filename),
+        format="GIF",
+        save_all=True,
+        append_images=imgs[1:],
+        duration=1000 // frames_per_second,
+        loop=0,
+    )
+
 __all__ = [
     "get_text_embeddings", 
     "generate_latents", 
@@ -171,5 +186,6 @@ __all__ = [
     "get_axis_embeddings", 
     "calculate_residual",
     "calculate_step_size",
-    "generate_seed_vis"
+    "generate_seed_vis",
+    "export_as_gif"
 ]  

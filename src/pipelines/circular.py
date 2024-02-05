@@ -4,18 +4,6 @@ import gradio as gr
 from src.util.base import *
 from src.util.params import *
 
-def export_as_gif(images, frames_per_second=2):
-    imgs = [img[0] for img in images]
-
-    imgs[0].save(
-        "out.gif",
-        format="GIF",
-        save_all=True,
-        append_images=imgs[1:],
-        duration=1000 // frames_per_second,
-        loop=0,
-    )
-
 def display_circular_images(prompt, seed, num_inference_steps, num_images, degree, progress=gr.Progress()):
     np.random.seed(seed)
     text_embeddings = get_text_embeddings(prompt)
@@ -38,8 +26,9 @@ def display_circular_images(prompt, seed, num_inference_steps, num_images, degre
         image = generate_images(noise[i], text_embeddings, num_inference_steps)
         images.append((image,"{}".format(i)))
 
-    export_as_gif(images)
-    return images, "out.gif"
+    progress(1, desc="Exporting as gif") 
+    export_as_gif(images, filename="circular.gif")
+    return images, "circular.gif"
 
 __all__ = [
     "display_circular_images"
