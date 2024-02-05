@@ -233,20 +233,21 @@ with gr.Blocks() as demo:
             with gr.Column():
                 promptA = gr.Textbox(lines=1, label="First Prompt", value="Self-portrait oil painting, a beautiful man with golden hair, 8k")
                 promptB = gr.Textbox(lines=1, label="Second Prompt", value="Self-portrait oil painting, a beautiful woman with golden hair, 8k")
-                num_images_1 = gr.Slider(minimum=0, maximum=100, step=1, value=5, label="Number of Interpolation Steps")
-                num_inference_steps_1 = gr.Slider(minimum=0, maximum=100, step=1, value=8, label="Number of Inference Steps per Image")
+                num_images_interpolate = gr.Slider(minimum=0, maximum=100, step=1, value=5, label="Number of Interpolation Steps")
+                num_inference_steps_interpolate = gr.Slider(minimum=0, maximum=100, step=1, value=8, label="Number of Inference Steps per Image")
                 
                 with gr.Row():
-                    seed_1 = gr.Slider(minimum=0, maximum=100, step=1, value=14, label="Seed")
-                    seed_vis_1 = gr.Plot(value=generate_seed_vis(14), label="Seed")
+                    seed_interpolate = gr.Slider(minimum=0, maximum=100, step=1, value=14, label="Seed")
+                    seed_vis_interpolate = gr.Plot(value=generate_seed_vis(14), label="Seed")
 
-                generate_images_button_1 = gr.Button("Generate Images")
+                generate_images_button_interpolate = gr.Button("Generate Images")
 
             with gr.Column():
-                images_output_1 = gr.Gallery(label="Interpolated Images", selected_index=0)
+                images_output_interpolate = gr.Gallery(label="Interpolated Images", selected_index=0)
+                gif_interpolate = gr.Image(label="GIF")
 
-    generate_images_button_1.click(fn=display_interpolate_images, inputs=[seed_1, promptA, promptB, num_inference_steps_1, num_images_1], outputs=images_output_1)
-    seed_1.change(fn=generate_seed_vis, inputs=[seed_1], outputs=[seed_vis_1])
+    generate_images_button_interpolate.click(fn=display_interpolate_images, inputs=[seed_interpolate, promptA, promptB, num_inference_steps_interpolate, num_images_interpolate], outputs=[images_output_interpolate, gif_interpolate])
+    seed_interpolate.change(fn=generate_seed_vis, inputs=[seed_interpolate], outputs=[seed_vis_interpolate])
 
     with gr.Tab("Poke"):
         gr.Markdown("Perturb a region in the image and observe the effect.")
