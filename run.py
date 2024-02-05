@@ -218,7 +218,7 @@ with gr.Blocks() as demo:
            
             with gr.Column():
                 images_output_circular = gr.Gallery(label="Image", selected_index=0)   
-                gif_circular = gr.Image(label="GIF", progress_bar=False) 
+                gif_circular = gr.Image(label="GIF") 
 
     num_images_circular.change(fn=calculate_step_size, inputs=[num_images_circular, degree_circular], outputs=[step_size_circular])
     degree_circular.change(fn=calculate_step_size, inputs=[num_images_circular, degree_circular], outputs=[step_size_circular])
@@ -270,8 +270,8 @@ with gr.Blocks() as demo:
                 generate_images_button_0 = gr.Button("Generate Images")
             
             with gr.Column():
-                original_images_output_0 = gr.Gallery(label="Original Images")
-                poked_images_output_0 = gr.Gallery(label="Poked Images")
+                original_images_output_0 = gr.Image(label="Original Image")
+                poked_images_output_0 = gr.Image(label="Poked Image")
 
     pokeX.change(visualize_poke, inputs=[pokeX, pokeY, pokeHeight, pokeWidth], outputs=visualize_poke_output)
     pokeY.change(visualize_poke, inputs=[pokeX, pokeY, pokeHeight, pokeWidth], outputs=visualize_poke_output)
@@ -281,7 +281,7 @@ with gr.Blocks() as demo:
 
     @generate_images_button_0.click(inputs=[prompt_0, seed_0, num_inference_steps_0, pokeX, pokeY, pokeHeight, pokeWidth, ], outputs=[original_images_output_0, poked_images_output_0])
     def generate_images_wrapper(prompt, seed, num_inference_steps, pokeX=pokeX, pokeY=pokeY, pokeHeight=pokeHeight, pokeWidth=pokeWidth):
-        images, modImages = display_poke_images(prompt, seed, num_inference_steps, poke=True, pokeX=pokeX, pokeY=pokeY, pokeHeight=pokeHeight, pokeWidth=pokeWidth, intermediate=True)
+        images, modImages = display_poke_images(prompt, seed, num_inference_steps, poke=True, pokeX=pokeX, pokeY=pokeY, pokeHeight=pokeHeight, pokeWidth=pokeWidth, intermediate=False)
         return images, modImages
     
 def run_dash():
