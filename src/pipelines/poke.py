@@ -20,6 +20,7 @@ def display_poke_images(prompt, seed, num_inference_steps, poke=False, pokeX=Non
     images = generate_images(latents, text_embeddings, num_inference_steps, intermediate=intermediate)
 
     if poke:
+        progress(0.5)
         modImages = generate_images(modified_latents, text_embeddings, num_inference_steps, intermediate=intermediate)
     else:    
         modImages = None
