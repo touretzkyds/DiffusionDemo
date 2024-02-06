@@ -13,7 +13,7 @@ def display_perturb_images(prompt, seed, num_inference_steps, num_images, pertur
     
     progress(0)
     images = []
-    images.append((generate_images(latents_x, text_embeddings, num_inference_steps),"{}".format(0)))
+    images.append((generate_images(latents_x, text_embeddings, num_inference_steps),"{}".format(1)))
 
     for i in range(num_images):  
         np.random.seed(i) 
@@ -24,7 +24,7 @@ def display_perturb_images(prompt, seed, num_inference_steps, num_images, pertur
 
         noise = noise_x + noise_y
         image = generate_images(noise[num_images-1], text_embeddings, num_inference_steps)
-        images.append((image, "{}".format(i+1)))
+        images.append((image, "{}".format(i+2)))
 
     return images   
 

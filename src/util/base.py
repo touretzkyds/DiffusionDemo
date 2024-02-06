@@ -59,7 +59,7 @@ def generate_images(latents, text_embeddings, num_inference_steps, unet=unet, gu
     scheduler.set_timesteps(num_inference_steps)
     latents = latents * scheduler.init_noise_sigma
     images = []
-    i = 0
+    i = 1
     
     for t in tqdm(scheduler.timesteps):          
         latent_model_input = torch.cat([latents] * 2)
