@@ -37,7 +37,7 @@ else:
 unet = UNet2DConditionModel.from_pretrained(model_path, subfolder="unet").to(torch_device)
 vae = AutoencoderKL.from_pretrained(model_path, subfolder="vae").to(torch_device)
 
-dash_tunnel = setup_tunnel('0.0.0.0', 8000, secrets.token_urlsafe(32))
+dash_tunnel = setup_tunnel('0.0.0.0', 8000, secrets.token_urlsafe(32), None)
 
 __all__ = [
     "prompt", 
