@@ -257,34 +257,29 @@ with gr.Blocks() as demo:
                 pokeY = gr.Slider(label="pokeY", minimum=0, maximum=64, step=1, value=32, info= "Y coordinate of poke center")
                 pokeHeight = gr.Slider(label="pokeHeight", minimum=0, maximum=64, step=1, value=8, info= "Height of the poke")
                 pokeWidth = gr.Slider(label="pokeWidth", minimum=0, maximum=64, step=1, value=8, info= "Width of the poke")
+                prompt_poke = gr.Textbox(lines=1, label="Prompt", value="Self-portrait oil painting, a beautiful cyborg with golden hair, 8k")
+                num_inference_steps_poke = gr.Slider(minimum=0, maximum=100, step=1, value=8, label="Number of Inference Steps per Image")
 
-            with gr.Column():
-                visualize_poke_output = gr.Image(value=visualize_poke(32,32,8,8), label="Poke Visualization")
-                    
-        with gr.Row():
-            with gr.Column():
-                prompt_0 = gr.Textbox(lines=1, label="Prompt", value="Self-portrait oil painting, a beautiful cyborg with golden hair, 8k")
-                num_inference_steps_0 = gr.Slider(minimum=0, maximum=100, step=1, value=8, label="Number of Inference Steps per Image")
-                
                 with gr.Row():
-                    seed_0 = gr.Slider(minimum=0, maximum=100, step=1, value=14, label="Seed")
-                    seed_vis_0 = gr.Plot(value=generate_seed_vis(14), label="Seed")
+                    seed_poke = gr.Slider(minimum=0, maximum=100, step=1, value=14, label="Seed")
+                    seed_vis_poke = gr.Plot(value=generate_seed_vis(14), label="Seed")
+                
+                generate_images_button_poke = gr.Button("Generate Images")   
 
-                generate_images_button_0 = gr.Button("Generate Images")
-            
             with gr.Column():
-                original_images_output_0 = gr.Image(label="Original Image")
-                poked_images_output_0 = gr.Image(label="Poked Image")
+                original_images_output_poke = gr.Image(value=visualize_poke(32,32,8,8)[0], label="Original Image")
+                poked_images_output_poke = gr.Image(value=visualize_poke(32,32,8,8)[1], label="Poked Image")
 
-    pokeX.change(visualize_poke, inputs=[pokeX, pokeY, pokeHeight, pokeWidth], outputs=visualize_poke_output)
-    pokeY.change(visualize_poke, inputs=[pokeX, pokeY, pokeHeight, pokeWidth], outputs=visualize_poke_output)
-    pokeHeight.change(visualize_poke, inputs=[pokeX, pokeY, pokeHeight, pokeWidth], outputs=visualize_poke_output)
-    pokeWidth.change(visualize_poke, inputs=[pokeX, pokeY, pokeHeight, pokeWidth], outputs=visualize_poke_output)
-    seed_0.change(fn=generate_seed_vis, inputs=[seed_0], outputs=[seed_vis_0])
+    pokeX.change(visualize_poke, inputs=[pokeX, pokeY, pokeHeight, pokeWidth], outputs=[original_images_output_poke, poked_images_output_poke])
+    pokeY.change(visualize_poke, inputs=[pokeX, pokeY, pokeHeight, pokeWidth], outputs=[original_images_output_poke, poked_images_output_poke])
+    pokeHeight.change(visualize_poke, inputs=[pokeX, pokeY, pokeHeight, pokeWidth], outputs=[original_images_output_poke, poked_images_output_poke])
+    pokeWidth.change(visualize_poke, inputs=[pokeX, pokeY, pokeHeight, pokeWidth], outputs=[original_images_output_poke, poked_images_output_poke])
+    seed_poke.change(fn=generate_seed_vis, inputs=[seed_poke], outputs=[seed_vis_poke])
 
-    @generate_images_button_0.click(inputs=[prompt_0, seed_0, num_inference_steps_0, pokeX, pokeY, pokeHeight, pokeWidth, ], outputs=[original_images_output_0, poked_images_output_0])
+    @generate_images_button_poke.click(inputs=[prompt_poke, seed_poke, num_inference_steps_poke, pokeX, pokeY, pokeHeight, pokeWidth], outputs=[original_images_output_poke, poked_images_output_poke])
     def generate_images_wrapper(prompt, seed, num_inference_steps, pokeX=pokeX, pokeY=pokeY, pokeHeight=pokeHeight, pokeWidth=pokeWidth):
-        images, modImages = display_poke_images(prompt, seed, num_inference_steps, poke=True, pokeX=pokeX, pokeY=pokeY, pokeHeight=pokeHeight, pokeWidth=pokeWidth, intermediate=False)
+        _, _ = display_poke_images(prompt, seed, num_inference_steps, poke=True, pokeX=pokeX, pokeY=pokeY, pokeHeight=pokeHeight, pokeWidth=pokeWidth, intermediate=False)
+        images, modImages = visualize_poke(pokeX, pokeY, pokeHeight, pokeWidth)
         return images, modImages
     
 def run_dash():

@@ -1,3 +1,4 @@
+import os
 import gradio as gr
 from src.util.base import *
 from src.util.params import *  
@@ -7,10 +8,23 @@ def visualize_poke(pokeX, pokeY, pokeHeight, pokeWidth, imageHeight=imageHeight,
     if ((pokeX - pokeWidth // 2 < 0) or (pokeX + pokeWidth // 2 > imageWidth//8) or (pokeY - pokeHeight // 2 < 0) or (pokeY + pokeHeight // 2 > imageHeight//8)):
         gr.Warning("Modification outside image")
     shape = [(pokeX * 8 - pokeWidth * 8 // 2, pokeY * 8 - pokeHeight * 8 // 2), (pokeX * 8 + pokeWidth * 8 // 2, pokeY * 8 + pokeHeight * 8 // 2)] 
-    img = Image.new("RGB", (imageHeight, imageWidth))
-    rec = ImageDraw.Draw(img) 
-    rec.rectangle(shape, outline ="white") 
-    return img
+
+    blank = Image.new("RGB", (imageWidth, imageHeight))
+
+    if os.path.exists("original.png"):
+        oImg = Image.open("original.png")
+        pImg = Image.open("poked.png")
+    else:
+        oImg = blank
+        pImg = blank
+
+    oRec = ImageDraw.Draw(oImg) 
+    pRec = ImageDraw.Draw(pImg)
+
+    oRec.rectangle(shape, outline ="white")     
+    pRec.rectangle(shape, outline ="white")
+    
+    return oImg, pImg
 
 def display_poke_images(prompt, seed, num_inference_steps, poke=False, pokeX=None, pokeY=None, pokeHeight=None, pokeWidth=None, intermediate=False, progress=gr.Progress()):
     text_embeddings = get_text_embeddings(prompt)
@@ -18,10 +32,16 @@ def display_poke_images(prompt, seed, num_inference_steps, poke=False, pokeX=Non
 
     progress(0)
     images = generate_images(latents, text_embeddings, num_inference_steps, intermediate=intermediate)
+    
+    if not intermediate:
+        images.save("original.png")
 
     if poke:
         progress(0.5)
         modImages = generate_images(modified_latents, text_embeddings, num_inference_steps, intermediate=intermediate)
+        
+        if not intermediate:
+            modImages.save("poked.png")
     else:    
         modImages = None
     
