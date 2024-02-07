@@ -1,4 +1,5 @@
 import io
+import os
 import torch
 import zipfile
 import numpy as np
@@ -179,6 +180,10 @@ def export_as_gif(images, filename, frames_per_second=2, reverse=False):
     )
 
 def export_as_zip(images, fname, tab_config=None):
+
+    if not os.path.exists(f'outputs/{fname}.zip'):
+        os.makedirs('outputs', exist_ok=True)
+
     with zipfile.ZipFile(f'outputs/{fname}.zip', 'w') as img_zip:
 
         if tab_config:
@@ -189,7 +194,7 @@ def export_as_zip(images, fname, tab_config=None):
 
             img_zip.write('outputs/config.txt', "config.txt")
 
-        for i, img in enumerate(images):
+        for img in images:
             buff = io.BytesIO()
             img[0].save(buff, format='PNG')
             buff = buff.getvalue()
