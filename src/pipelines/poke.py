@@ -11,9 +11,9 @@ def visualize_poke(pokeX, pokeY, pokeHeight, pokeWidth, imageHeight=imageHeight,
 
     blank = Image.new("RGB", (imageWidth, imageHeight))
 
-    if os.path.exists("original.png"):
-        oImg = Image.open("original.png")
-        pImg = Image.open("poked.png")
+    if os.path.exists("outputs/original.png"):
+        oImg = Image.open("outputs/original.png")
+        pImg = Image.open("outputs/poked.png")
     else:
         oImg = blank
         pImg = blank
@@ -34,14 +34,14 @@ def display_poke_images(prompt, seed, num_inference_steps, poke=False, pokeX=Non
     images = generate_images(latents, text_embeddings, num_inference_steps, intermediate=intermediate)
     
     if not intermediate:
-        images.save("original.png")
+        images.save("outputs/original.png")
 
     if poke:
         progress(0.5)
         modImages = generate_images(modified_latents, text_embeddings, num_inference_steps, intermediate=intermediate)
         
         if not intermediate:
-            modImages.save("poked.png")
+            modImages.save("outputs/poked.png")
     else:    
         modImages = None
     
