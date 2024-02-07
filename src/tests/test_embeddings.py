@@ -56,7 +56,8 @@ def display_hover(hoverData):
 
 with gr.Blocks() as demo:
     gr.Markdown("## Stable Diffusion Demo")
-    with gr.Tab("CLIP"):
+    with gr.Tab("Embeddings"):
+        gr.Markdown("Visualize text embedding space in 3D with input texts and output images based on the chosen axis.")
         with gr.Row():
             output = gr.HTML(f'''
                     <iframe id="html" src="{dash_tunnel}" style="width:100%; height:700px;"></iframe>
@@ -69,39 +70,45 @@ with gr.Blocks() as demo:
         with gr.Accordion("Custom Semantic Dimensions", open=False):
             with gr.Row():
                 axis_name_1 = gr.Textbox(label="Axis name", value="gender")
-                which_axis_1 = gr.Dropdown(choices=["X - Axis", "Y - Axis", "Z - Axis"], value="X - Axis", label="Axis direction")
-                from_words_1 = gr.Textbox(lines=1, label="From", value="prince husband father son uncle")
-                to_words_1 = gr.Textbox(lines=1, label="To", value="princess wife mother daughter aunt")
+                which_axis_1 = gr.Dropdown(choices=["X - Axis", "Y - Axis", "Z - Axis", "---"], value=whichAxisMap["which_axis_1"], label="Axis direction")
+                from_words_1 = gr.Textbox(lines=1, label="Positive", value="prince husband father son uncle")
+                to_words_1 = gr.Textbox(lines=1, label="Negative", value="princess wife mother daughter aunt")
+                submit_1 = gr.Button("Submit")
 
             with gr.Row():
                 axis_name_2 = gr.Textbox(label="Axis name", value="age")
-                which_axis_2 = gr.Dropdown(choices=["X - Axis", "Y - Axis", "Z - Axis"], value="Z - Axis", label="Axis direction")
-                from_words_2 = gr.Textbox(lines=1, label="From", value="man woman king queen father")
-                to_words_2 = gr.Textbox(lines=1, label="To", value="boy girl prince princess son")
+                which_axis_2 = gr.Dropdown(choices=["X - Axis", "Y - Axis", "Z - Axis", "---"], value=whichAxisMap["which_axis_2"], label="Axis direction")
+                from_words_2 = gr.Textbox(lines=1, label="Positive", value="man woman king queen father")
+                to_words_2 = gr.Textbox(lines=1, label="Negative", value="boy girl prince princess son")
+                submit_2 = gr.Button("Submit")
 
             with gr.Row():
                 axis_name_3 = gr.Textbox(label="Axis name", value="residual")
-                which_axis_3 = gr.Dropdown(choices=["X - Axis", "Y - Axis", "Z - Axis"], value="Y - Axis", label="Axis direction")
-                from_words_3 = gr.Textbox(lines=1, label="From")
-                to_words_3 = gr.Textbox(lines=1, label="To")
+                which_axis_3 = gr.Dropdown(choices=["X - Axis", "Y - Axis", "Z - Axis", "---"], value=whichAxisMap["which_axis_3"], label="Axis direction")
+                from_words_3 = gr.Textbox(lines=1, label="Positive")
+                to_words_3 = gr.Textbox(lines=1, label="Negative")
+                submit_3 = gr.Button("Submit")
 
             with gr.Row():
                 axis_name_4 = gr.Textbox(label="Axis name", value="number")
-                which_axis_4 = gr.Dropdown(choices=["X - Axis", "Y - Axis", "Z - Axis"], label="Axis direction")
-                from_words_4 = gr.Textbox(lines=1, label="From", value="boys girls cats puppies computers")
-                to_words_4 = gr.Textbox(lines=1, label="To", value="boy girl cat puppy computer")
+                which_axis_4 = gr.Dropdown(choices=["X - Axis", "Y - Axis", "Z - Axis", "---"], value=whichAxisMap["which_axis_4"], label="Axis direction")
+                from_words_4 = gr.Textbox(lines=1, label="Positive", value="boys girls cats puppies computers")
+                to_words_4 = gr.Textbox(lines=1, label="Negative", value="boy girl cat puppy computer")
+                submit_4 = gr.Button("Submit")
 
             with gr.Row():
                 axis_name_5 = gr.Textbox(label="Axis name", value="royalty")
-                which_axis_5 = gr.Dropdown(choices=["X - Axis", "Y - Axis", "Z - Axis"], label="Axis direction")
-                from_words_5 = gr.Textbox(lines=1, label="From", value="king queen prince princess duchess")
-                to_words_5 = gr.Textbox(lines=1, label="To", value="man woman boy girl woman")
+                which_axis_5 = gr.Dropdown(choices=["X - Axis", "Y - Axis", "Z - Axis", "---"], value=whichAxisMap["which_axis_5"], label="Axis direction")
+                from_words_5 = gr.Textbox(lines=1, label="Positive", value="king queen prince princess duchess")
+                to_words_5 = gr.Textbox(lines=1, label="Negative", value="man woman boy girl woman")
+                submit_5 = gr.Button("Submit")
 
             with gr.Row():
                 axis_name_6 = gr.Textbox(label="Axis name")
-                which_axis_6 = gr.Dropdown(choices=["X - Axis", "Y - Axis", "Z - Axis"], label="Axis direction")
-                from_words_6 = gr.Textbox(lines=1, label="From")
-                to_words_6 = gr.Textbox(lines=1, label="To")
+                which_axis_6 = gr.Dropdown(choices=["X - Axis", "Y - Axis", "Z - Axis", "---"], value=whichAxisMap["which_axis_6"], label="Axis direction")
+                from_words_6 = gr.Textbox(lines=1, label="Positive")
+                to_words_6 = gr.Textbox(lines=1, label="Negative")
+                submit_6 = gr.Button("Submit")
 
     
     @word2add_rem.submit(inputs=[word2add_rem], outputs=[output, word2add_rem])
@@ -110,37 +117,69 @@ with gr.Blocks() as demo:
 
     @word2change.submit(inputs=[word2change], outputs=[output, word2change])
     def change_word_and_clear(word):
-        return change_word(word), ""
-    
+        return change_word(word), ""  
+
     clear_words_button.click(fn=clear_words, outputs=[output])
 
-    axis_name_1.submit(fn=set_axis, inputs=[axis_name_1, which_axis_1, from_words_1, to_words_1], outputs=[output])
-    axis_name_2.submit(fn=set_axis, inputs=[axis_name_2, which_axis_2, from_words_2, to_words_2], outputs=[output])
-    axis_name_3.submit(fn=set_axis, inputs=[axis_name_3, which_axis_3, from_words_3, to_words_3], outputs=[output])
-    axis_name_4.submit(fn=set_axis, inputs=[axis_name_4, which_axis_4, from_words_4, to_words_4], outputs=[output])
-    axis_name_5.submit(fn=set_axis, inputs=[axis_name_5, which_axis_5, from_words_5, to_words_5], outputs=[output])
-    axis_name_6.submit(fn=set_axis, inputs=[axis_name_6, which_axis_6, from_words_6, to_words_6], outputs=[output])
+    @submit_1.click(inputs=[axis_name_1, which_axis_1, from_words_1, to_words_1], outputs=[output, which_axis_2, which_axis_3, which_axis_4, which_axis_5, which_axis_6])
+    def set_axis_wrapper(axis_name, which_axis, from_words, to_words):
 
-    which_axis_1.change(fn=set_axis, inputs=[axis_name_1, which_axis_1, from_words_1, to_words_1], outputs=[output])
-    which_axis_2.change(fn=set_axis, inputs=[axis_name_2, which_axis_2, from_words_2, to_words_2], outputs=[output])
-    which_axis_3.change(fn=set_axis, inputs=[axis_name_3, which_axis_3, from_words_3, to_words_3], outputs=[output])
-    which_axis_4.change(fn=set_axis, inputs=[axis_name_4, which_axis_4, from_words_4, to_words_4], outputs=[output])
-    which_axis_5.change(fn=set_axis, inputs=[axis_name_5, which_axis_5, from_words_5, to_words_5], outputs=[output])
-    which_axis_6.change(fn=set_axis, inputs=[axis_name_6, which_axis_6, from_words_6, to_words_6], outputs=[output])
+        for ax in whichAxisMap:
+            if whichAxisMap[ax] == which_axis:
+                whichAxisMap[ax] = "---"
 
-    from_words_1.submit(fn=set_axis, inputs=[axis_name_1, which_axis_1, from_words_1, to_words_1], outputs=[output])
-    from_words_2.submit(fn=set_axis, inputs=[axis_name_2, which_axis_2, from_words_2, to_words_2], outputs=[output])
-    from_words_3.submit(fn=set_axis, inputs=[axis_name_3, which_axis_3, from_words_3, to_words_3], outputs=[output])
-    from_words_4.submit(fn=set_axis, inputs=[axis_name_4, which_axis_4, from_words_4, to_words_4], outputs=[output])
-    from_words_5.submit(fn=set_axis, inputs=[axis_name_5, which_axis_5, from_words_5, to_words_5], outputs=[output])
-    from_words_6.submit(fn=set_axis, inputs=[axis_name_6, which_axis_6, from_words_6, to_words_6], outputs=[output])
+        whichAxisMap["which_axis_1"] = which_axis
+        return set_axis(axis_name, which_axis, from_words, to_words), whichAxisMap["which_axis_2"], whichAxisMap["which_axis_3"], whichAxisMap["which_axis_4"], whichAxisMap["which_axis_5"], whichAxisMap["which_axis_6"]
     
-    to_words_1.submit(fn=set_axis, inputs=[axis_name_1, which_axis_1, from_words_1, to_words_1], outputs=[output])
-    to_words_2.submit(fn=set_axis, inputs=[axis_name_2, which_axis_2, from_words_2, to_words_2], outputs=[output])
-    to_words_3.submit(fn=set_axis, inputs=[axis_name_3, which_axis_3, from_words_3, to_words_3], outputs=[output])
-    to_words_4.submit(fn=set_axis, inputs=[axis_name_4, which_axis_4, from_words_4, to_words_4], outputs=[output])
-    to_words_5.submit(fn=set_axis, inputs=[axis_name_5, which_axis_5, from_words_5, to_words_5], outputs=[output])
-    to_words_6.submit(fn=set_axis, inputs=[axis_name_6, which_axis_6, from_words_6, to_words_6], outputs=[output])
+    @submit_2.click(inputs=[axis_name_2, which_axis_2, from_words_2, to_words_2], outputs=[output, which_axis_1, which_axis_3, which_axis_4, which_axis_5, which_axis_6])
+    def set_axis_wrapper(axis_name, which_axis, from_words, to_words):
+            
+        for ax in whichAxisMap:
+            if whichAxisMap[ax] == which_axis:
+                whichAxisMap[ax] = "---"
+
+        whichAxisMap["which_axis_2"] = which_axis
+        return set_axis(axis_name, which_axis, from_words, to_words), whichAxisMap["which_axis_1"], whichAxisMap["which_axis_3"], whichAxisMap["which_axis_4"], whichAxisMap["which_axis_5"], whichAxisMap["which_axis_6"]
+
+    @submit_3.click(inputs=[axis_name_3, which_axis_3, from_words_3, to_words_3], outputs=[output, which_axis_1, which_axis_2, which_axis_4, which_axis_5, which_axis_6])
+    def set_axis_wrapper(axis_name, which_axis, from_words, to_words):
+            
+        for ax in whichAxisMap:
+            if whichAxisMap[ax] == which_axis:
+                whichAxisMap[ax] = "---"
+
+        whichAxisMap["which_axis_3"] = which_axis
+        return set_axis(axis_name, which_axis, from_words, to_words), whichAxisMap["which_axis_1"], whichAxisMap["which_axis_2"], whichAxisMap["which_axis_4"], whichAxisMap["which_axis_5"], whichAxisMap["which_axis_6"]
+
+    @submit_4.click(inputs=[axis_name_4, which_axis_4, from_words_4, to_words_4], outputs=[output, which_axis_1, which_axis_2, which_axis_3, which_axis_5, which_axis_6])
+    def set_axis_wrapper(axis_name, which_axis, from_words, to_words):
+
+        for ax in whichAxisMap:
+            if whichAxisMap[ax] == which_axis:
+                whichAxisMap[ax] = "---"
+
+        whichAxisMap["which_axis_4"] = which_axis
+        return set_axis(axis_name, which_axis, from_words, to_words), whichAxisMap["which_axis_1"], whichAxisMap["which_axis_2"], whichAxisMap["which_axis_3"], whichAxisMap["which_axis_5"], whichAxisMap["which_axis_6"]
+
+    @submit_5.click(inputs=[axis_name_5, which_axis_5, from_words_5, to_words_5], outputs=[output, which_axis_1, which_axis_2, which_axis_3, which_axis_4, which_axis_6])
+    def set_axis_wrapper(axis_name, which_axis, from_words, to_words):
+            
+        for ax in whichAxisMap:
+            if whichAxisMap[ax] == which_axis:
+                whichAxisMap[ax] = "---"
+
+        whichAxisMap["which_axis_5"] = which_axis
+        return set_axis(axis_name, which_axis, from_words, to_words), whichAxisMap["which_axis_1"], whichAxisMap["which_axis_2"], whichAxisMap["which_axis_3"], whichAxisMap["which_axis_4"], whichAxisMap["which_axis_6"]
+    
+    @submit_6.click(inputs=[axis_name_6, which_axis_6, from_words_6, to_words_6], outputs=[output, which_axis_1, which_axis_2, which_axis_3, which_axis_4, which_axis_5])
+    def set_axis_wrapper(axis_name, which_axis, from_words, to_words):
+                
+        for ax in whichAxisMap:
+            if whichAxisMap[ax] == which_axis:
+                whichAxisMap[ax] = "---"
+
+        whichAxisMap["which_axis_6"] = which_axis
+        return set_axis(axis_name, which_axis, from_words, to_words), whichAxisMap["which_axis_1"], whichAxisMap["which_axis_2"], whichAxisMap["which_axis_3"], whichAxisMap["which_axis_4"], whichAxisMap["which_axis_5"]
 
 def run_dash():
     app.run(host="127.0.0.1", port="8000")

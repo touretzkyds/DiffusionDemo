@@ -92,8 +92,18 @@ axisMap = {
     "Z - Axis": 2,
 }
 
+whichAxisMap = {
+    "which_axis_1": "X - Axis",
+    "which_axis_2": "Z - Axis",
+    "which_axis_3": "Y - Axis",
+    "which_axis_4": "---",
+    "which_axis_5": "---",
+    "which_axis_6": "---"
+}  
+
 __all__ = [
     "axisMap", 
+    "whichAxisMap",
     "axis_names", 
     "axis_combinations", 
     "examples", 
