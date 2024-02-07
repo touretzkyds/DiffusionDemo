@@ -304,16 +304,17 @@ with gr.Blocks() as demo:
         gr.Markdown("Perturb a region in the image and observe the effect.")
         with gr.Row():
             with gr.Column():
-                pokeX = gr.Slider(label="pokeX", minimum=0, maximum=64, step=1, value=32, info= "X coordinate of poke center")
-                pokeY = gr.Slider(label="pokeY", minimum=0, maximum=64, step=1, value=32, info= "Y coordinate of poke center")
-                pokeHeight = gr.Slider(label="pokeHeight", minimum=0, maximum=64, step=1, value=8, info= "Height of the poke")
-                pokeWidth = gr.Slider(label="pokeWidth", minimum=0, maximum=64, step=1, value=8, info= "Width of the poke")
                 prompt_poke = gr.Textbox(lines=1, label="Prompt", value="Self-portrait oil painting, a beautiful cyborg with golden hair, 8k")
                 num_inference_steps_poke = gr.Slider(minimum=0, maximum=100, step=1, value=8, label="Number of Inference Steps per Image")
 
                 with gr.Row():
                     seed_poke = gr.Slider(minimum=0, maximum=100, step=1, value=14, label="Seed")
                     seed_vis_poke = gr.Plot(value=generate_seed_vis(14), label="Seed")
+
+                pokeX = gr.Slider(label="pokeX", minimum=0, maximum=64, step=1, value=32, info= "X coordinate of poke center")
+                pokeY = gr.Slider(label="pokeY", minimum=0, maximum=64, step=1, value=32, info= "Y coordinate of poke center")
+                pokeHeight = gr.Slider(label="pokeHeight", minimum=0, maximum=64, step=1, value=8, info= "Height of the poke")
+                pokeWidth = gr.Slider(label="pokeWidth", minimum=0, maximum=64, step=1, value=8, info= "Width of the poke")
                 
                 generate_images_button_poke = gr.Button("Generate Images")   
 
