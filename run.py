@@ -194,11 +194,20 @@ with gr.Blocks() as demo:
             
             with gr.Column():
                 images_output_denoise = gr.Gallery(label="Images", selected_index=0)
+                zip_output_denoise = gr.File(label="Download ZIP")
     
-    @generate_images_button_denoise.click(inputs=[prompt_denoise, seed_denoise, num_inference_steps_denoise], outputs=[images_output_denoise])
+    @generate_images_button_denoise.click(inputs=[prompt_denoise, seed_denoise, num_inference_steps_denoise], outputs=[images_output_denoise, zip_output_denoise])
     def generate_images_wrapper(prompt, seed, num_inference_steps):
-        images, _ = display_poke_images(prompt, seed, num_inference_steps, poke=False, intermediate=True)
-        return images
+        images, _ = display_poke_images(prompt, seed, num_inference_steps, poke=False, intermediate=True)   
+        fname = "denoising"
+        tab_config = {
+            "Tab"                           : "Denoising",
+            "Prompt"                        : prompt, 
+            "Number of Inference Steps"     : num_inference_steps,
+            "Seed"                          : seed, 
+        }
+        export_as_zip(images, fname, tab_config)
+        return images, f"outputs/{fname}.zip"
     
     seed_denoise.change(fn=generate_seed_vis, inputs=[seed_denoise], outputs=[seed_vis_denoise])
     
@@ -213,8 +222,9 @@ with gr.Blocks() as demo:
             
             with gr.Column():
                 images_output_seed = gr.Gallery(label="Images", selected_index=0)
+                zip_output_seed = gr.File(label="Download ZIP")
 
-    generate_images_button_seed.click(fn=display_seed_images, inputs=[prompt_seed, num_inference_steps_seed, num_images_seed], outputs=[images_output_seed])
+    generate_images_button_seed.click(fn=display_seed_images, inputs=[prompt_seed, num_inference_steps_seed, num_images_seed], outputs=[images_output_seed, zip_output_seed])
 
     with gr.Tab("Perturbations"):
         gr.Markdown("Explore different perturbations from a point in latent space.")
@@ -232,9 +242,10 @@ with gr.Blocks() as demo:
                 generate_images_button_perturb = gr.Button("Generate Images")
 
             with gr.Column():
-                images_output_perturb = gr.Gallery(label="Image", selected_index=0)    
+                images_output_perturb = gr.Gallery(label="Image", selected_index=0)  
+                zip_output_perturb = gr.File(label="Download ZIP")  
 
-    generate_images_button_perturb.click(fn=display_perturb_images, inputs=[prompt_perturb, seed_perturb, num_inference_steps_perturb, num_images_perturb, perturbation_size_perturb], outputs=images_output_perturb)
+    generate_images_button_perturb.click(fn=display_perturb_images, inputs=[prompt_perturb, seed_perturb, num_inference_steps_perturb, num_images_perturb, perturbation_size_perturb], outputs=[images_output_perturb, zip_output_perturb])
     seed_perturb.change(fn=generate_seed_vis, inputs=[seed_perturb], outputs=[seed_vis_perturb])
 
     with gr.Tab("Circular"):
@@ -259,10 +270,11 @@ with gr.Blocks() as demo:
             with gr.Column():
                 images_output_circular = gr.Gallery(label="Image", selected_index=0)   
                 gif_circular = gr.Image(label="GIF") 
+                zip_output_circular = gr.File(label="Download ZIP")
 
     num_images_circular.change(fn=calculate_step_size, inputs=[num_images_circular, degree_circular], outputs=[step_size_circular])
     degree_circular.change(fn=calculate_step_size, inputs=[num_images_circular, degree_circular], outputs=[step_size_circular])
-    generate_images_button_circular.click(fn=display_circular_images, inputs=[prompt_circular, seed_circular, num_inference_steps_circular, num_images_circular, degree_circular], outputs=[images_output_circular, gif_circular])
+    generate_images_button_circular.click(fn=display_circular_images, inputs=[prompt_circular, seed_circular, num_inference_steps_circular, num_images_circular, degree_circular], outputs=[images_output_circular, gif_circular, zip_output_circular])
     seed_circular.change(fn=generate_seed_vis, inputs=[seed_circular], outputs=[seed_vis_circular])
 
     with gr.Tab("Interpolate"):
@@ -283,8 +295,9 @@ with gr.Blocks() as demo:
             with gr.Column():
                 images_output_interpolate = gr.Gallery(label="Interpolated Images", selected_index=0)
                 gif_interpolate = gr.Image(label="GIF")
+                zip_output_interpolate = gr.File(label="Download ZIP")
 
-    generate_images_button_interpolate.click(fn=display_interpolate_images, inputs=[seed_interpolate, promptA, promptB, num_inference_steps_interpolate, num_images_interpolate], outputs=[images_output_interpolate, gif_interpolate])
+    generate_images_button_interpolate.click(fn=display_interpolate_images, inputs=[seed_interpolate, promptA, promptB, num_inference_steps_interpolate, num_images_interpolate], outputs=[images_output_interpolate, gif_interpolate, zip_output_interpolate])
     seed_interpolate.change(fn=generate_seed_vis, inputs=[seed_interpolate], outputs=[seed_vis_interpolate])
 
     with gr.Tab("Poke"):
@@ -307,6 +320,7 @@ with gr.Blocks() as demo:
             with gr.Column():
                 original_images_output_poke = gr.Image(value=visualize_poke(32,32,8,8)[0], label="Original Image")
                 poked_images_output_poke = gr.Image(value=visualize_poke(32,32,8,8)[1], label="Poked Image")
+                zip_output_poke = gr.File(label="Download ZIP")
 
     pokeX.change(visualize_poke, inputs=[pokeX, pokeY, pokeHeight, pokeWidth], outputs=[original_images_output_poke, poked_images_output_poke])
     pokeY.change(visualize_poke, inputs=[pokeX, pokeY, pokeHeight, pokeWidth], outputs=[original_images_output_poke, poked_images_output_poke])
@@ -314,11 +328,27 @@ with gr.Blocks() as demo:
     pokeWidth.change(visualize_poke, inputs=[pokeX, pokeY, pokeHeight, pokeWidth], outputs=[original_images_output_poke, poked_images_output_poke])
     seed_poke.change(fn=generate_seed_vis, inputs=[seed_poke], outputs=[seed_vis_poke])
 
-    @generate_images_button_poke.click(inputs=[prompt_poke, seed_poke, num_inference_steps_poke, pokeX, pokeY, pokeHeight, pokeWidth], outputs=[original_images_output_poke, poked_images_output_poke])
+    @generate_images_button_poke.click(inputs=[prompt_poke, seed_poke, num_inference_steps_poke, pokeX, pokeY, pokeHeight, pokeWidth], outputs=[original_images_output_poke, poked_images_output_poke, zip_output_poke])
     def generate_images_wrapper(prompt, seed, num_inference_steps, pokeX=pokeX, pokeY=pokeY, pokeHeight=pokeHeight, pokeWidth=pokeWidth):
         _, _ = display_poke_images(prompt, seed, num_inference_steps, poke=True, pokeX=pokeX, pokeY=pokeY, pokeHeight=pokeHeight, pokeWidth=pokeWidth, intermediate=False)
         images, modImages = visualize_poke(pokeX, pokeY, pokeHeight, pokeWidth)
-        return images, modImages
+        fname = "poke"
+        tab_config = {
+            "Tab"                                   : "Poke",
+            "Prompt"                                : prompt, 
+            "Number of Inference Steps per Image"   : num_inference_steps,
+            "Seed"                                  : seed,
+            "PokeX"                                 : pokeX,
+            "PokeY"                                 : pokeY,
+            "PokeHeight"                            : pokeHeight,
+            "PokeWidth"                             : pokeWidth,
+        }
+        imgs_list = []
+        imgs_list.append((images, "Original Image"))
+        imgs_list.append((modImages, "Poked Image"))
+
+        export_as_zip(imgs_list, fname, tab_config)
+        return images, modImages, f"outputs/{fname}.zip"
     
 def run_dash():
     app.run(host="127.0.0.1", port="8000")

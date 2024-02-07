@@ -26,7 +26,18 @@ def display_perturb_images(prompt, seed, num_inference_steps, num_images, pertur
         image = generate_images(noise[num_images-1], text_embeddings, num_inference_steps)
         images.append((image, "{}".format(i+2)))
 
-    return images   
+    fname = "perturbations"
+    tab_config = {
+        "Tab"                                   : "Perturbations",
+        "Prompt"                                : prompt, 
+        "Number of Perturbations"               : num_images,
+        "Perturbation Size"                     : perturbation_size,
+        "Number of Inference Steps per Image"   : num_inference_steps,
+        "Seed"                                  : seed,
+    }
+    export_as_zip(images, fname, tab_config)
+
+    return images, f"outputs/{fname}.zip"
 
 __all__ = [
     "display_perturb_images"

@@ -28,7 +28,18 @@ def display_circular_images(prompt, seed, num_inference_steps, num_images, degre
 
     progress(1, desc="Exporting as gif") 
     export_as_gif(images, filename="circular.gif")
-    return images, "circular.gif"
+
+    fname = "circular"
+    tab_config = {
+        "Tab"                                       : "Circular",
+        "Prompt"                                    : prompt, 
+        "Number of Steps around the Circle"         : num_images,
+        "Proportion of Circle"                      : degree,
+        "Number of Inference Steps per Image"       : num_inference_steps,
+        "Seed"                                      : seed,
+    }
+    export_as_zip(images, fname, tab_config)
+    return images, "outputs/circular.gif", f"outputs/{fname}.zip"
 
 __all__ = [
     "display_circular_images"

@@ -28,7 +28,18 @@ def display_interpolate_images(seed, promptA, promptB, num_inference_steps, num_
 
     progress(1, desc="Exporting as gif")
     export_as_gif(images, filename="interpolate.gif", reverse=True)
-    return images, "interpolate.gif"
+
+    fname = "interpolate"
+    tab_config = {
+        "Tab"                                       : "Interpolate",
+        "First Prompt"                              : promptA, 
+        "Second Prompt"                             : promptB, 
+        "Number of Interpolation Steps"             : num_images,
+        "Number of Inference Steps per Image"       : num_inference_steps,
+        "Seed"                                      : seed,
+    }
+    export_as_zip(images, fname, tab_config)
+    return images, "outputs/interpolate.gif", f"outputs/{fname}.zip"
 
 __all__ = [
     "display_interpolate_images"

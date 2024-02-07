@@ -1,4 +1,6 @@
+import io
 import torch
+import zipfile
 import numpy as np
 import gradio as gr
 from PIL import Image
@@ -168,7 +170,7 @@ def export_as_gif(images, filename, frames_per_second=2, reverse=False):
         imgs += imgs[2:-1][::-1]
 
     imgs[0].save(
-        "{}".format(filename),
+        f"outputs/{filename}",
         format="GIF",
         save_all=True,
         append_images=imgs[1:],
@@ -176,6 +178,23 @@ def export_as_gif(images, filename, frames_per_second=2, reverse=False):
         loop=0,
     )
 
+def export_as_zip(images, fname, tab_config=None):
+    with zipfile.ZipFile(f'outputs/{fname}.zip', 'w') as img_zip:
+
+        if tab_config:
+            with open('outputs/config.txt', 'w') as f:
+                for key, value in tab_config.items():
+                    f.write(f"{key}: {value}\n")
+                f.close()
+
+            img_zip.write('outputs/config.txt', "config.txt")
+
+        for i, img in enumerate(images):
+            buff = io.BytesIO()
+            img[0].save(buff, format='PNG')
+            buff = buff.getvalue()
+            img_zip.writestr(f"{img[1]}.png", buff)
+        
 __all__ = [
     "get_text_embeddings", 
     "generate_latents", 
@@ -187,5 +206,6 @@ __all__ = [
     "calculate_residual",
     "calculate_step_size",
     "generate_seed_vis",
-    "export_as_gif"
+    "export_as_gif",
+    "export_as_zip"
 ]  
