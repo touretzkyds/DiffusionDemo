@@ -2,7 +2,7 @@ from src.util.params import *
 from src.pipelines.perturbations import *
 import matplotlib.pyplot as plt
 
-images = display_spread_images(prompt, seed, num_inference_steps, num_images, perturbation_size)
+images = display_perturb_images(prompt, seed, num_inference_steps, num_images, perturbation_size)
 fig, ax = plt.subplots(1, num_images + 1, dpi=200, figsize=(num_images, 2))
 fig.suptitle("Spread Images")
 
