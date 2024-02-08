@@ -74,8 +74,8 @@ def download_image(clickData):
     img_encoded = images[index]
     img_decoded = base64.b64decode(img_encoded.split(",")[1])
     img = Image.open(BytesIO(img_decoded))
-    img.save(f"outputs/{txt}.png")
-    return dcc.send_file(f"outputs/{txt}.png")
+    img.save(f"{txt}.png")
+    return dcc.send_file(f"{txt}.png")
 
 with gr.Blocks() as demo:
     gr.Markdown("## Stable Diffusion Demo")
