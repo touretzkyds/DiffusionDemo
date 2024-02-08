@@ -1,5 +1,8 @@
+import base64
 import gradio as gr
+from PIL import Image
 from src.util import *
+from io import BytesIO
 from src.pipelines import *
 from threading import Thread
 from dash import Dash, dcc, html, Input, Output, no_update, callback
@@ -12,7 +15,11 @@ app.layout = html.Div(
         dcc.Graph(id="graph", figure=fig, clear_on_unhover=True, style={"height": "90vh"}),
         dcc.Tooltip(id="tooltip"),
         html.Div(id="word-emb-txt", style={"background-color": "white"}),
-        html.Div(id="word-emb-vis")
+        html.Div(id="word-emb-vis"),
+        html.Div([
+            html.Button(id="btn-download-image", hidden=True),
+            dcc.Download(id="download-image"),
+        ]),
     ],
 )
 
@@ -38,7 +45,7 @@ def display_hover(hoverData):
     children = [
         html.Img(
             src=images[index],
-            style={"width": "150px"},
+            style={"width": "250px"},
         ),
     ]
 
@@ -49,8 +56,26 @@ def display_hover(hoverData):
         ),
     ]
 
-
     return True, bbox, children, direction, hover_data["text"], emb_children
+
+@callback(
+    Output("download-image", "data"),
+    Input("graph", "clickData"),
+)
+def download_image(clickData):
+    
+    if clickData is None:
+        return no_update
+    
+    click_data = clickData["points"][0]
+    index = click_data["pointNumber"]
+    txt = click_data["text"]
+
+    img_encoded = images[index]
+    img_decoded = base64.b64decode(img_encoded.split(",")[1])
+    img = Image.open(BytesIO(img_decoded))
+    img.save(f"outputs/{txt}.png")
+    return dcc.send_file(f"outputs/{txt}.png")
 
 with gr.Blocks() as demo:
     gr.Markdown("## Stable Diffusion Demo")

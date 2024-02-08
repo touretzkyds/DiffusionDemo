@@ -1,4 +1,7 @@
+import base64
 import gradio as gr
+from PIL import Image
+from io import BytesIO
 from threading import Thread
 
 from src.util.base import *
@@ -12,9 +15,14 @@ app = Dash(__name__)
 app.layout = html.Div(
     className="container",
     children=[
-        dcc.Graph(id="graph", figure=fig, clear_on_unhover=True, style={"height": "93.5vh"}),
+        dcc.Graph(id="graph", figure=fig, clear_on_unhover=True, style={"height": "90vh"}),
         dcc.Tooltip(id="tooltip"),
-        html.Div(id="word-emb-vis")
+        html.Div(id="word-emb-txt", style={"background-color": "white"}),
+        html.Div(id="word-emb-vis"),
+        html.Div([
+            html.Button(id="btn-download-image", hidden=True),
+            dcc.Download(id="download-image"),
+        ]),
     ],
 )
 
@@ -23,13 +31,14 @@ app.layout = html.Div(
     Output("tooltip", "bbox"),
     Output("tooltip", "children"),
     Output("tooltip", "direction"),
+    Output("word-emb-txt", "children"),
     Output("word-emb-vis", "children"),
 
     Input("graph", "hoverData"),
 )
 def display_hover(hoverData):
     if hoverData is None:
-        return False, no_update, no_update, no_update, no_update
+        return False, no_update, no_update, no_update, no_update, no_update
 
     hover_data = hoverData["points"][0]
     bbox = hover_data["bbox"]
@@ -39,7 +48,7 @@ def display_hover(hoverData):
     children = [
         html.Img(
             src=images[index],
-            style={"width": "150px"},
+            style={"width": "250px"},
         ),
     ]
 
@@ -50,8 +59,26 @@ def display_hover(hoverData):
         ),
     ]
 
+    return True, bbox, children, direction, hover_data["text"], emb_children
 
-    return True, bbox, children, direction, emb_children
+@callback(
+    Output("download-image", "data"),
+    Input("graph", "clickData"),
+)
+def download_image(clickData):
+    
+    if clickData is None:
+        return no_update
+    
+    click_data = clickData["points"][0]
+    index = click_data["pointNumber"]
+    txt = click_data["text"]
+
+    img_encoded = images[index]
+    img_decoded = base64.b64decode(img_encoded.split(",")[1])
+    img = Image.open(BytesIO(img_decoded))
+    img.save(f"outputs/{txt}.png")
+    return dcc.send_file(f"outputs/{txt}.png")
 
 
 with gr.Blocks() as demo:
