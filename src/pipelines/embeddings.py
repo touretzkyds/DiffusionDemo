@@ -88,8 +88,12 @@ def add_rem_word(new_examples):
             remove_word(new_example)
             gr.Info("Removed {}".format(new_example))
         else:
-            add_word(new_example)
-            gr.Info("Added {}".format(new_example))
+            tokens = tokenizer.encode(new_example)
+            if len(tokens) != 3:
+                gr.Warning(f"{new_example} not found in embeddings")
+            else:
+                add_word(new_example)
+                gr.Info("Added {}".format(new_example))
 
     return update_fig()
 
