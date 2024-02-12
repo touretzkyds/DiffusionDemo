@@ -47,12 +47,25 @@ def display_hover(hoverData):
             src=images[index],
             style={"width": "250px"},
         ),
+        html.P(
+            hover_data["text"],
+            style={
+                "color": "black", 
+                "font-size": "20px",
+                "text-align": "center",
+                "background-color": "white",
+                "margin": "5px",
+            },
+        ),
     ]
 
     emb_children = [
         html.Img(
             src=generate_word_emb_vis(hover_data["text"]),
-            style={"width": "100%", "height": "25px"},
+            style={
+                "width": "100%", 
+                "height": "25px"
+            },
         ),
     ]
 
