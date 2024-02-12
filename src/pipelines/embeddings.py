@@ -81,7 +81,7 @@ def remove_word(new_example):
 
 def add_rem_word(new_examples):
     global examples
-    new_examples = new_examples.split()
+    new_examples = new_examples.replace(","," ").split()
 
     for new_example in new_examples:
         if new_example in examples:
@@ -97,7 +97,7 @@ def set_axis(axis_name, which_axis, from_words, to_words):
     global coords, examples, fig, axis_names
 
     if axis_name != "residual":
-        from_words, to_words = from_words.split(), to_words.split()
+        from_words, to_words = from_words.replace(","," ").split(), to_words.replace(","," ").split()
         axis_emb = get_axis_embeddings(from_words, to_words)
         axis[axisMap[which_axis]] = axis_emb
         axis_names[axisMap[which_axis]] = axis_name
@@ -124,7 +124,7 @@ def set_axis(axis_name, which_axis, from_words, to_words):
     return update_fig()
 
 def change_word(examples):
-    examples = examples.split()
+    examples = examples.replace(","," ").split()
 
     for example in examples:
         remove_word(example)
