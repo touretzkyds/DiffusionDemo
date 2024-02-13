@@ -18,6 +18,7 @@ To run the demo, click "Open in Colab". Follow the instructions to execute the c
 6. Interpolate: Interpolate between the first and the second prompt, and observe how the output changes.
 7. Poke: Perturb a region in the image and observe the effect.
 8. Negative: Observe the effect of negative prompts.
+9. Guidance: Observe the effect of different guidance scales.
 
 ## References
 

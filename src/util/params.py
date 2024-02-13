@@ -21,7 +21,8 @@ perturbation_size = 0.1
 num_inference_steps = 8                                                        
 seed = 69420                                                              
 
-guidance_scale = 8                                                                 
+guidance_scale = 8       
+guidance_values = "1, 8, 20"                                                          
 intermediate = True                           
 pokeX, pokeY = 256, 256                                                         
 pokeHeight, pokeWidth = 128, 128                                                
@@ -64,6 +65,7 @@ __all__ = [
     "imageHeight", 
     "imageWidth", 
     "guidance_scale", 
+    "guidance_values",
     "HF_ACCESS_TOKEN",
     "model_path",
     "dash_tunnel"

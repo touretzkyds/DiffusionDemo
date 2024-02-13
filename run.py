@@ -411,6 +411,27 @@ with gr.Blocks() as demo:
     seed_negative.change(fn=generate_seed_vis, inputs=[seed_negative], outputs=[seed_vis_negative])
     generate_images_button_negative.click(fn=display_negative_images, inputs=[prompt_negative, seed_negative, num_inference_steps_negative, neg_prompt], outputs=[images_output_negative, images_neg_output_negative, zip_output_negative])
 
+    with gr.Tab("Guidance"):
+        gr.Markdown("Observe the effect of different guidance scales.")
+        with gr.Row():
+            with gr.Column():
+                prompt_guidance = gr.Textbox(lines=1, label="Prompt", value="Self-portrait oil painting, a beautiful cyborg with golden hair, 8k")
+                num_inference_steps_guidance = gr.Slider(minimum=0, maximum=100, step=1, value=8, label="Number of Inference Steps per Image")
+                guidance_scale_values = gr.Textbox(lines=1, value="1, 8, 20, 30", label="Guidance Scale Values")
+
+                with gr.Row():
+                    seed_guidance = gr.Slider(minimum=0, maximum=100, step=1, value=14, label="Seed")
+                    seed_vis_guidance = gr.Plot(value=generate_seed_vis(14), label="Seed")
+
+                generate_images_button_guidance = gr.Button("Generate Images")
+
+            with gr.Column():
+                images_output_guidance = gr.Gallery(label="Images", selected_index=0)
+                zip_output_guidance = gr.File(label="Download ZIP")
+
+    generate_images_button_guidance.click(fn=display_guidance_images, inputs=[prompt_guidance, seed_guidance, num_inference_steps_guidance, guidance_scale_values], outputs=[images_output_guidance, zip_output_guidance])
+    seed_guidance.change(fn=generate_seed_vis, inputs=[seed_guidance], outputs=[seed_vis_guidance])
+
 def run_dash():
     app.run(host="127.0.0.1", port="8000")
 
