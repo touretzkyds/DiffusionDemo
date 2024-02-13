@@ -13,6 +13,7 @@ model_path = "segmind/small-sd"
 prompt = "Self-portrait oil painting, a beautiful cyborg with golden hair, 8k"
 promptA = "Self-portrait oil painting, a beautiful man with golden hair, 8k"
 promptB = "Self-portrait oil painting, a beautiful woman with golden hair, 8k"
+negative_prompt = "a photo frame"
 
 num_images = 5                                                                  
 degree = 360  
@@ -41,6 +42,7 @@ dash_tunnel = setup_tunnel('0.0.0.0', 8000, secrets.token_urlsafe(32), None)
 
 __all__ = [
     "prompt", 
+    "negative_prompt",
     "num_images", 
     "degree",
     "perturbation_size", 

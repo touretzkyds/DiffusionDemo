@@ -389,6 +389,28 @@ with gr.Blocks() as demo:
         export_as_zip(imgs_list, fname, tab_config)
         return images, modImages, f"outputs/{fname}.zip"
     
+    with gr.Tab("Negative"):
+        gr.Markdown("Observe the effect of negative prompts.")
+        with gr.Row():
+            with gr.Column():
+                prompt_negative = gr.Textbox(lines=1, label="Prompt", value="Self-portrait oil painting, a beautiful cyborg with golden hair, 8k")
+                neg_prompt = gr.Textbox(lines=1, label="Negative Prompt", value="Yellow")
+                num_inference_steps_negative = gr.Slider(minimum=0, maximum=100, step=1, value=8, label="Number of Inference Steps per Image")
+
+                with gr.Row():
+                    seed_negative = gr.Slider(minimum=0, maximum=100, step=1, value=14, label="Seed")
+                    seed_vis_negative = gr.Plot(value=generate_seed_vis(14), label="Seed")
+                
+                generate_images_button_negative = gr.Button("Generate Images")
+
+            with gr.Column():
+                images_output_negative = gr.Image(label="Image")
+                images_neg_output_negative = gr.Image(label="Image with Negative Prompt")
+                zip_output_negative = gr.File(label="Download ZIP")
+
+    seed_negative.change(fn=generate_seed_vis, inputs=[seed_negative], outputs=[seed_vis_negative])
+    generate_images_button_negative.click(fn=display_negative_images, inputs=[prompt_negative, seed_negative, num_inference_steps_negative, neg_prompt], outputs=[images_output_negative, images_neg_output_negative, zip_output_negative])
+
 def run_dash():
     app.run(host="127.0.0.1", port="8000")
 

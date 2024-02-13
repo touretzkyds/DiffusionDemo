@@ -10,14 +10,14 @@ from src.util.params import *
 from src.util.clip_config import *
 import matplotlib.pyplot as plt
 
-def get_text_embeddings(prompt, tokenizer=tokenizer, text_encoder=text_encoder, torch_device=torch_device, batch_size=1):
+def get_text_embeddings(prompt, tokenizer=tokenizer, text_encoder=text_encoder, torch_device=torch_device, batch_size=1, negative_prompt=""):
     text_input = tokenizer(prompt, padding="max_length", max_length=tokenizer.model_max_length, truncation=True, return_tensors="pt")
     
     with torch.no_grad():
         text_embeddings = text_encoder(text_input.input_ids.to(torch_device))[0]
     max_length = text_input.input_ids.shape[-1]
     uncond_input = tokenizer(
-        [""] * batch_size, padding="max_length", max_length=max_length, return_tensors="pt"
+        [negative_prompt] * batch_size, padding="max_length", max_length=max_length, return_tensors="pt"
     )
     with torch.no_grad():
         uncond_embeddings = text_encoder(uncond_input.input_ids.to(torch_device))[0]   
