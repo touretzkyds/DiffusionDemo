@@ -10,6 +10,7 @@ isLCM = False
 HF_ACCESS_TOKEN = ""        
 
 model_path = "segmind/small-sd"    
+inpaint_model_path = "Lykon/dreamshaper-8-inpainting"
 prompt = "Self-portrait oil painting, a beautiful cyborg with golden hair, 8k"
 promptA = "Self-portrait oil painting, a beautiful man with golden hair, 8k"
 promptB = "Self-portrait oil painting, a beautiful woman with golden hair, 8k"
@@ -79,6 +80,7 @@ __all__ = [
     "guidance_values",
     "HF_ACCESS_TOKEN",
     "model_path",
+    "inpaint_model_path",
     "dash_tunnel",
     "pipe",
 ]

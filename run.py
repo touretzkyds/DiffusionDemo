@@ -432,6 +432,27 @@ with gr.Blocks() as demo:
     generate_images_button_guidance.click(fn=display_guidance_images, inputs=[prompt_guidance, seed_guidance, num_inference_steps_guidance, guidance_scale_values], outputs=[images_output_guidance, zip_output_guidance])
     seed_guidance.change(fn=generate_seed_vis, inputs=[seed_guidance], outputs=[seed_vis_guidance])
 
+    with gr.Tab("Inpainting"):
+        gr.Markdown("Inpaint the image based on the prompt.")
+        with gr.Row():
+            with gr.Column():
+                uploaded_img_inpaint = gr.Sketchpad(sources='upload', type="pil", label="Upload", brush=gr.Brush(colors=["#ffff00"]))
+                prompt_inpaint = gr.Textbox(lines=1, label="Prompt", value="A apple fruit")
+                num_inference_steps_inpaint = gr.Slider(minimum=0, maximum=100, step=1, value=50, label="Number of Inference Steps per Image")
+                
+                with gr.Row():
+                    seed_inpaint = gr.Slider(minimum=0, maximum=100, step=1, value=14, label="Seed")
+                    seed_vis_inpaint= gr.Plot(value=generate_seed_vis(14), label="Seed")
+
+                inpaint_button = gr.Button("Inpaint") 
+                
+            with gr.Column():
+                images_output_inpaint = gr.Image(label="Output")
+                zip_output_inpaint = gr.File(label="Download ZIP")
+
+    inpaint_button.click(fn=inpaint, inputs=[uploaded_img_inpaint, num_inference_steps_inpaint, seed_inpaint, prompt_inpaint], outputs=[images_output_inpaint, zip_output_inpaint])
+    seed_inpaint.change(fn=generate_seed_vis, inputs=[seed_inpaint], outputs=[seed_vis_inpaint])
+
 def run_dash():
     app.run(host="127.0.0.1", port="8000")
 

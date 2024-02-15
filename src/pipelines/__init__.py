@@ -6,3 +6,4 @@ from .seed import *
 from .perturbations import *
 from .negative import *
 from .guidance import *
+from .inpainting import *
