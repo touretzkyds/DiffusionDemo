@@ -16,17 +16,6 @@ age = get_axis_embeddings(young, old)
 gender = get_axis_embeddings(masculine, feminine)
 royalty = get_axis_embeddings(common, elite)
 
-pipe = StableDiffusionPipeline(
-    tokenizer=tokenizer,
-    text_encoder=text_encoder,
-    unet=unet,
-    scheduler=scheduler,
-    vae=vae,  
-    safety_checker=None,
-    feature_extractor=None,
-    requires_safety_checker=False,
-    ).to(torch_device)
-
 images = []
 for example in examples:
     image = pipe(prompt=example, num_inference_steps=num_inference_steps, guidance_scale=guidance_scale).images[0]

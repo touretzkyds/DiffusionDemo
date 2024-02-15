@@ -2,7 +2,7 @@ import torch
 import secrets
 from gradio.networking import setup_tunnel
 from transformers import CLIPTextModel, CLIPTokenizer
-from diffusers import AutoencoderKL, UNet2DConditionModel, LCMScheduler, LMSDiscreteScheduler
+from diffusers import AutoencoderKL, UNet2DConditionModel, LCMScheduler, LMSDiscreteScheduler, StableDiffusionPipeline
 
 torch_device = "cuda" if torch.cuda.is_available() else "cpu"
 
@@ -39,6 +39,17 @@ else:
 unet = UNet2DConditionModel.from_pretrained(model_path, subfolder="unet").to(torch_device)
 vae = AutoencoderKL.from_pretrained(model_path, subfolder="vae").to(torch_device)
 
+pipe = StableDiffusionPipeline(
+    tokenizer=tokenizer,
+    text_encoder=text_encoder,
+    unet=unet,
+    scheduler=scheduler,
+    vae=vae,  
+    safety_checker=None,
+    feature_extractor=None,
+    requires_safety_checker=False,
+    ).to(torch_device)
+
 dash_tunnel = setup_tunnel('0.0.0.0', 8000, secrets.token_urlsafe(32), None)
 
 __all__ = [
@@ -68,5 +79,6 @@ __all__ = [
     "guidance_values",
     "HF_ACCESS_TOKEN",
     "model_path",
-    "dash_tunnel"
+    "dash_tunnel",
+    "pipe",
 ]
