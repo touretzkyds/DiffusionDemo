@@ -4,7 +4,7 @@ from src.util.base import *
 from src.util.params import *
 from diffusers import AutoPipelineForInpainting
 
-inpaint_pipe = AutoPipelineForInpainting.from_pipe(pipe).to(torch_device)
+inpaint_pipe = AutoPipelineForInpainting.from_pretrained(inpaint_model_path).to(torch_device)
 
 def inpaint(dict, num_inference_steps, seed, prompt="", progress=gr.Progress()):
     progress(0)
