@@ -438,7 +438,7 @@ with gr.Blocks() as demo:
             with gr.Column():
                 uploaded_img_inpaint = gr.Sketchpad(sources='upload', type="pil", label="Upload", brush=gr.Brush(colors=["#ffff00"]))
                 prompt_inpaint = gr.Textbox(lines=1, label="Prompt", value="A apple fruit")
-                num_inference_steps_inpaint = gr.Slider(minimum=0, maximum=100, step=1, value=50, label="Number of Inference Steps per Image")
+                num_inference_steps_inpaint = gr.Slider(minimum=0, maximum=100, step=1, value=8, label="Number of Inference Steps per Image")
                 
                 with gr.Row():
                     seed_inpaint = gr.Slider(minimum=0, maximum=100, step=1, value=14, label="Seed")
