@@ -222,7 +222,7 @@ with gr.Blocks() as demo:
         with gr.Row():
             with gr.Column():
                 prompt_denoise = gr.Textbox(lines=1, label="Prompt", value="Self-portrait oil painting, a beautiful cyborg with golden hair, 8k")
-                num_inference_steps_denoise = gr.Slider(minimum=0, maximum=100, step=1, value=8, label="Number of Inference Steps")
+                num_inference_steps_denoise = gr.Slider(minimum=2, maximum=100, step=1, value=8, label="Number of Inference Steps")
                 
                 with gr.Row():
                     seed_denoise = gr.Slider(minimum=0, maximum=100, step=1, value=14, label="Seed")
@@ -255,7 +255,7 @@ with gr.Blocks() as demo:
             with gr.Column():
                 prompt_seed = gr.Textbox(lines=1, label="Prompt", value="Self-portrait oil painting, a beautiful cyborg with golden hair, 8k")
                 num_images_seed = gr.Slider(minimum=0, maximum=100, step=1, value=5, label="Number of Seeds")
-                num_inference_steps_seed = gr.Slider(minimum=0, maximum=100, step=1, value=8, label="Number of Inference Steps per Image")
+                num_inference_steps_seed = gr.Slider(minimum=2, maximum=100, step=1, value=8, label="Number of Inference Steps per Image")
                 generate_images_button_seed = gr.Button("Generate Images")
             
             with gr.Column():
@@ -271,7 +271,7 @@ with gr.Blocks() as demo:
                 prompt_perturb = gr.Textbox(lines=1, label="Prompt", value="Self-portrait oil painting, a beautiful cyborg with golden hair, 8k")
                 num_images_perturb = gr.Slider(minimum=0, maximum=100, step=1, value=5, label="Number of Perturbations")
                 perturbation_size_perturb = gr.Slider(minimum=0, maximum=1, step=0.1, value=0.1, label="Perturbation Size")
-                num_inference_steps_perturb = gr.Slider(minimum=0, maximum=100, step=1, value=8, label="Number of Inference Steps per Image")
+                num_inference_steps_perturb = gr.Slider(minimum=2, maximum=100, step=1, value=8, label="Number of Inference Steps per Image")
                 
                 with gr.Row():
                     seed_perturb = gr.Slider(minimum=0, maximum=100, step=1, value=14, label="Seed")
@@ -297,7 +297,7 @@ with gr.Blocks() as demo:
                     degree_circular = gr.Slider(minimum=0, maximum=360, step=1, value=360, label="Proportion of Circle", info="Enter the value in degrees")
                     step_size_circular = gr.Textbox(label="Step Size", value=360/5)
 
-                num_inference_steps_circular = gr.Slider(minimum=0, maximum=100, step=1, value=8, label="Number of Inference Steps per Image")
+                num_inference_steps_circular = gr.Slider(minimum=2, maximum=100, step=1, value=8, label="Number of Inference Steps per Image")
                 
                 with gr.Row():
                     seed_circular = gr.Slider(minimum=0, maximum=100, step=1, value=14, label="Seed")
@@ -322,7 +322,7 @@ with gr.Blocks() as demo:
                 promptA = gr.Textbox(lines=1, label="First Prompt", value="Self-portrait oil painting, a beautiful man with golden hair, 8k")
                 promptB = gr.Textbox(lines=1, label="Second Prompt", value="Self-portrait oil painting, a beautiful woman with golden hair, 8k")
                 num_images_interpolate = gr.Slider(minimum=0, maximum=100, step=1, value=5, label="Number of Interpolation Steps")
-                num_inference_steps_interpolate = gr.Slider(minimum=0, maximum=100, step=1, value=8, label="Number of Inference Steps per Image")
+                num_inference_steps_interpolate = gr.Slider(minimum=2, maximum=100, step=1, value=8, label="Number of Inference Steps per Image")
                 
                 with gr.Row():
                     seed_interpolate = gr.Slider(minimum=0, maximum=100, step=1, value=14, label="Seed")
@@ -343,7 +343,7 @@ with gr.Blocks() as demo:
         with gr.Row():
             with gr.Column():
                 prompt_poke = gr.Textbox(lines=1, label="Prompt", value="Self-portrait oil painting, a beautiful cyborg with golden hair, 8k")
-                num_inference_steps_poke = gr.Slider(minimum=0, maximum=100, step=1, value=8, label="Number of Inference Steps per Image")
+                num_inference_steps_poke = gr.Slider(minimum=2, maximum=100, step=1, value=8, label="Number of Inference Steps per Image")
 
                 with gr.Row():
                     seed_poke = gr.Slider(minimum=0, maximum=100, step=1, value=14, label="Seed")
@@ -395,7 +395,7 @@ with gr.Blocks() as demo:
             with gr.Column():
                 prompt_negative = gr.Textbox(lines=1, label="Prompt", value="Self-portrait oil painting, a beautiful cyborg with golden hair, 8k")
                 neg_prompt = gr.Textbox(lines=1, label="Negative Prompt", value="Yellow")
-                num_inference_steps_negative = gr.Slider(minimum=0, maximum=100, step=1, value=8, label="Number of Inference Steps per Image")
+                num_inference_steps_negative = gr.Slider(minimum=2, maximum=100, step=1, value=8, label="Number of Inference Steps per Image")
 
                 with gr.Row():
                     seed_negative = gr.Slider(minimum=0, maximum=100, step=1, value=14, label="Seed")
@@ -416,7 +416,7 @@ with gr.Blocks() as demo:
         with gr.Row():
             with gr.Column():
                 prompt_guidance = gr.Textbox(lines=1, label="Prompt", value="Self-portrait oil painting, a beautiful cyborg with golden hair, 8k")
-                num_inference_steps_guidance = gr.Slider(minimum=0, maximum=100, step=1, value=8, label="Number of Inference Steps per Image")
+                num_inference_steps_guidance = gr.Slider(minimum=2, maximum=100, step=1, value=8, label="Number of Inference Steps per Image")
                 guidance_scale_values = gr.Textbox(lines=1, value="1, 8, 20, 30", label="Guidance Scale Values")
 
                 with gr.Row():
@@ -438,7 +438,7 @@ with gr.Blocks() as demo:
             with gr.Column():
                 uploaded_img_inpaint = gr.Sketchpad(sources='upload', type="pil", label="Upload", brush=gr.Brush(colors=["#ffff00"]))
                 prompt_inpaint = gr.Textbox(lines=1, label="Prompt", value="A apple fruit")
-                num_inference_steps_inpaint = gr.Slider(minimum=0, maximum=100, step=1, value=8, label="Number of Inference Steps per Image")
+                num_inference_steps_inpaint = gr.Slider(minimum=2, maximum=100, step=1, value=8, label="Number of Inference Steps per Image")
                 
                 with gr.Row():
                     seed_inpaint = gr.Slider(minimum=0, maximum=100, step=1, value=14, label="Seed")
