@@ -277,10 +277,11 @@ with gr.Blocks() as demo:
             
             with gr.Column():
                 images_output_denoise = gr.Gallery(label="Images", selected_index=0)
+                gif_denoise = gr.Image(label="GIF")
                 zip_output_denoise = gr.File(label="Download ZIP")
     
-    @generate_images_button_denoise.click(inputs=[prompt_denoise, seed_denoise, num_inference_steps_denoise], outputs=[images_output_denoise, zip_output_denoise])
-    def generate_images_wrapper(prompt, seed, num_inference_steps):
+    @generate_images_button_denoise.click(inputs=[prompt_denoise, seed_denoise, num_inference_steps_denoise], outputs=[images_output_denoise, gif_denoise, zip_output_denoise])
+    def generate_images_wrapper(prompt, seed, num_inference_steps, progress=gr.Progress()):
         images, _ = display_poke_images(prompt, seed, num_inference_steps, poke=False, intermediate=True)   
         fname = "denoising"
         tab_config = {
@@ -290,7 +291,9 @@ with gr.Blocks() as demo:
             "Seed"                          : seed, 
         }
         export_as_zip(images, fname, tab_config)
-        return images, f"outputs/{fname}.zip"
+        progress(1, desc="Exporting as gif") 
+        export_as_gif(images, filename="denoising.gif")
+        return images, "outputs/denoising.gif", f"outputs/{fname}.zip"
     
     seed_denoise.change(fn=generate_seed_vis, inputs=[seed_denoise], outputs=[seed_vis_denoise])
     
