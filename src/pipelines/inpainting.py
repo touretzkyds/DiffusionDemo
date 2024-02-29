@@ -8,8 +8,8 @@ inpaint_pipe = AutoPipelineForInpainting.from_pretrained(inpaint_model_path).to(
 
 def inpaint(dict, num_inference_steps, seed, prompt="", progress=gr.Progress()):
     progress(0)
-    mask = dict["layers"][0].convert("RGB").resize((imageHeight, imageWidth))
-    init_image = dict["background"].convert("RGB").resize((imageHeight, imageWidth))
+    mask = dict["mask"].convert("RGB").resize((imageHeight, imageWidth))
+    init_image = dict["image"].convert("RGB").resize((imageHeight, imageWidth))    
     output = inpaint_pipe(prompt = prompt, image=init_image, mask_image=mask, guidance_scale=guidance_scale, num_inference_steps=num_inference_steps, generator=torch.Generator().manual_seed(seed))
     progress(1)
 
