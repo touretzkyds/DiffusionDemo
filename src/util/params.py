@@ -51,7 +51,7 @@ pipe = StableDiffusionPipeline(
     requires_safety_checker=False,
     ).to(torch_device)
 
-dash_tunnel = setup_tunnel('0.0.0.0', 8000, secrets.token_urlsafe(32), None)
+dash_tunnel = setup_tunnel('0.0.0.0', 8000, secrets.token_urlsafe(32))
 
 __all__ = [
     "prompt", 
