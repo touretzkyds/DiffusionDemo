@@ -257,10 +257,13 @@ with gr.Blocks() as demo:
     with gr.Tab("Denoising"):
         gr.Markdown("Observe the intermediate images during denoising.")
         with gr.Accordion("About", open=False):
-            gr.Markdown("""
-                        This tab displays the intermediate images generated during the denoising process. 
-                        Seeing these intermediate images provides insight into how the diffusion model progressively adds detail at each step.
-                        """)
+            with gr.Row():
+                gr.Markdown("""
+                            This tab displays the intermediate images generated during the denoising process. 
+                            Seeing these intermediate images provides insight into how the diffusion model progressively adds detail at each step.
+                            """)
+                gr.Image(value="DiffusionDemo/images/about/denoising.png")
+                
         with gr.Row():
             with gr.Column():
                 prompt_denoise = gr.Textbox(lines=1, label="Prompt", value="Self-portrait oil painting, a beautiful cyborg with golden hair, 8k")
@@ -294,15 +297,18 @@ with gr.Blocks() as demo:
     with gr.Tab("Seeds"):
         gr.Markdown("Understand how different starting points in latent space can lead to different images.")
         with gr.Accordion("About", open=False):
-            gr.Markdown("""
-                        Seeds create the initial noise that gets refined into the target image. 
-                        Different seeds produce different noise patterns, hence the target image will differ even when prompted by the same text. 
-                        This tab produces multiple target images from the same text prompt to showcase how changing the seed changes the target image.
+            with gr.Row():
+                gr.Markdown("""
+                            Seeds create the initial noise that gets refined into the target image. 
+                            Different seeds produce different noise patterns, hence the target image will differ even when prompted by the same text. 
+                            This tab produces multiple target images from the same text prompt to showcase how changing the seed changes the target image.
 
-                        **Additional Controls:**  
-                        **Number of Seeds:**  
-                        Specify how many seed values to use.
-                        """)
+                            **Additional Controls:**  
+                            **Number of Seeds:**  
+                            Specify how many seed values to use.
+                            """)
+                gr.Image(value="DiffusionDemo/images/about/seeds.png")
+
         with gr.Row():
             with gr.Column():
                 prompt_seed = gr.Textbox(lines=1, label="Prompt", value="Self-portrait oil painting, a beautiful cyborg with golden hair, 8k")
@@ -319,22 +325,25 @@ with gr.Blocks() as demo:
     with gr.Tab("Perturbations"):
         gr.Markdown("Explore different perturbations from a point in latent space.")
         with gr.Accordion("About", open=False):
-            gr.Markdown("""
-                        This tab enables the exploration of the latent space around a seed. 
-                        Perturbing the noise from an initial seed towards the noise from a different seed illustrates the variations in images obtainable from a local region of latent space. 
-                        Using a small perturbation size produces target images that closely resemble the one from the initial seed. 
-                        Larger perturbations traverse more distance in latent space towards the second seed, resulting in greater variation in the generated images.
+            with gr.Row():
+                gr.Markdown("""
+                            This tab enables the exploration of the latent space around a seed. 
+                            Perturbing the noise from an initial seed towards the noise from a different seed illustrates the variations in images obtainable from a local region of latent space. 
+                            Using a small perturbation size produces target images that closely resemble the one from the initial seed. 
+                            Larger perturbations traverse more distance in latent space towards the second seed, resulting in greater variation in the generated images.
 
-                        **Additional Controls:**  
-                        **Number of Perturbations:**  
-                        Specify the number of perturbations to create, i.e., the number of seeds to use. More perturbations produce more images.
+                            **Additional Controls:**  
+                            **Number of Perturbations:**  
+                            Specify the number of perturbations to create, i.e., the number of seeds to use. More perturbations produce more images.
 
-                        **Perturbation Size:**  
-                        Controls the perturbation magnitude, ranging from 0 to 1. 
-                        With a value of 0, all images will match the one from the initial seed. 
-                        With a value of 1, images will have no connection to the initial seed. 
-                        A value such as 0.1 is recommended.
-                        """)
+                            **Perturbation Size:**  
+                            Controls the perturbation magnitude, ranging from 0 to 1. 
+                            With a value of 0, all images will match the one from the initial seed. 
+                            With a value of 1, images will have no connection to the initial seed. 
+                            A value such as 0.1 is recommended.
+                            """)
+                gr.Image(value="DiffusionDemo/images/about/perturbations.png")
+
         with gr.Row():
             with gr.Column():
                 prompt_perturb = gr.Textbox(lines=1, label="Prompt", value="Self-portrait oil painting, a beautiful cyborg with golden hair, 8k")
@@ -358,19 +367,22 @@ with gr.Blocks() as demo:
     with gr.Tab("Circular"):
         gr.Markdown("Generate a circular path in latent space and observe how the images vary along the path.")
         with gr.Accordion("About", open=False):
-            gr.Markdown("""
-                        This tab generates a circular trajectory through latent space that begins and ends with the same image. 
-                        If we specify a large number of steps around the circle, the successive images will be closely related, resulting in a gradual deformation that produces a nice animation.
+            with gr.Row():
+                gr.Markdown("""
+                            This tab generates a circular trajectory through latent space that begins and ends with the same image. 
+                            If we specify a large number of steps around the circle, the successive images will be closely related, resulting in a gradual deformation that produces a nice animation.
 
-                        **Additional Controls:**  
-                        **Number of Steps around the Circle:**  
-                        Specify the number of images to produce along the circular path.
+                            **Additional Controls:**  
+                            **Number of Steps around the Circle:**  
+                            Specify the number of images to produce along the circular path.
 
-                        **Proportion of Circle:**  
-                        Sets the proportion of the circle to cover during image generation. 
-                        Ranges from 0 to 360 degrees. 
-                        Using a high step count with a small number of degrees allows you to explore very subtle image transformations.
-                        """)
+                            **Proportion of Circle:**  
+                            Sets the proportion of the circle to cover during image generation. 
+                            Ranges from 0 to 360 degrees. 
+                            Using a high step count with a small number of degrees allows you to explore very subtle image transformations.
+                            """)
+                gr.Image(value="DiffusionDemo/images/about/circular.png")
+
         with gr.Row():
             with gr.Column():
                 prompt_circular = gr.Textbox(lines=1, label="Prompt", value="Self-portrait oil painting, a beautiful cyborg with golden hair, 8k")
@@ -401,14 +413,17 @@ with gr.Blocks() as demo:
     with gr.Tab("Interpolate"):
         gr.Markdown("Interpolate between the first and the second prompt, and observe how the output changes.")
         with gr.Accordion("About", open=False):
-            gr.Markdown("""
-                        This tab generates noise patterns for two text prompts and then interpolates between them, gradually transforming from the first to the second. 
-                        With a large number of perturbation steps the transformation is very gradual and makes a nice animation.
-                        
-                        **Additional Controls:**  
-                        **Number of Interpolation Steps:**  
-                        Defines the number of intermediate images to generate between the two prompts.
-                        """)
+            with gr.Row():
+                gr.Markdown("""
+                            This tab generates noise patterns for two text prompts and then interpolates between them, gradually transforming from the first to the second. 
+                            With a large number of perturbation steps the transformation is very gradual and makes a nice animation.
+                            
+                            **Additional Controls:**  
+                            **Number of Interpolation Steps:**  
+                            Defines the number of intermediate images to generate between the two prompts.
+                            """)
+                gr.Image(value="DiffusionDemo/images/about/interpolate.png")
+
         with gr.Row():
             with gr.Column():
                 promptA = gr.Textbox(lines=1, label="First Prompt", value="Self-portrait oil painting, a beautiful man with golden hair, 8k")
@@ -433,13 +448,16 @@ with gr.Blocks() as demo:
     with gr.Tab("Poke"):
         gr.Markdown("Perturb a region in the image and observe the effect.")
         with gr.Accordion("About", open=False):
-            gr.Markdown("""
-                        This tab explores how perturbations in a local region of the initial latent noise impact the target image. 
-                        A small perturbation to the initial latent noise gets carried through the denoising process, demonstrating the global effect it can produce. 
-                        
-                        **Additional Controls:**  
-                        You can adjust the perturbation through the X, Y, height, and width controls. 
-                        """)
+            with gr.Row():
+                gr.Markdown("""
+                            This tab explores how perturbations in a local region of the initial latent noise impact the target image. 
+                            A small perturbation to the initial latent noise gets carried through the denoising process, demonstrating the global effect it can produce. 
+                            
+                            **Additional Controls:**  
+                            You can adjust the perturbation through the X, Y, height, and width controls. 
+                            """)
+                gr.Image(value="DiffusionDemo/images/about/poke.png")
+
         with gr.Row():
             with gr.Column():
                 prompt_poke = gr.Textbox(lines=1, label="Prompt", value="Self-portrait oil painting, a beautiful cyborg with golden hair, 8k")
@@ -492,10 +510,13 @@ with gr.Blocks() as demo:
     with gr.Tab("Negative"):
         gr.Markdown("Observe the effect of negative prompts.")
         with gr.Accordion("About", open=False):
-            gr.Markdown("""
-                        Negative prompts steer images away from unwanted features. 
-                        For example, “red” as a negative prompt makes the generated image unlikely to have reddish hues. 
-                        """)
+            with gr.Row():
+                gr.Markdown("""
+                            Negative prompts steer images away from unwanted features. 
+                            For example, “red” as a negative prompt makes the generated image unlikely to have reddish hues. 
+                            """)
+                gr.Image(value="DiffusionDemo/images/about/negative.png")
+
         with gr.Row():
             with gr.Column():
                 prompt_negative = gr.Textbox(lines=1, label="Prompt", value="Self-portrait oil painting, a beautiful cyborg with golden hair, 8k")
@@ -509,7 +530,7 @@ with gr.Blocks() as demo:
                 generate_images_button_negative = gr.Button("Generate Images")
 
             with gr.Column():
-                images_output_negative = gr.Image(label="Image")
+                images_output_negative = gr.Image(label="Image without Negative Prompt")
                 images_neg_output_negative = gr.Image(label="Image with Negative Prompt")
                 zip_output_negative = gr.File(label="Download ZIP")
 
@@ -519,12 +540,15 @@ with gr.Blocks() as demo:
     with gr.Tab("Guidance"):
         gr.Markdown("Observe the effect of different guidance scales.")
         with gr.Accordion("About", open=False):
-            gr.Markdown("""
-                        Guidance is responsible for making the target image adhere to the prompt. 
-                        A higher value enforces this relation, whereas a lower value does not. 
-                        For example, a guidance scale of 1 produces a distorted grayscale image, whereas 50 produces a distorted, oversaturated image. 
-                        The default value of 8 produces normal-looking images that reasonably adhere to the prompt.
-                        """)
+            with gr.Row():
+                gr.Markdown("""
+                            Guidance is responsible for making the target image adhere to the prompt. 
+                            A higher value enforces this relation, whereas a lower value does not. 
+                            For example, a guidance scale of 1 produces a distorted grayscale image, whereas 50 produces a distorted, oversaturated image. 
+                            The default value of 8 produces normal-looking images that reasonably adhere to the prompt.
+                            """)
+                gr.Image(value="DiffusionDemo/images/about/guidance.png")
+
         with gr.Row():
             with gr.Column():
                 prompt_guidance = gr.Textbox(lines=1, label="Prompt", value="Self-portrait oil painting, a beautiful cyborg with golden hair, 8k")
@@ -547,7 +571,10 @@ with gr.Blocks() as demo:
     with gr.Tab("Inpainting"):
         gr.Markdown("Inpaint the image based on the prompt.")
         with gr.Accordion("About", open=False):
-            gr.Markdown("Unlike poke, which globally alters the target image via a perturbation in the initial latent noise, inpainting alters just the region of the perturbation and allows us to specify the change we want to make.")
+            with gr.Row():
+                gr.Markdown("Unlike poke, which globally alters the target image via a perturbation in the initial latent noise, inpainting alters just the region of the perturbation and allows us to specify the change we want to make.")
+                gr.Image(value="DiffusionDemo/images/about/inpainting.png")
+
         with gr.Row():
             with gr.Column():
                 uploaded_img_inpaint = gr.Image(source='upload', tool='sketch', type="pil", label="Upload")
