@@ -28,6 +28,12 @@ Here are some additional references you might find interesting:
 - [Diffusion Explainer: Stable Diffusion Explained with Visualization](https://poloclub.github.io/diffusion-explainer/)
 - [The Illustrated Stable Diffusion](https://jalammar.github.io/illustrated-stable-diffusion/)
 
+## Collaborators
+
+Author: [Adithya Kameswara Rao](https://www.linkedin.com/in/akameswa/), Carnegie Mellon University. \
+Advisor: [David S. Touretzky](https://www.cs.cmu.edu/~dst/), Carnegie Mellon University.
+
+
 ## Contributing
 
 If you encounter any issues, please don't hesitate to [open an issue](https://github.com/akameswa/DiffusionDemo/issues) in this repository.
