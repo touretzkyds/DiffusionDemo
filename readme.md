@@ -1,6 +1,6 @@
 # DiffusionDemo
 
-[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/akameswa/DiffusionDemo/blob/master/demo.ipynb)
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/touretzkyds/DiffusionDemo/blob/master/demo.ipynb)
 
 This repository provides an in-depth exploration of stable diffusion models, walking readers through the inner workings in a step-by-step manner. 
 
@@ -39,7 +39,7 @@ This work was funded by a grant from NEOM Company, and by National Science Found
 
 ## Contributing
 
-If you encounter any issues, please don't hesitate to [open an issue](https://github.com/akameswa/DiffusionDemo/issues) in this repository.
+If you encounter any issues, please don't hesitate to [open an issue](https://github.com/touretzkyds/DiffusionDemo/issues) in this repository.
 
 Happy exploring!
 
