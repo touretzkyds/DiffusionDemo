@@ -602,13 +602,14 @@ def run_dash():
 
 def run_gradio():
     demo.queue()
-    demo.launch(share=True)
+    _, _, public_url = demo.launch(share=True)
+    return public_url
 
-if __name__ == "__main__":
-    thread = Thread(target=run_dash)
-    thread.daemon = True
-    thread.start()
-    try:
-        run_gradio()
-    except KeyboardInterrupt:
-        print("Server closed")
+# if __name__ == "__main__":
+#     thread = Thread(target=run_dash)
+#     thread.daemon = True
+#     thread.start()
+#     try:
+#         run_gradio()
+#     except KeyboardInterrupt:
+#         print("Server closed")
