@@ -33,6 +33,9 @@ Here are some additional references you might find interesting:
 Author: [Adithya Kameswara Rao](https://www.linkedin.com/in/akameswa/), Carnegie Mellon University. \
 Advisor: [David S. Touretzky](https://www.cs.cmu.edu/~dst/), Carnegie Mellon University.
 
+## Funding 
+
+This work was funded by a grant from NEOM Company, and by National Science Foundation award IIS-2112633.
 
 ## Contributing
 
