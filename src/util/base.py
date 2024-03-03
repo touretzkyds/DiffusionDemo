@@ -199,6 +199,11 @@ def export_as_zip(images, fname, tab_config=None):
             img[0].save(buff, format='PNG')
             buff = buff.getvalue()
             img_zip.writestr(f"{img[1]}.png", buff)
+
+def read_html(file_path):
+    with open(file_path, 'r', encoding='utf-8') as f:
+        content = f.read()
+    return content
         
 __all__ = [
     "get_text_embeddings", 
@@ -212,5 +217,6 @@ __all__ = [
     "calculate_step_size",
     "generate_seed_vis",
     "export_as_gif",
-    "export_as_zip"
+    "export_as_zip",
+    "read_html"
 ]  
