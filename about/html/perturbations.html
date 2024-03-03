@@ -1,0 +1,35 @@
+<details>
+    <summary style="background-color: #CE6400; padding-left: 10px;">
+        About
+    </summary>
+    <div style="display: flex; flex-direction: row; background-color: #D87F2B; padding-left: 10px;">
+        <div style="flex: 1;">
+            <p style="margin-top: 10px">
+                Perturbations enables the exploration of the latent space around a seed. 
+                Perturbing the noise from an initial seed towards the noise from a different seed illustrates the variations in images obtainable from a local region of latent space. 
+                Using a small perturbation size produces target images that closely resemble the one from the initial seed. 
+                Larger perturbations traverse more distance in latent space towards the second seed, resulting in greater variation in the generated images.
+            </p>
+            <p style="font-weight: bold;">
+                Additional Controls:
+            </p>  
+            <p style="font-weight: bold;">
+                Number of Perturbations:
+            </p>
+            <p>
+                Specify the number of perturbations to create, i.e., the number of seeds to use. More perturbations produce more images.
+            </p>
+            <p style="font-weight: bold;">
+                Perturbation Size:
+            </p>
+            <p>
+                Controls the perturbation magnitude, ranging from 0 to 1. 
+                With a value of 0, all images will match the one from the initial seed. 
+                With a value of 1, images will have no connection to the initial seed. 
+                A value such as 0.1 is recommended.
+            </p>
+        </div>
+        <div style="flex: 1;">
+            <img src="DiffusionDemo\about\html\images\perturbations.png" style="max-width: 100%; height: auto; margin-top: 10px; padding-left: 10px;">
+        </div>
+    </div>
