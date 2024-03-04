@@ -1,11 +1,14 @@
 import gradio as gr
 from src.util.base import *
-from src.util.params import *  
+from src.util.params import *
 
-def display_negative_images(prompt, seed, num_inference_steps, negative_prompt="", progress=gr.Progress()):
+
+def display_negative_images(
+    prompt, seed, num_inference_steps, negative_prompt="", progress=gr.Progress()
+):
     text_embeddings = get_text_embeddings(prompt)
     text_embeddings_neg = get_text_embeddings(prompt, negative_prompt=negative_prompt)
-    
+
     latents = generate_latents(seed)
 
     progress(0)
@@ -16,11 +19,11 @@ def display_negative_images(prompt, seed, num_inference_steps, negative_prompt="
 
     fname = "negative"
     tab_config = {
-        "Tab"                                   : "Negative",
-        "Prompt"                                : prompt, 
-        "Negative Prompt"                       : negative_prompt, 
-        "Number of Inference Steps per Image"   : num_inference_steps,
-        "Seed"                                  : seed,
+        "Tab": "Negative",
+        "Prompt": prompt,
+        "Negative Prompt": negative_prompt,
+        "Number of Inference Steps per Image": num_inference_steps,
+        "Seed": seed,
     }
 
     imgs_list = []
@@ -30,6 +33,5 @@ def display_negative_images(prompt, seed, num_inference_steps, negative_prompt="
 
     return images, images_neg, f"outputs/{fname}.zip"
 
-__all__ = [
-    "display_negative_images"
-]
+
+__all__ = ["display_negative_images"]

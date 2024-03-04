@@ -63,8 +63,8 @@ plural = [
 ]
 
 examples = [
-    "king", 
-    "queen", 
+    "king",
+    "queen",
     "man",
     "woman",
     "boy",
@@ -73,20 +73,16 @@ examples = [
     "orange",
 ]
 
-axis_names = [
-    "gender", 
-    "residual", 
-    "age"
-]
+axis_names = ["gender", "residual", "age"]
 
 axis_combinations = {
-    "age"       :   young + old,
-    "gender"    :   masculine + feminine,
-    "royalty"   :   common + elite,
-    "number"    :   singular + plural,
+    "age": young + old,
+    "gender": masculine + feminine,
+    "royalty": common + elite,
+    "number": singular + plural,
 }
 
-axisMap = { 
+axisMap = {
     "X - Axis": 0,
     "Y - Axis": 1,
     "Z - Axis": 2,
@@ -98,21 +94,21 @@ whichAxisMap = {
     "which_axis_3": "Y - Axis",
     "which_axis_4": "---",
     "which_axis_5": "---",
-    "which_axis_6": "---"
-}  
+    "which_axis_6": "---",
+}
 
 __all__ = [
-    "axisMap", 
+    "axisMap",
     "whichAxisMap",
-    "axis_names", 
-    "axis_combinations", 
-    "examples", 
-    "masculine", 
-    "feminine", 
-    "young", 
-    "old", 
-    "common", 
-    "elite", 
-    "singular", 
-    "plural"
+    "axis_names",
+    "axis_combinations",
+    "examples",
+    "masculine",
+    "feminine",
+    "young",
+    "old",
+    "common",
+    "elite",
+    "singular",
+    "plural",
 ]
