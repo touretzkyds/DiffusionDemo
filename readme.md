@@ -10,16 +10,19 @@ To run the demo, click "Open in Colab". Follow the instructions to execute the c
 
 ## Demo Tabs Overview
 
-1. Embeddings: Visualize text embedding space in 3D with input texts and output images based on the chosen axis.
-2. Denoising: Observe the intermediate images during denoising.
-3. Seeds: Understand how different starting points in latent space can lead to different images.
-4. Perturbations: Explore different perturbations from a point in latent space.
-5. Circular: Generate a circular path in latent space and observe how the images vary along the path.
-6. Interpolate: Interpolate between the first and the second prompt, and observe how the output changes.
-7. Poke: Perturb a region in the image and observe the effect.
-8. Negative: Observe the effect of negative prompts.
-9. Guidance: Observe the effect of different guidance scales.
-10. Inpainting: Inpaint the image based on the prompt.
+1. Latent Space:
+    - Denoising: Observe the intermediate images during denoising.
+    - Seeds: Understand how different starting points in latent space can lead to different images.
+    - Perturbations: Explore different perturbations from a point in latent space.
+    - Circular: Generate a circular path in latent space and observe how the images vary along the path.
+    - Poke: Perturb a region in the image and observe the effect.
+    - Guidance: Observe the effect of different guidance scales.
+    - Inpainting: Inpaint the image based on the prompt.
+
+2. Clip Space:
+    - Embeddings: Visualize text embedding space in 3D with input texts and output images based on the chosen axis.
+    - Interpolate: Interpolate between the first and the second prompt, and observe how the output changes.
+    - Negative: Observe the effect of negative prompts.
 
 ## References
 
