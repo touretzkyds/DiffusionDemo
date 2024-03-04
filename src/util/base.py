@@ -152,7 +152,7 @@ def calculate_residual(axis, axis_names, from_words=None, to_words=None, residua
     return residual
 
 def calculate_step_size(num_images, differentiation):
-    return differentiation / num_images
+    return differentiation / (num_images - 1)
 
 def generate_seed_vis(seed):
     np.random.seed(seed)

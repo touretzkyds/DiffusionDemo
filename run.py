@@ -178,7 +178,7 @@ with gr.Blocks() as demo:
         with gr.Row():
             with gr.Column():
                 prompt_circular = gr.Textbox(lines=1, label="Prompt", value="Self-portrait oil painting, a beautiful cyborg with golden hair, 8k")
-                num_images_circular = gr.Slider(minimum=0, maximum=100, step=1, value=5, label="Number of Steps around the Circle")
+                num_images_circular = gr.Slider(minimum=2, maximum=100, step=1, value=5, label="Number of Steps around the Circle")
 
                 with gr.Row():
                     degree_circular = gr.Slider(minimum=0, maximum=360, step=1, value=360, label="Proportion of Circle", info="Enter the value in degrees")
