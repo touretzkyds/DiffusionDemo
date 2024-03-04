@@ -137,7 +137,7 @@ with gr.Blocks() as demo:
         with gr.Row():
             with gr.Column():
                 prompt_seed = gr.Textbox(lines=1, label="Prompt", value="Self-portrait oil painting, a beautiful cyborg with golden hair, 8k")
-                num_images_seed = gr.Slider(minimum=0, maximum=100, step=1, value=5, label="Number of Seeds")
+                num_images_seed = gr.Slider(minimum=1, maximum=100, step=1, value=5, label="Number of Seeds")
                 num_inference_steps_seed = gr.Slider(minimum=2, maximum=100, step=1, value=8, label="Number of Inference Steps per Image")
                 generate_images_button_seed = gr.Button("Generate Images")
             
