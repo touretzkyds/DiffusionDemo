@@ -92,6 +92,215 @@ def download_image(clickData):
 
 with gr.Blocks() as demo:
     gr.Markdown("## Stable Diffusion Demo")
+
+    with gr.Tab("Denoising"):
+        gr.Markdown("Observe the intermediate images during denoising.")
+        gr.HTML(read_html("DiffusionDemo/html/denoising.html"))
+                
+        with gr.Row():
+            with gr.Column():
+                prompt_denoise = gr.Textbox(lines=1, label="Prompt", value="Self-portrait oil painting, a beautiful cyborg with golden hair, 8k")
+                num_inference_steps_denoise = gr.Slider(minimum=2, maximum=100, step=1, value=8, label="Number of Inference Steps")
+                
+                with gr.Row():
+                    seed_denoise = gr.Slider(minimum=0, maximum=100, step=1, value=14, label="Seed")
+                    seed_vis_denoise = gr.Plot(value=generate_seed_vis(14), label="Seed")
+
+                generate_images_button_denoise = gr.Button("Generate Images")
+            
+            with gr.Column():
+                images_output_denoise = gr.Gallery(label="Images", selected_index=0)
+                gif_denoise = gr.Image(label="GIF")
+                zip_output_denoise = gr.File(label="Download ZIP")
+    
+    @generate_images_button_denoise.click(inputs=[prompt_denoise, seed_denoise, num_inference_steps_denoise], outputs=[images_output_denoise, gif_denoise, zip_output_denoise])
+    def generate_images_wrapper(prompt, seed, num_inference_steps, progress=gr.Progress()):
+        images, _ = display_poke_images(prompt, seed, num_inference_steps, poke=False, intermediate=True)   
+        fname = "denoising"
+        tab_config = {
+            "Tab"                           : "Denoising",
+            "Prompt"                        : prompt, 
+            "Number of Inference Steps"     : num_inference_steps,
+            "Seed"                          : seed, 
+        }
+        export_as_zip(images, fname, tab_config)
+        progress(1, desc="Exporting as gif") 
+        export_as_gif(images, filename="denoising.gif")
+        return images, "outputs/denoising.gif", f"outputs/{fname}.zip"
+    
+    seed_denoise.change(fn=generate_seed_vis, inputs=[seed_denoise], outputs=[seed_vis_denoise])
+    
+    with gr.Tab("Seeds"):
+        gr.Markdown("Understand how different starting points in latent space can lead to different images.")
+        gr.HTML(read_html("DiffusionDemo/html/seeds.html"))
+
+        with gr.Row():
+            with gr.Column():
+                prompt_seed = gr.Textbox(lines=1, label="Prompt", value="Self-portrait oil painting, a beautiful cyborg with golden hair, 8k")
+                num_images_seed = gr.Slider(minimum=0, maximum=100, step=1, value=5, label="Number of Seeds")
+                num_inference_steps_seed = gr.Slider(minimum=2, maximum=100, step=1, value=8, label="Number of Inference Steps per Image")
+                generate_images_button_seed = gr.Button("Generate Images")
+            
+            with gr.Column():
+                images_output_seed = gr.Gallery(label="Images", selected_index=0)
+                zip_output_seed = gr.File(label="Download ZIP")
+
+    generate_images_button_seed.click(fn=display_seed_images, inputs=[prompt_seed, num_inference_steps_seed, num_images_seed], outputs=[images_output_seed, zip_output_seed])
+
+    with gr.Tab("Perturbations"):
+        gr.Markdown("Explore different perturbations from a point in latent space.")
+        gr.HTML(read_html("DiffusionDemo/html/perturbations.html"))
+
+        with gr.Row():
+            with gr.Column():
+                prompt_perturb = gr.Textbox(lines=1, label="Prompt", value="Self-portrait oil painting, a beautiful cyborg with golden hair, 8k")
+                num_images_perturb = gr.Slider(minimum=0, maximum=100, step=1, value=5, label="Number of Perturbations")
+                perturbation_size_perturb = gr.Slider(minimum=0, maximum=1, step=0.1, value=0.1, label="Perturbation Size")
+                num_inference_steps_perturb = gr.Slider(minimum=2, maximum=100, step=1, value=8, label="Number of Inference Steps per Image")
+                
+                with gr.Row():
+                    seed_perturb = gr.Slider(minimum=0, maximum=100, step=1, value=14, label="Seed")
+                    seed_vis_perturb = gr.Plot(value=generate_seed_vis(14), label="Seed")
+
+                generate_images_button_perturb = gr.Button("Generate Images")
+
+            with gr.Column():
+                images_output_perturb = gr.Gallery(label="Image", selected_index=0)  
+                zip_output_perturb = gr.File(label="Download ZIP")  
+
+    generate_images_button_perturb.click(fn=display_perturb_images, inputs=[prompt_perturb, seed_perturb, num_inference_steps_perturb, num_images_perturb, perturbation_size_perturb], outputs=[images_output_perturb, zip_output_perturb])
+    seed_perturb.change(fn=generate_seed_vis, inputs=[seed_perturb], outputs=[seed_vis_perturb])
+
+    with gr.Tab("Circular"):
+        gr.Markdown("Generate a circular path in latent space and observe how the images vary along the path.")
+        gr.HTML(read_html("DiffusionDemo/html/circular.html"))
+
+        with gr.Row():
+            with gr.Column():
+                prompt_circular = gr.Textbox(lines=1, label="Prompt", value="Self-portrait oil painting, a beautiful cyborg with golden hair, 8k")
+                num_images_circular = gr.Slider(minimum=0, maximum=100, step=1, value=5, label="Number of Steps around the Circle")
+
+                with gr.Row():
+                    degree_circular = gr.Slider(minimum=0, maximum=360, step=1, value=360, label="Proportion of Circle", info="Enter the value in degrees")
+                    step_size_circular = gr.Textbox(label="Step Size", value=360/5)
+
+                num_inference_steps_circular = gr.Slider(minimum=2, maximum=100, step=1, value=8, label="Number of Inference Steps per Image")
+                
+                with gr.Row():
+                    seed_circular = gr.Slider(minimum=0, maximum=100, step=1, value=14, label="Seed")
+                    seed_vis_circular = gr.Plot(value=generate_seed_vis(14), label="Seed")
+
+                generate_images_button_circular = gr.Button("Generate Images")
+           
+            with gr.Column():
+                images_output_circular = gr.Gallery(label="Image", selected_index=0)   
+                gif_circular = gr.Image(label="GIF") 
+                zip_output_circular = gr.File(label="Download ZIP")
+
+    num_images_circular.change(fn=calculate_step_size, inputs=[num_images_circular, degree_circular], outputs=[step_size_circular])
+    degree_circular.change(fn=calculate_step_size, inputs=[num_images_circular, degree_circular], outputs=[step_size_circular])
+    generate_images_button_circular.click(fn=display_circular_images, inputs=[prompt_circular, seed_circular, num_inference_steps_circular, num_images_circular, degree_circular], outputs=[images_output_circular, gif_circular, zip_output_circular])
+    seed_circular.change(fn=generate_seed_vis, inputs=[seed_circular], outputs=[seed_vis_circular])
+
+    with gr.Tab("Poke"):
+        gr.Markdown("Perturb a region in the image and observe the effect.")
+        gr.HTML(read_html("DiffusionDemo/html/poke.html"))
+
+        with gr.Row():
+            with gr.Column():
+                prompt_poke = gr.Textbox(lines=1, label="Prompt", value="Self-portrait oil painting, a beautiful cyborg with golden hair, 8k")
+                num_inference_steps_poke = gr.Slider(minimum=2, maximum=100, step=1, value=8, label="Number of Inference Steps per Image")
+
+                with gr.Row():
+                    seed_poke = gr.Slider(minimum=0, maximum=100, step=1, value=14, label="Seed")
+                    seed_vis_poke = gr.Plot(value=generate_seed_vis(14), label="Seed")
+
+                pokeX = gr.Slider(label="pokeX", minimum=0, maximum=64, step=1, value=32, info= "X coordinate of poke center")
+                pokeY = gr.Slider(label="pokeY", minimum=0, maximum=64, step=1, value=32, info= "Y coordinate of poke center")
+                pokeHeight = gr.Slider(label="pokeHeight", minimum=0, maximum=64, step=1, value=8, info= "Height of the poke")
+                pokeWidth = gr.Slider(label="pokeWidth", minimum=0, maximum=64, step=1, value=8, info= "Width of the poke")
+                
+                generate_images_button_poke = gr.Button("Generate Images")   
+
+            with gr.Column():
+                original_images_output_poke = gr.Image(value=visualize_poke(32,32,8,8)[0], label="Original Image")
+                poked_images_output_poke = gr.Image(value=visualize_poke(32,32,8,8)[1], label="Poked Image")
+                zip_output_poke = gr.File(label="Download ZIP")
+
+    pokeX.change(visualize_poke, inputs=[pokeX, pokeY, pokeHeight, pokeWidth], outputs=[original_images_output_poke, poked_images_output_poke])
+    pokeY.change(visualize_poke, inputs=[pokeX, pokeY, pokeHeight, pokeWidth], outputs=[original_images_output_poke, poked_images_output_poke])
+    pokeHeight.change(visualize_poke, inputs=[pokeX, pokeY, pokeHeight, pokeWidth], outputs=[original_images_output_poke, poked_images_output_poke])
+    pokeWidth.change(visualize_poke, inputs=[pokeX, pokeY, pokeHeight, pokeWidth], outputs=[original_images_output_poke, poked_images_output_poke])
+    seed_poke.change(fn=generate_seed_vis, inputs=[seed_poke], outputs=[seed_vis_poke])
+
+    @generate_images_button_poke.click(inputs=[prompt_poke, seed_poke, num_inference_steps_poke, pokeX, pokeY, pokeHeight, pokeWidth], outputs=[original_images_output_poke, poked_images_output_poke, zip_output_poke])
+    def generate_images_wrapper(prompt, seed, num_inference_steps, pokeX=pokeX, pokeY=pokeY, pokeHeight=pokeHeight, pokeWidth=pokeWidth):
+        _, _ = display_poke_images(prompt, seed, num_inference_steps, poke=True, pokeX=pokeX, pokeY=pokeY, pokeHeight=pokeHeight, pokeWidth=pokeWidth, intermediate=False)
+        images, modImages = visualize_poke(pokeX, pokeY, pokeHeight, pokeWidth)
+        fname = "poke"
+        tab_config = {
+            "Tab"                                   : "Poke",
+            "Prompt"                                : prompt, 
+            "Number of Inference Steps per Image"   : num_inference_steps,
+            "Seed"                                  : seed,
+            "PokeX"                                 : pokeX,
+            "PokeY"                                 : pokeY,
+            "PokeHeight"                            : pokeHeight,
+            "PokeWidth"                             : pokeWidth,
+        }
+        imgs_list = []
+        imgs_list.append((images, "Original Image"))
+        imgs_list.append((modImages, "Poked Image"))
+
+        export_as_zip(imgs_list, fname, tab_config)
+        return images, modImages, f"outputs/{fname}.zip"
+
+    with gr.Tab("Guidance"):
+        gr.Markdown("Observe the effect of different guidance scales.")
+        gr.HTML(read_html("DiffusionDemo/html/guidance.html"))
+
+        with gr.Row():
+            with gr.Column():
+                prompt_guidance = gr.Textbox(lines=1, label="Prompt", value="Self-portrait oil painting, a beautiful cyborg with golden hair, 8k")
+                num_inference_steps_guidance = gr.Slider(minimum=2, maximum=100, step=1, value=8, label="Number of Inference Steps per Image")
+                guidance_scale_values = gr.Textbox(lines=1, value="1, 8, 20, 30", label="Guidance Scale Values")
+
+                with gr.Row():
+                    seed_guidance = gr.Slider(minimum=0, maximum=100, step=1, value=14, label="Seed")
+                    seed_vis_guidance = gr.Plot(value=generate_seed_vis(14), label="Seed")
+
+                generate_images_button_guidance = gr.Button("Generate Images")
+
+            with gr.Column():
+                images_output_guidance = gr.Gallery(label="Images", selected_index=0)
+                zip_output_guidance = gr.File(label="Download ZIP")
+
+    generate_images_button_guidance.click(fn=display_guidance_images, inputs=[prompt_guidance, seed_guidance, num_inference_steps_guidance, guidance_scale_values], outputs=[images_output_guidance, zip_output_guidance])
+    seed_guidance.change(fn=generate_seed_vis, inputs=[seed_guidance], outputs=[seed_vis_guidance])
+
+    with gr.Tab("Inpainting"):
+        gr.Markdown("Inpaint the image based on the prompt.")
+        gr.HTML(read_html("DiffusionDemo/html/inpainting.html"))
+
+        with gr.Row():
+            with gr.Column():
+                uploaded_img_inpaint = gr.Image(source='upload', tool='sketch', type="pil", label="Upload")
+                prompt_inpaint = gr.Textbox(lines=1, label="Prompt", value="A apple fruit")
+                num_inference_steps_inpaint = gr.Slider(minimum=2, maximum=100, step=1, value=8, label="Number of Inference Steps per Image")
+                
+                with gr.Row():
+                    seed_inpaint = gr.Slider(minimum=0, maximum=100, step=1, value=14, label="Seed")
+                    seed_vis_inpaint= gr.Plot(value=generate_seed_vis(14), label="Seed")
+
+                inpaint_button = gr.Button("Inpaint") 
+                
+            with gr.Column():
+                images_output_inpaint = gr.Image(label="Output")
+                zip_output_inpaint = gr.File(label="Download ZIP")
+
+    inpaint_button.click(fn=inpaint, inputs=[uploaded_img_inpaint, num_inference_steps_inpaint, seed_inpaint, prompt_inpaint], outputs=[images_output_inpaint, zip_output_inpaint])
+    seed_inpaint.change(fn=generate_seed_vis, inputs=[seed_inpaint], outputs=[seed_vis_inpaint])
+    
     with gr.Tab("Embeddings"):
         gr.Markdown("Visualize text embedding space in 3D with input texts and output images based on the chosen axis.")
         gr.HTML(read_html("DiffusionDemo/html/embeddings.html"))
@@ -219,115 +428,6 @@ with gr.Blocks() as demo:
         whichAxisMap["which_axis_6"] = which_axis
         return set_axis(axis_name, which_axis, from_words, to_words), whichAxisMap["which_axis_1"], whichAxisMap["which_axis_2"], whichAxisMap["which_axis_3"], whichAxisMap["which_axis_4"], whichAxisMap["which_axis_5"]
 
-    with gr.Tab("Denoising"):
-        gr.Markdown("Observe the intermediate images during denoising.")
-        gr.HTML(read_html("DiffusionDemo/html/denoising.html"))
-                
-        with gr.Row():
-            with gr.Column():
-                prompt_denoise = gr.Textbox(lines=1, label="Prompt", value="Self-portrait oil painting, a beautiful cyborg with golden hair, 8k")
-                num_inference_steps_denoise = gr.Slider(minimum=2, maximum=100, step=1, value=8, label="Number of Inference Steps")
-                
-                with gr.Row():
-                    seed_denoise = gr.Slider(minimum=0, maximum=100, step=1, value=14, label="Seed")
-                    seed_vis_denoise = gr.Plot(value=generate_seed_vis(14), label="Seed")
-
-                generate_images_button_denoise = gr.Button("Generate Images")
-            
-            with gr.Column():
-                images_output_denoise = gr.Gallery(label="Images", selected_index=0)
-                gif_denoise = gr.Image(label="GIF")
-                zip_output_denoise = gr.File(label="Download ZIP")
-    
-    @generate_images_button_denoise.click(inputs=[prompt_denoise, seed_denoise, num_inference_steps_denoise], outputs=[images_output_denoise, gif_denoise, zip_output_denoise])
-    def generate_images_wrapper(prompt, seed, num_inference_steps, progress=gr.Progress()):
-        images, _ = display_poke_images(prompt, seed, num_inference_steps, poke=False, intermediate=True)   
-        fname = "denoising"
-        tab_config = {
-            "Tab"                           : "Denoising",
-            "Prompt"                        : prompt, 
-            "Number of Inference Steps"     : num_inference_steps,
-            "Seed"                          : seed, 
-        }
-        export_as_zip(images, fname, tab_config)
-        progress(1, desc="Exporting as gif") 
-        export_as_gif(images, filename="denoising.gif")
-        return images, "outputs/denoising.gif", f"outputs/{fname}.zip"
-    
-    seed_denoise.change(fn=generate_seed_vis, inputs=[seed_denoise], outputs=[seed_vis_denoise])
-    
-    with gr.Tab("Seeds"):
-        gr.Markdown("Understand how different starting points in latent space can lead to different images.")
-        gr.HTML(read_html("DiffusionDemo/html/seeds.html"))
-
-        with gr.Row():
-            with gr.Column():
-                prompt_seed = gr.Textbox(lines=1, label="Prompt", value="Self-portrait oil painting, a beautiful cyborg with golden hair, 8k")
-                num_images_seed = gr.Slider(minimum=0, maximum=100, step=1, value=5, label="Number of Seeds")
-                num_inference_steps_seed = gr.Slider(minimum=2, maximum=100, step=1, value=8, label="Number of Inference Steps per Image")
-                generate_images_button_seed = gr.Button("Generate Images")
-            
-            with gr.Column():
-                images_output_seed = gr.Gallery(label="Images", selected_index=0)
-                zip_output_seed = gr.File(label="Download ZIP")
-
-    generate_images_button_seed.click(fn=display_seed_images, inputs=[prompt_seed, num_inference_steps_seed, num_images_seed], outputs=[images_output_seed, zip_output_seed])
-
-    with gr.Tab("Perturbations"):
-        gr.Markdown("Explore different perturbations from a point in latent space.")
-        gr.HTML(read_html("DiffusionDemo/html/perturbations.html"))
-
-        with gr.Row():
-            with gr.Column():
-                prompt_perturb = gr.Textbox(lines=1, label="Prompt", value="Self-portrait oil painting, a beautiful cyborg with golden hair, 8k")
-                num_images_perturb = gr.Slider(minimum=0, maximum=100, step=1, value=5, label="Number of Perturbations")
-                perturbation_size_perturb = gr.Slider(minimum=0, maximum=1, step=0.1, value=0.1, label="Perturbation Size")
-                num_inference_steps_perturb = gr.Slider(minimum=2, maximum=100, step=1, value=8, label="Number of Inference Steps per Image")
-                
-                with gr.Row():
-                    seed_perturb = gr.Slider(minimum=0, maximum=100, step=1, value=14, label="Seed")
-                    seed_vis_perturb = gr.Plot(value=generate_seed_vis(14), label="Seed")
-
-                generate_images_button_perturb = gr.Button("Generate Images")
-
-            with gr.Column():
-                images_output_perturb = gr.Gallery(label="Image", selected_index=0)  
-                zip_output_perturb = gr.File(label="Download ZIP")  
-
-    generate_images_button_perturb.click(fn=display_perturb_images, inputs=[prompt_perturb, seed_perturb, num_inference_steps_perturb, num_images_perturb, perturbation_size_perturb], outputs=[images_output_perturb, zip_output_perturb])
-    seed_perturb.change(fn=generate_seed_vis, inputs=[seed_perturb], outputs=[seed_vis_perturb])
-
-    with gr.Tab("Circular"):
-        gr.Markdown("Generate a circular path in latent space and observe how the images vary along the path.")
-        gr.HTML(read_html("DiffusionDemo/html/circular.html"))
-
-        with gr.Row():
-            with gr.Column():
-                prompt_circular = gr.Textbox(lines=1, label="Prompt", value="Self-portrait oil painting, a beautiful cyborg with golden hair, 8k")
-                num_images_circular = gr.Slider(minimum=0, maximum=100, step=1, value=5, label="Number of Steps around the Circle")
-
-                with gr.Row():
-                    degree_circular = gr.Slider(minimum=0, maximum=360, step=1, value=360, label="Proportion of Circle", info="Enter the value in degrees")
-                    step_size_circular = gr.Textbox(label="Step Size", value=360/5)
-
-                num_inference_steps_circular = gr.Slider(minimum=2, maximum=100, step=1, value=8, label="Number of Inference Steps per Image")
-                
-                with gr.Row():
-                    seed_circular = gr.Slider(minimum=0, maximum=100, step=1, value=14, label="Seed")
-                    seed_vis_circular = gr.Plot(value=generate_seed_vis(14), label="Seed")
-
-                generate_images_button_circular = gr.Button("Generate Images")
-           
-            with gr.Column():
-                images_output_circular = gr.Gallery(label="Image", selected_index=0)   
-                gif_circular = gr.Image(label="GIF") 
-                zip_output_circular = gr.File(label="Download ZIP")
-
-    num_images_circular.change(fn=calculate_step_size, inputs=[num_images_circular, degree_circular], outputs=[step_size_circular])
-    degree_circular.change(fn=calculate_step_size, inputs=[num_images_circular, degree_circular], outputs=[step_size_circular])
-    generate_images_button_circular.click(fn=display_circular_images, inputs=[prompt_circular, seed_circular, num_inference_steps_circular, num_images_circular, degree_circular], outputs=[images_output_circular, gif_circular, zip_output_circular])
-    seed_circular.change(fn=generate_seed_vis, inputs=[seed_circular], outputs=[seed_vis_circular])
-
     with gr.Tab("Interpolate"):
         gr.Markdown("Interpolate between the first and the second prompt, and observe how the output changes.")
         gr.HTML(read_html("DiffusionDemo/html/interpolate.html"))
@@ -353,59 +453,6 @@ with gr.Blocks() as demo:
     generate_images_button_interpolate.click(fn=display_interpolate_images, inputs=[seed_interpolate, promptA, promptB, num_inference_steps_interpolate, num_images_interpolate], outputs=[images_output_interpolate, gif_interpolate, zip_output_interpolate])
     seed_interpolate.change(fn=generate_seed_vis, inputs=[seed_interpolate], outputs=[seed_vis_interpolate])
 
-    with gr.Tab("Poke"):
-        gr.Markdown("Perturb a region in the image and observe the effect.")
-        gr.HTML(read_html("DiffusionDemo/html/poke.html"))
-
-        with gr.Row():
-            with gr.Column():
-                prompt_poke = gr.Textbox(lines=1, label="Prompt", value="Self-portrait oil painting, a beautiful cyborg with golden hair, 8k")
-                num_inference_steps_poke = gr.Slider(minimum=2, maximum=100, step=1, value=8, label="Number of Inference Steps per Image")
-
-                with gr.Row():
-                    seed_poke = gr.Slider(minimum=0, maximum=100, step=1, value=14, label="Seed")
-                    seed_vis_poke = gr.Plot(value=generate_seed_vis(14), label="Seed")
-
-                pokeX = gr.Slider(label="pokeX", minimum=0, maximum=64, step=1, value=32, info= "X coordinate of poke center")
-                pokeY = gr.Slider(label="pokeY", minimum=0, maximum=64, step=1, value=32, info= "Y coordinate of poke center")
-                pokeHeight = gr.Slider(label="pokeHeight", minimum=0, maximum=64, step=1, value=8, info= "Height of the poke")
-                pokeWidth = gr.Slider(label="pokeWidth", minimum=0, maximum=64, step=1, value=8, info= "Width of the poke")
-                
-                generate_images_button_poke = gr.Button("Generate Images")   
-
-            with gr.Column():
-                original_images_output_poke = gr.Image(value=visualize_poke(32,32,8,8)[0], label="Original Image")
-                poked_images_output_poke = gr.Image(value=visualize_poke(32,32,8,8)[1], label="Poked Image")
-                zip_output_poke = gr.File(label="Download ZIP")
-
-    pokeX.change(visualize_poke, inputs=[pokeX, pokeY, pokeHeight, pokeWidth], outputs=[original_images_output_poke, poked_images_output_poke])
-    pokeY.change(visualize_poke, inputs=[pokeX, pokeY, pokeHeight, pokeWidth], outputs=[original_images_output_poke, poked_images_output_poke])
-    pokeHeight.change(visualize_poke, inputs=[pokeX, pokeY, pokeHeight, pokeWidth], outputs=[original_images_output_poke, poked_images_output_poke])
-    pokeWidth.change(visualize_poke, inputs=[pokeX, pokeY, pokeHeight, pokeWidth], outputs=[original_images_output_poke, poked_images_output_poke])
-    seed_poke.change(fn=generate_seed_vis, inputs=[seed_poke], outputs=[seed_vis_poke])
-
-    @generate_images_button_poke.click(inputs=[prompt_poke, seed_poke, num_inference_steps_poke, pokeX, pokeY, pokeHeight, pokeWidth], outputs=[original_images_output_poke, poked_images_output_poke, zip_output_poke])
-    def generate_images_wrapper(prompt, seed, num_inference_steps, pokeX=pokeX, pokeY=pokeY, pokeHeight=pokeHeight, pokeWidth=pokeWidth):
-        _, _ = display_poke_images(prompt, seed, num_inference_steps, poke=True, pokeX=pokeX, pokeY=pokeY, pokeHeight=pokeHeight, pokeWidth=pokeWidth, intermediate=False)
-        images, modImages = visualize_poke(pokeX, pokeY, pokeHeight, pokeWidth)
-        fname = "poke"
-        tab_config = {
-            "Tab"                                   : "Poke",
-            "Prompt"                                : prompt, 
-            "Number of Inference Steps per Image"   : num_inference_steps,
-            "Seed"                                  : seed,
-            "PokeX"                                 : pokeX,
-            "PokeY"                                 : pokeY,
-            "PokeHeight"                            : pokeHeight,
-            "PokeWidth"                             : pokeWidth,
-        }
-        imgs_list = []
-        imgs_list.append((images, "Original Image"))
-        imgs_list.append((modImages, "Poked Image"))
-
-        export_as_zip(imgs_list, fname, tab_config)
-        return images, modImages, f"outputs/{fname}.zip"
-    
     with gr.Tab("Negative"):
         gr.Markdown("Observe the effect of negative prompts.")
         gr.HTML(read_html("DiffusionDemo/html/negative.html"))
@@ -429,52 +476,6 @@ with gr.Blocks() as demo:
 
     seed_negative.change(fn=generate_seed_vis, inputs=[seed_negative], outputs=[seed_vis_negative])
     generate_images_button_negative.click(fn=display_negative_images, inputs=[prompt_negative, seed_negative, num_inference_steps_negative, neg_prompt], outputs=[images_output_negative, images_neg_output_negative, zip_output_negative])
-
-    with gr.Tab("Guidance"):
-        gr.Markdown("Observe the effect of different guidance scales.")
-        gr.HTML(read_html("DiffusionDemo/html/guidance.html"))
-
-        with gr.Row():
-            with gr.Column():
-                prompt_guidance = gr.Textbox(lines=1, label="Prompt", value="Self-portrait oil painting, a beautiful cyborg with golden hair, 8k")
-                num_inference_steps_guidance = gr.Slider(minimum=2, maximum=100, step=1, value=8, label="Number of Inference Steps per Image")
-                guidance_scale_values = gr.Textbox(lines=1, value="1, 8, 20, 30", label="Guidance Scale Values")
-
-                with gr.Row():
-                    seed_guidance = gr.Slider(minimum=0, maximum=100, step=1, value=14, label="Seed")
-                    seed_vis_guidance = gr.Plot(value=generate_seed_vis(14), label="Seed")
-
-                generate_images_button_guidance = gr.Button("Generate Images")
-
-            with gr.Column():
-                images_output_guidance = gr.Gallery(label="Images", selected_index=0)
-                zip_output_guidance = gr.File(label="Download ZIP")
-
-    generate_images_button_guidance.click(fn=display_guidance_images, inputs=[prompt_guidance, seed_guidance, num_inference_steps_guidance, guidance_scale_values], outputs=[images_output_guidance, zip_output_guidance])
-    seed_guidance.change(fn=generate_seed_vis, inputs=[seed_guidance], outputs=[seed_vis_guidance])
-
-    with gr.Tab("Inpainting"):
-        gr.Markdown("Inpaint the image based on the prompt.")
-        gr.HTML(read_html("DiffusionDemo/html/inpainting.html"))
-
-        with gr.Row():
-            with gr.Column():
-                uploaded_img_inpaint = gr.Image(source='upload', tool='sketch', type="pil", label="Upload")
-                prompt_inpaint = gr.Textbox(lines=1, label="Prompt", value="A apple fruit")
-                num_inference_steps_inpaint = gr.Slider(minimum=2, maximum=100, step=1, value=8, label="Number of Inference Steps per Image")
-                
-                with gr.Row():
-                    seed_inpaint = gr.Slider(minimum=0, maximum=100, step=1, value=14, label="Seed")
-                    seed_vis_inpaint= gr.Plot(value=generate_seed_vis(14), label="Seed")
-
-                inpaint_button = gr.Button("Inpaint") 
-                
-            with gr.Column():
-                images_output_inpaint = gr.Image(label="Output")
-                zip_output_inpaint = gr.File(label="Download ZIP")
-
-    inpaint_button.click(fn=inpaint, inputs=[uploaded_img_inpaint, num_inference_steps_inpaint, seed_inpaint, prompt_inpaint], outputs=[images_output_inpaint, zip_output_inpaint])
-    seed_inpaint.change(fn=generate_seed_vis, inputs=[seed_inpaint], outputs=[seed_vis_inpaint])
 
 def run_dash():
     app.run(host="127.0.0.1", port="8000")
