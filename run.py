@@ -999,6 +999,15 @@ with gr.Blocks() as demo:
             ],
         )
 
+    with gr.Tab("Credits"):
+        gr.Markdown("""
+                    Author: Adithya Kameswara Rao, Carnegie Mellon University.
+
+                    Advisor: David S. Touretzky, Carnegie Mellon University.
+
+                    This work was funded by a grant from NEOM Company, and by National Science Foundation award IIS-2112633.
+                    """)
+    
 
 def run_dash():
     app.run(host="127.0.0.1", port="8000")
