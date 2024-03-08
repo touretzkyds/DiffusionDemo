@@ -549,7 +549,7 @@ with gr.Blocks() as demo:
                         source="upload", tool="sketch", type="pil", label="Upload"
                     )
                     prompt_inpaint = gr.Textbox(
-                        lines=1, label="Prompt", value="A apple fruit"
+                        lines=1, label="Prompt", value="sunglasses"
                     )
                     num_inference_steps_inpaint = gr.Slider(
                         minimum=2,

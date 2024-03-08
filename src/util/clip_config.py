@@ -67,8 +67,8 @@ examples = [
     "queen",
     "man",
     "woman",
-    "boy",
-    "child",
+    "boys",
+    "girls",
     "apple",
     "orange",
 ]
