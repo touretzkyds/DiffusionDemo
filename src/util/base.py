@@ -271,11 +271,14 @@ def export_as_zip(images, fname, tab_config=None):
 
             img_zip.write("outputs/config.txt", "config.txt")
 
-        for img in images:
+        for idx, img in enumerate(images):
             buff = io.BytesIO()
             img[0].save(buff, format="PNG")
             buff = buff.getvalue()
-            img_zip.writestr(f"{img[1]}.png", buff)
+            max_num = len(images)
+            num_leading_zeros = len(str(max_num))
+            img_name = f"{{:0{num_leading_zeros}}}.png"
+            img_zip.writestr(img_name.format(idx + 1), buff)
 
 
 def read_html(file_path):
