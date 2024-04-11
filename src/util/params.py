@@ -6,7 +6,7 @@ from diffusers import (
     AutoencoderKL,
     UNet2DConditionModel,
     LCMScheduler,
-    DDIMScheduler,
+    EulerDiscreteScheduler,
     StableDiffusionPipeline,
 )
 
@@ -43,7 +43,7 @@ text_encoder = CLIPTextModel.from_pretrained(model_path, subfolder="text_encoder
 if isLCM:
     scheduler = LCMScheduler.from_pretrained(model_path, subfolder="scheduler")
 else:
-    scheduler = DDIMScheduler.from_pretrained(model_path, subfolder="scheduler")
+    scheduler = EulerDiscreteScheduler.from_pretrained(model_path, subfolder="scheduler")
 
 unet = UNet2DConditionModel.from_pretrained(model_path, subfolder="unet").to(
     torch_device
