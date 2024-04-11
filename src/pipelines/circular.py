@@ -6,7 +6,7 @@ from src.util.params import *
 
 
 def display_circular_images(
-    prompt, seed, num_inference_steps, num_images, degree, progress=gr.Progress()
+    prompt, seed, num_inference_steps, num_images, start_degree, end_degree, progress=gr.Progress()
 ):
     np.random.seed(seed)
     text_embeddings = get_text_embeddings(prompt)
@@ -15,10 +15,10 @@ def display_circular_images(
     latents_y = generate_latents(seed * np.random.randint(0, 100000))
 
     scale_x = torch.cos(
-        torch.linspace(0, 2, num_images) * torch.pi * (degree / 360)
+        torch.linspace(start_degree, end_degree, num_images) * torch.pi / 180
     ).to(torch_device)
     scale_y = torch.sin(
-        torch.linspace(0, 2, num_images) * torch.pi * (degree / 360)
+        torch.linspace(start_degree, end_degree, num_images) * torch.pi / 180
     ).to(torch_device)
 
     noise_x = torch.tensordot(scale_x, latents_x, dims=0)
@@ -31,7 +31,7 @@ def display_circular_images(
     for i in range(num_images):
         progress(i / num_images)
         image = generate_images(noise[i], text_embeddings, num_inference_steps)
-        images.append((image, "{}".format(i)))
+        images.append((image, str(start_degree + i*(end_degree-start_degree)/(num_images-1))))
 
     progress(1, desc="Exporting as gif")
     export_as_gif(images, filename="circular.gif")
@@ -41,7 +41,8 @@ def display_circular_images(
         "Tab": "Circular",
         "Prompt": prompt,
         "Number of Steps around the Circle": num_images,
-        "Proportion of Circle": degree,
+        "Start Proportion of Circle": start_degree,
+        "End Proportion of Circle": end_degree,
         "Number of Inference Steps per Image": num_inference_steps,
         "Seed": seed,
     }

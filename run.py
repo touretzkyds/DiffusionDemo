@@ -277,16 +277,24 @@ with gr.Blocks() as demo:
                     )
 
                     with gr.Row():
-                        degree_circular = gr.Slider(
+                        start_degree_circular = gr.Slider(
+                            minimum=0,
+                            maximum=360,
+                            step=1,
+                            value=180,
+                            label="Start Proportion of Circle",
+                            info="Enter the value in degrees",
+                        )
+                        end_degree_circular = gr.Slider(
                             minimum=0,
                             maximum=360,
                             step=1,
                             value=360,
-                            label="Proportion of Circle",
+                            label="End Proportion of Circle",
                             info="Enter the value in degrees",
                         )
                         step_size_circular = gr.Textbox(
-                            label="Step Size", value=360 / 5
+                            label="Step Size", value=180 / 4
                         )
 
                     num_inference_steps_circular = gr.Slider(
@@ -314,12 +322,17 @@ with gr.Blocks() as demo:
 
         num_images_circular.change(
             fn=calculate_step_size,
-            inputs=[num_images_circular, degree_circular],
+            inputs=[num_images_circular, start_degree_circular, end_degree_circular],
             outputs=[step_size_circular],
         )
-        degree_circular.change(
+        start_degree_circular.change(
             fn=calculate_step_size,
-            inputs=[num_images_circular, degree_circular],
+            inputs=[num_images_circular, start_degree_circular, end_degree_circular],
+            outputs=[step_size_circular],
+        )
+        end_degree_circular.change(
+            fn=calculate_step_size,
+            inputs=[num_images_circular, start_degree_circular, end_degree_circular],
             outputs=[step_size_circular],
         )
         generate_images_button_circular.click(
@@ -329,7 +342,8 @@ with gr.Blocks() as demo:
                 seed_circular,
                 num_inference_steps_circular,
                 num_images_circular,
-                degree_circular,
+                start_degree_circular,
+                end_degree_circular,
             ],
             outputs=[images_output_circular, gif_circular, zip_output_circular],
         )
