@@ -281,8 +281,8 @@ with gr.Blocks() as demo:
                             minimum=0,
                             maximum=360,
                             step=1,
-                            value=180,
-                            label="Start Proportion of Circle",
+                            value=0,
+                            label="Start Angle",
                             info="Enter the value in degrees",
                         )
                         end_degree_circular = gr.Slider(
@@ -290,7 +290,7 @@ with gr.Blocks() as demo:
                             maximum=360,
                             step=1,
                             value=360,
-                            label="End Proportion of Circle",
+                            label="End Angle",
                             info="Enter the value in degrees",
                         )
                         step_size_circular = gr.Textbox(
