@@ -1,3 +1,4 @@
+import os
 import base64
 import gradio as gr
 from PIL import Image
@@ -97,6 +98,46 @@ with gr.Blocks() as demo:
     gr.Markdown("## Stable Diffusion Demo")
 
     with gr.Tab("Latent Space"):
+
+        with gr.TabItem("Beginner"):
+            gr.Markdown("Generate images from text.")
+
+            with gr.Row():
+                with gr.Column():
+                    prompt_beginner = gr.Textbox(
+                        lines=1,
+                        label="Prompt",
+                        value="Self-portrait oil painting, a beautiful cyborg with golden hair, 8k",
+                    )
+
+                    with gr.Row():
+                        seed_beginner = gr.Slider(
+                            minimum=0, maximum=100, step=1, value=14, label="Seed"
+                        )
+                        seed_vis_beginner = gr.Plot(
+                            value=generate_seed_vis(14), label="Seed"
+                        )
+
+                    generate_images_button_beginner = gr.Button("Generate Image")
+
+                with gr.Column():
+                    images_output_beginner = gr.Image(label="Image")
+
+        @generate_images_button_beginner.click(
+            inputs=[prompt_beginner, seed_beginner],
+            outputs=[images_output_beginner],
+        )
+        def generate_images_wrapper(
+            prompt, seed, progress=gr.Progress()
+        ):
+            images, _ = display_poke_images(
+                prompt, seed, num_inference_steps=8, poke=False, intermediate=False
+            )
+            return images
+
+        seed_beginner.change(
+            fn=generate_seed_vis, inputs=[seed_beginner], outputs=[seed_vis_beginner]
+        )
 
         with gr.TabItem("Denoising"):
             gr.Markdown("Observe the intermediate images during denoising.")
@@ -1029,6 +1070,7 @@ def run_dash():
 
 def run_gradio():
     demo.queue()
+    os.makedirs("outputs", exist_ok=True)
     _, _, public_url = demo.launch(share=True)
     return public_url
 
