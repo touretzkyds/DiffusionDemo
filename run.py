@@ -94,7 +94,7 @@ def download_image(clickData):
     return dcc.send_file(f"{txt}.png")
 
 
-with gr.Blocks() as demo:
+with gr.Blocks(css="#step_size_circular {background-color: #666666}") as demo:
     gr.Markdown("## Stable Diffusion Demo")
 
     with gr.Tab("Latent Space"):
@@ -335,7 +335,8 @@ with gr.Blocks() as demo:
                             info="Enter the value in degrees",
                         )
                         step_size_circular = gr.Textbox(
-                            label="Step Size", value=360 / 5
+                            label="Step Size", value=360 / 5,
+                            elem_id="step_size_circular"
                         )
 
                     num_inference_steps_circular = gr.Slider(
