@@ -226,7 +226,7 @@ def calculate_residual(
 
 
 def calculate_step_size(num_images, start_degree_circular, end_degree_circular):
-    return (end_degree_circular - start_degree_circular) / (num_images - 1)
+    return (end_degree_circular - start_degree_circular) / (num_images)
 
 
 def generate_seed_vis(seed):

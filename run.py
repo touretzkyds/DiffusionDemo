@@ -310,7 +310,7 @@ with gr.Blocks() as demo:
                         value="Self-portrait oil painting, a beautiful cyborg with golden hair, 8k",
                     )
                     num_images_circular = gr.Slider(
-                        minimum=2,
+                        minimum=1,
                         maximum=100,
                         step=1,
                         value=5,
@@ -335,7 +335,7 @@ with gr.Blocks() as demo:
                             info="Enter the value in degrees",
                         )
                         step_size_circular = gr.Textbox(
-                            label="Step Size", value=180 / 4
+                            label="Step Size", value=360 / 5
                         )
 
                     num_inference_steps_circular = gr.Slider(

@@ -9,6 +9,7 @@ def display_circular_images(
     prompt, seed, num_inference_steps, num_images, start_degree, end_degree, progress=gr.Progress()
 ):
     np.random.seed(seed)
+    num_images += 1
     text_embeddings = get_text_embeddings(prompt)
 
     latents_x = generate_latents(seed)
