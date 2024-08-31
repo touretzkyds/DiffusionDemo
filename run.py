@@ -94,7 +94,7 @@ def download_image(clickData):
     return dcc.send_file(f"{txt}.png")
 
 
-with gr.Blocks(css="#step_size_circular {background-color: #666666}") as demo:
+with gr.Blocks(css="#step_size_circular {background-color: #666666} #step_size_circular textarea {background-color: #666666}") as demo:
     gr.Markdown("## Stable Diffusion Demo")
 
     with gr.Tab("Latent Space"):
