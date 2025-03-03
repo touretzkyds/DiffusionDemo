@@ -3,10 +3,11 @@ import gradio as gr
 from src.util.base import *
 from src.util.params import *
 from PIL import Image, ImageDraw
+from src.util.session import session_manager
 
 
 def visualize_poke(
-    pokeX, pokeY, pokeHeight, pokeWidth, imageHeight=imageHeight, imageWidth=imageWidth
+    pokeX, pokeY, pokeHeight, pokeWidth, imageHeight=imageHeight, imageWidth=imageWidth, request: gr.Request = None
 ):
     if (
         (pokeX - pokeWidth // 2 < 0)
@@ -21,10 +22,13 @@ def visualize_poke(
     ]
 
     blank = Image.new("RGB", (imageWidth, imageHeight))
+    session_dir = session_manager.get_session_path(request.session_hash if request else "default")
+    original_path = session_dir / "original.png"
+    poked_path = session_dir / "poked.png"
 
-    if os.path.exists("outputs/original.png"):
-        oImg = Image.open("outputs/original.png")
-        pImg = Image.open("outputs/poked.png")
+    if original_path.exists() and poked_path.exists():
+        oImg = Image.open(original_path)
+        pImg = Image.open(poked_path)
     else:
         oImg = blank
         pImg = blank
@@ -49,6 +53,7 @@ def display_poke_images(
     pokeWidth=None,
     intermediate=False,
     progress=gr.Progress(),
+    request: gr.Request = None
 ):
     text_embeddings = get_text_embeddings(prompt)
     latents, modified_latents = generate_modified_latents(
@@ -60,8 +65,10 @@ def display_poke_images(
         latents, text_embeddings, num_inference_steps, intermediate=intermediate
     )
 
+    session_dir = session_manager.get_session_path(request.session_hash if request else "default")
+    
     if not intermediate:
-        images.save("outputs/original.png")
+        images.save(session_dir / "original.png")
 
     if poke:
         progress(0.5)
@@ -73,7 +80,7 @@ def display_poke_images(
         )
 
         if not intermediate:
-            modImages.save("outputs/poked.png")
+            modImages.save(session_dir / "poked.png")
     else:
         modImages = None
 

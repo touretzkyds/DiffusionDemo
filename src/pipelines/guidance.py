@@ -4,7 +4,7 @@ from src.util.params import *
 
 
 def display_guidance_images(
-    prompt, seed, num_inference_steps, guidance_values, progress=gr.Progress()
+    prompt, seed, num_inference_steps, guidance_values, progress=gr.Progress(), request: gr.Request = None
 ):
     text_embeddings = get_text_embeddings(prompt)
     latents = generate_latents(seed)
@@ -32,8 +32,8 @@ def display_guidance_images(
         "Number of Inference Steps per Image": num_inference_steps,
         "Seed": seed,
     }
-    export_as_zip(images, fname, tab_config)
-    return images, f"outputs/{fname}.zip"
+    zip_path = export_as_zip(images, fname, tab_config, request=request)
+    return images, zip_path
 
 
 __all__ = ["display_guidance_images"]

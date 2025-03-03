@@ -6,7 +6,7 @@ from src.util.params import *
 
 
 def display_circular_images(
-    prompt, seed, num_inference_steps, num_images, start_degree, end_degree, progress=gr.Progress()
+    prompt, seed, num_inference_steps, num_images, start_degree, end_degree, progress=gr.Progress(), request: gr.Request = None
 ):
     np.random.seed(seed)
     num_images += 1
@@ -35,7 +35,7 @@ def display_circular_images(
         images.append((image, str(start_degree + i*(end_degree-start_degree)/(num_images-1))))
 
     progress(1, desc="Exporting as gif")
-    export_as_gif(images, filename="circular.gif")
+    # export_as_gif(images, filename="circular.gif")
 
     fname = "circular"
     tab_config = {
@@ -47,8 +47,10 @@ def display_circular_images(
         "Number of Inference Steps per Image": num_inference_steps,
         "Seed": seed,
     }
-    export_as_zip(images, fname, tab_config)
-    return images, "outputs/circular.gif", f"outputs/{fname}.zip"
+    
+    zip_path = export_as_zip(images, fname, tab_config, request=request)
+    gif_path = export_as_gif(images, filename="circular.gif", request=request)
+    return images, gif_path, zip_path
 
 
 __all__ = ["display_circular_images"]

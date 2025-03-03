@@ -19,7 +19,7 @@ def interpolate_prompts(promptA, promptB, num_interpolation_steps):
 
 
 def display_interpolate_images(
-    seed, promptA, promptB, num_inference_steps, num_images, progress=gr.Progress()
+    seed, promptA, promptB, num_inference_steps, num_images, progress=gr.Progress(), request: gr.Request = None
 ):
     latents = generate_latents(seed)
     num_images = num_images + 2  # add 2 for first and last image
@@ -33,7 +33,7 @@ def display_interpolate_images(
         images.append((image, "{}".format(i + 1)))
 
     progress(1, desc="Exporting as gif")
-    export_as_gif(images, filename="interpolate.gif", reverse=True)
+    # export_as_gif(images, filename="interpolate.gif", reverse=True)
 
     fname = "interpolate"
     tab_config = {
@@ -44,8 +44,8 @@ def display_interpolate_images(
         "Number of Inference Steps per Image": num_inference_steps,
         "Seed": seed,
     }
-    export_as_zip(images, fname, tab_config)
-    return images, "outputs/interpolate.gif", f"outputs/{fname}.zip"
-
+    zip_path = export_as_zip(images, fname, tab_config, request=request)
+    gif_path = export_as_gif(images, filename="interpolate.gif", reverse=True, request=request)
+    return images, gif_path, zip_path
 
 __all__ = ["display_interpolate_images"]

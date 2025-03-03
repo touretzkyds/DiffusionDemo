@@ -9,6 +9,8 @@ from tqdm.auto import tqdm
 from src.util.params import *
 from src.util.clip_config import *
 import matplotlib.pyplot as plt
+import json
+from src.util.session import session_manager
 
 
 def get_text_embeddings(
@@ -240,45 +242,44 @@ def generate_seed_vis(seed):
     return plt
 
 
-def export_as_gif(images, filename, frames_per_second=2, reverse=False):
-    imgs = [img[0] for img in images]
-
+def export_as_gif(images, filename="output.gif", duration=500, reverse=False, request: gr.Request = None):
+    session_dir = session_manager.get_session_path(request.session_hash if request else "default")
+    gif_path = session_dir / filename
+    
+    pil_images = []
+    if isinstance(images, list) and isinstance(images[0], tuple):
+        pil_images = [img for img, _ in images]
+    else:
+        pil_images = images
+    
     if reverse:
-        imgs += imgs[2:-1][::-1]
-
-    imgs[0].save(
-        f"outputs/{filename}",
-        format="GIF",
+        pil_images = pil_images + pil_images[::-1]
+    
+    pil_images[0].save(
+        gif_path,
         save_all=True,
-        append_images=imgs[1:],
-        duration=1000 // frames_per_second,
+        append_images=pil_images[1:],
+        duration=duration,
         loop=0,
     )
+    return str(gif_path)
 
 
-def export_as_zip(images, fname, tab_config=None):
-
-    if not os.path.exists(f"outputs/{fname}.zip"):
-        os.makedirs("outputs", exist_ok=True)
-
-    with zipfile.ZipFile(f"outputs/{fname}.zip", "w") as img_zip:
-
-        if tab_config:
-            with open("outputs/config.txt", "w") as f:
-                for key, value in tab_config.items():
-                    f.write(f"{key}: {value}\n")
-                f.close()
-
-            img_zip.write("outputs/config.txt", "config.txt")
-
-        for idx, img in enumerate(images):
-            buff = io.BytesIO()
-            img[0].save(buff, format="PNG")
-            buff = buff.getvalue()
-            max_num = len(images)
-            num_leading_zeros = len(str(max_num))
-            img_name = f"{{:0{num_leading_zeros}}}.png"
-            img_zip.writestr(img_name.format(idx + 1), buff)
+def export_as_zip(images, fname, tab_config, request: gr.Request = None):
+    session_dir = session_manager.get_session_path(request.session_hash if request else "default")
+    
+    if isinstance(images, list):
+        for i, (image, caption) in enumerate(images):
+            image.save(session_dir / f"{fname}_{caption}.png")
+    else:
+        images.save(session_dir / f"{fname}.png")
+    
+    with open(session_dir / f"{fname}_config.txt", "w") as f:
+        json.dump(tab_config, f, indent=4)
+    
+    zip_path = session_dir / f"{fname}.zip"
+    os.system(f"cd {session_dir} && zip {fname}.zip {fname}*.png {fname}_config.txt")
+    return str(zip_path)
 
 
 def read_html(file_path):

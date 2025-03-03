@@ -8,7 +8,7 @@ from diffusers import AutoPipelineForInpainting
 inpaint_pipe = AutoPipelineForInpainting.from_pipe(pipe).to(torch_device)
 
 
-def inpaint(dict, num_inference_steps, seed, prompt="", progress=gr.Progress()):
+def inpaint(dict, num_inference_steps, seed, prompt="", progress=gr.Progress(), request: gr.Request = None):
     progress(0)
     mask = dict["layers"][0].convert("RGB").resize((imageHeight, imageWidth))
     init_image = dict["background"].convert("RGB").resize((imageHeight, imageWidth))
@@ -34,8 +34,9 @@ def inpaint(dict, num_inference_steps, seed, prompt="", progress=gr.Progress()):
     imgs_list.append((output.images[0], "Inpainted Image"))
     imgs_list.append((mask, "Mask"))
 
-    export_as_zip(imgs_list, fname, tab_config)
-    return output.images[0], f"outputs/{fname}.zip"
+    zip_path = export_as_zip(imgs_list, fname, tab_config, request=request)
+    progress(1.0, desc="Done")
+    return output.images[0], zip_path
 
 
 __all__ = ["inpaint"]

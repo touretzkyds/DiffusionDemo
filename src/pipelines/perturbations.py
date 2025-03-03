@@ -12,6 +12,7 @@ def display_perturb_images(
     num_images,
     perturbation_size,
     progress=gr.Progress(),
+    request: gr.Request = None
 ):
     text_embeddings = get_text_embeddings(prompt)
 
@@ -54,9 +55,8 @@ def display_perturb_images(
         "Number of Inference Steps per Image": num_inference_steps,
         "Seed": seed,
     }
-    export_as_zip(images, fname, tab_config)
-
-    return images, f"outputs/{fname}.zip"
+    zip_path = export_as_zip(images, fname, tab_config, request=request)
+    return images, zip_path
 
 
 __all__ = ["display_perturb_images"]

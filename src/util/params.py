@@ -62,7 +62,9 @@ pipe = StableDiffusionPipeline(
 ).to(torch_device)
 
 dash_tunnel = setup_tunnel("0.0.0.0", 8000, secrets.token_urlsafe(32), None)
-dash_tunnel = setup_tunnel("0.0.0.0", 8000, secrets.token_urlsafe(32))
+
+cleanup_interval = 30  # Run user session directory cleanup every 30 seconds
+cleanup_threshold = 30  # Delete user session directory if not accessed for 30 seconds
 
 __all__ = [
     "prompt",

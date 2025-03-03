@@ -4,7 +4,7 @@ from src.util.params import *
 
 
 def display_negative_images(
-    prompt, seed, num_inference_steps, negative_prompt="", progress=gr.Progress()
+    prompt, seed, num_inference_steps, negative_prompt="", progress=gr.Progress(), request: gr.Request = None
 ):
     text_embeddings = get_text_embeddings(prompt)
     text_embeddings_neg = get_text_embeddings(prompt, negative_prompt=negative_prompt)
@@ -29,9 +29,8 @@ def display_negative_images(
     imgs_list = []
     imgs_list.append((images, "Without Negative Prompt"))
     imgs_list.append((images_neg, "With Negative Prompt"))
-    export_as_zip(imgs_list, fname, tab_config)
-
-    return images, images_neg, f"outputs/{fname}.zip"
+    zip_path = export_as_zip(imgs_list, fname, tab_config, request=request)
+    return images, images_neg, zip_path
 
 
 __all__ = ["display_negative_images"]

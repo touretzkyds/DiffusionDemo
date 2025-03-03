@@ -11,32 +11,53 @@ import plotly.express as px
 from src.util.base import *
 from src.util.params import *
 from src.util.clip_config import *
+from src.util.session import session_manager
 
 age = get_axis_embeddings(young, old)
 gender = get_axis_embeddings(masculine, feminine)
 royalty = get_axis_embeddings(common, elite)
 
-images = []
-for example in examples:
-    image = pipe(
-        prompt=example,
-        num_inference_steps=num_inference_steps,
-        guidance_scale=guidance_scale,
-    ).images[0]
-    buffer = BytesIO()
-    image.save(buffer, format="JPEG")
-    encoded_image = base64.b64encode(buffer.getvalue()).decode("utf-8")
-    images.append("data:image/jpeg;base64, " + encoded_image)
+def initialize_state():
+    initial_images = []
+    for example in examples:
+        image = pipe(
+            prompt=example,
+            num_inference_steps=num_inference_steps,
+            guidance_scale=guidance_scale,
+        ).images[0]
+        buffer = BytesIO()
+        image.save(buffer, format="JPEG")
+        encoded_image = base64.b64encode(buffer.getvalue()).decode("utf-8")
+        initial_images.append("data:image/jpeg;base64, " + encoded_image)
 
-axis = np.vstack([gender, royalty, age])
-axis[1] = calculate_residual(axis, axis_names)
+    initial_axis = np.vstack([gender, royalty, age])
+    initial_axis[1] = calculate_residual(initial_axis, axis_names)
 
-coords = get_concat_embeddings(examples) @ axis.T
-coords[:, 1] = 5 * (1.0 - coords[:, 1])
+    initial_coords = get_concat_embeddings(examples) @ initial_axis.T
+    initial_coords[:, 1] = 5 * (1.0 - initial_coords[:, 1])
 
+    fig = px.scatter_3d(
+        x=initial_coords[:, 0],
+        y=initial_coords[:, 1],
+        z=initial_coords[:, 2],
+        labels={
+            "x": axis_names[0],
+            "y": axis_names[1],
+            "z": axis_names[2],
+        },
+        text=examples,
+        height=750,
+    )
 
-def update_fig():
-    global coords, examples, fig
+    fig.update_layout(
+        margin=dict(l=0, r=0, b=0, t=0), 
+        scene_camera=dict(eye=dict(x=2, y=2, z=0.1))
+    )
+    fig.update_traces(hoverinfo="none", hovertemplate=None)
+
+    return initial_axis, initial_coords, initial_images, fig
+
+def update_fig(coords, examples, fig):
     fig.data[0].x = coords[:, 0]
     fig.data[0].y = coords[:, 1]
     fig.data[0].z = coords[:, 2]
@@ -49,9 +70,12 @@ def update_fig():
             <iframe id="html" src={dash_tunnel} style="width:100%; height:725px;"></iframe>
             """
 
+def add_word(new_example, coords_state, images_state, examples_state, axis_state, request: gr.Request = None):
+    coords = coords_state.copy()
+    images = images_state.copy()
+    examples = examples_state.copy()
+    axis = axis_state.copy()
 
-def add_word(new_example):
-    global coords, images, examples
     new_coord = get_concat_embeddings([new_example]) @ axis.T
     new_coord[:, 1] = 5 * (1.0 - new_coord[:, 1])
     coords = np.vstack([coords, new_coord])
@@ -61,46 +85,70 @@ def add_word(new_example):
         num_inference_steps=num_inference_steps,
         guidance_scale=guidance_scale,
     ).images[0]
-    buffer = BytesIO()
-    image.save(buffer, format="JPEG")
-    encoded_image = base64.b64encode(buffer.getvalue()).decode("utf-8")
+    
+    if request:
+        session_dir = session_manager.get_session_path(request.session_hash)
+        image_path = session_dir / f"{new_example}.png"
+        image.save(image_path)
+        with open(image_path, "rb") as f:
+            encoded_image = base64.b64encode(f.read()).decode("utf-8")
+    else:
+        buffer = BytesIO()
+        image.save(buffer, format="JPEG")
+        encoded_image = base64.b64encode(buffer.getvalue()).decode("utf-8")
+    
     images.append("data:image/jpeg;base64, " + encoded_image)
     examples.append(new_example)
-    return update_fig()
+    
+    return coords, images, examples
 
+def remove_word(new_example, coords_state, images_state, examples_state, request: gr.Request = None):
+    coords = coords_state.copy()
+    images = images_state.copy()
+    examples = examples_state.copy()
 
-def remove_word(new_example):
-    global coords, images, examples
     examplesMap = {example: index for index, example in enumerate(examples)}
     index = examplesMap[new_example]
 
     coords = np.delete(coords, index, 0)
     images.pop(index)
     examples.pop(index)
-    return update_fig()
+    
+    if request:
+        session_dir = session_manager.get_session_path(request.session_hash)
+        image_path = session_dir / f"{new_example}.png"
+        if image_path.exists():
+            image_path.unlink()
+            
+    return coords, images, examples
 
+def add_rem_word(new_examples, coords_state, images_state, examples_state, axis_state, request: gr.Request = None):
+    coords = coords_state.copy()
+    images = images_state.copy()
+    examples = examples_state.copy()
+    axis = axis_state.copy()
 
-def add_rem_word(new_examples):
-    global examples
     new_examples = new_examples.replace(",", " ").split()
 
     for new_example in new_examples:
         if new_example in examples:
-            remove_word(new_example)
+            coords, images, examples = remove_word(new_example, coords, images, examples, request=request)
             gr.Info("Removed {}".format(new_example))
         else:
             tokens = tokenizer.encode(new_example)
             if len(tokens) != 3:
                 gr.Warning(f"{new_example} not found in embeddings")
             else:
-                add_word(new_example)
+                coords, images, examples = add_word(new_example, coords, images, examples, axis, request=request)
                 gr.Info("Added {}".format(new_example))
 
-    return update_fig()
+    return coords, images, examples
 
-
-def set_axis(axis_name, which_axis, from_words, to_words):
-    global coords, examples, fig, axis_names
+def set_axis(axis_name, which_axis, from_words, to_words, coords_state, examples_state, axis_state, axis_names_state):
+    coords = coords_state.copy()
+    examples = examples_state.copy()
+    axis = axis_state.copy()
+    axis_names = axis_names_state.copy()
 
     if axis_name != "residual":
         from_words, to_words = (
@@ -125,66 +173,42 @@ def set_axis(axis_name, which_axis, from_words, to_words):
     coords = get_concat_embeddings(examples) @ axis.T
     coords[:, 1] = 5 * (1.0 - coords[:, 1])
 
-    fig.update_layout(
-        scene=dict(
-            xaxis_title=axis_names[0],
-            yaxis_title=axis_names[1],
-            zaxis_title=axis_names[2],
-        )
-    )
-    return update_fig()
+    return coords, axis, axis_names
 
+def change_word(examples_str, coords_state, images_state, examples_state, axis_state, request: gr.Request = None):
+    coords = coords_state.copy()
+    images = images_state.copy()
+    examples = examples_state.copy()
+    axis = axis_state.copy()
 
-def change_word(examples):
-    examples = examples.replace(",", " ").split()
+    examples_list = examples_str.replace(",", " ").split()
 
-    for example in examples:
-        remove_word(example)
-        add_word(example)
+    for example in examples_list:
+        coords, images, examples = remove_word(example, coords, images, examples, request=request)
+        coords, images, examples = add_word(example, coords, images, examples, axis, request=request)
         gr.Info("Changed image for {}".format(example))
 
-    return update_fig()
+    return coords, images, examples
 
+def clear_words(coords_state, images_state, examples_state, request: gr.Request = None):
+    coords = coords_state.copy()
+    images = images_state.copy()
+    examples = examples_state.copy()
 
-def clear_words():
     while examples:
-        remove_word(examples[-1])
-    return update_fig()
+        coords, images, examples = remove_word(examples[-1], coords, images, examples, request=request)
+    return coords, images, examples
 
-
-def generate_word_emb_vis(prompt):
+def generate_word_emb_vis(prompt, request: gr.Request = None):
     buf = BytesIO()
     emb = get_word_embeddings(prompt).reshape(77, 768)[1]
     plt.imsave(buf, [emb], cmap="inferno")
     img = "data:image/jpeg;base64, " + base64.b64encode(buf.getvalue()).decode("utf-8")
     return img
 
-
-fig = px.scatter_3d(
-    x=coords[:, 0],
-    y=coords[:, 1],
-    z=coords[:, 2],
-    labels={
-        "x": axis_names[0],
-        "y": axis_names[1],
-        "z": axis_names[2],
-    },
-    text=examples,
-    height=750,
-)
-
-fig.update_layout(
-    margin=dict(l=0, r=0, b=0, t=0), scene_camera=dict(eye=dict(x=2, y=2, z=0.1))
-)
-
-fig.update_traces(hoverinfo="none", hovertemplate=None)
-
 __all__ = [
-    "fig",
+    "initialize_state",
     "update_fig",
-    "coords",
-    "images",
-    "examples",
     "add_word",
     "remove_word",
     "add_rem_word",
@@ -192,5 +216,4 @@ __all__ = [
     "clear_words",
     "generate_word_emb_vis",
     "set_axis",
-    "axis",
 ]
