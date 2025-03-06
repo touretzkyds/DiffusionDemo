@@ -733,9 +733,21 @@ with gr.Blocks(css="#step_size_circular {background-color: #666666} #step_size_c
                 to_words_1,
                 session_hash_state,
             ],
-            outputs=[output, gallery],
+            outputs=[
+                output, 
+                gallery,
+                which_axis_2,
+                which_axis_3,
+                which_axis_4,
+                which_axis_5,
+                which_axis_6,
+            ],
         )
         def set_axis_wrapper(axis_name, which_axis, from_words, to_words, session_hash):
+            for ax in whichAxisMap:
+                if whichAxisMap[ax] == which_axis:
+                    whichAxisMap[ax] = "---"
+                    
             whichAxisMap["which_axis_1"] = which_axis
 
             flask_url = set_axis_user(
@@ -745,7 +757,15 @@ with gr.Blocks(css="#step_size_circular {background-color: #666666} #step_size_c
             <iframe id="html-frame" src="{flask_url}" style="width:100%; height:700px;"></iframe>
             """
             gallery_images = load_user_gallery(session_hash)
-            return html_content, gallery_images
+            return (
+                html_content, 
+                gallery_images,
+                whichAxisMap["which_axis_2"],
+                whichAxisMap["which_axis_3"],
+                whichAxisMap["which_axis_4"],
+                whichAxisMap["which_axis_5"],
+                whichAxisMap["which_axis_6"],
+            )
         
         @submit_2.click(
             inputs=[
@@ -755,9 +775,21 @@ with gr.Blocks(css="#step_size_circular {background-color: #666666} #step_size_c
                 to_words_2,
                 session_hash_state,
             ],
-            outputs=[output, gallery],
+            outputs=[
+                output, 
+                gallery,
+                which_axis_1,
+                which_axis_3,
+                which_axis_4,
+                which_axis_5,
+                which_axis_6,
+            ],
         )
         def set_axis_wrapper(axis_name, which_axis, from_words, to_words, session_hash):
+            for ax in whichAxisMap:
+                if whichAxisMap[ax] == which_axis:
+                    whichAxisMap[ax] = "---"
+                    
             whichAxisMap["which_axis_2"] = which_axis
 
             flask_url = set_axis_user(
@@ -767,7 +799,15 @@ with gr.Blocks(css="#step_size_circular {background-color: #666666} #step_size_c
             <iframe id="html-frame" src="{flask_url}" style="width:100%; height:700px;"></iframe>
             """
             gallery_images = load_user_gallery(session_hash)
-            return html_content, gallery_images
+            return (
+                html_content, 
+                gallery_images,
+                whichAxisMap["which_axis_1"],
+                whichAxisMap["which_axis_3"],
+                whichAxisMap["which_axis_4"],
+                whichAxisMap["which_axis_5"],
+                whichAxisMap["which_axis_6"],
+            )
         
         @submit_3.click(
             inputs=[
@@ -777,9 +817,21 @@ with gr.Blocks(css="#step_size_circular {background-color: #666666} #step_size_c
                 to_words_3,
                 session_hash_state,
             ],
-            outputs=[output, gallery],
+            outputs=[
+                output, 
+                gallery,
+                which_axis_1,
+                which_axis_2,
+                which_axis_4,
+                which_axis_5,
+                which_axis_6,
+            ],
         )
         def set_axis_wrapper(axis_name, which_axis, from_words, to_words, session_hash):
+            for ax in whichAxisMap:
+                if whichAxisMap[ax] == which_axis:
+                    whichAxisMap[ax] = "---"
+                    
             whichAxisMap["which_axis_3"] = which_axis
 
             flask_url = set_axis_user(
@@ -789,7 +841,15 @@ with gr.Blocks(css="#step_size_circular {background-color: #666666} #step_size_c
             <iframe id="html-frame" src="{flask_url}" style="width:100%; height:700px;"></iframe>
             """
             gallery_images = load_user_gallery(session_hash)
-            return html_content, gallery_images
+            return (
+                html_content, 
+                gallery_images,
+                whichAxisMap["which_axis_1"],
+                whichAxisMap["which_axis_2"],
+                whichAxisMap["which_axis_4"],
+                whichAxisMap["which_axis_5"],
+                whichAxisMap["which_axis_6"],
+            )
         
         @submit_4.click(
             inputs=[
@@ -799,9 +859,21 @@ with gr.Blocks(css="#step_size_circular {background-color: #666666} #step_size_c
                 to_words_4,
                 session_hash_state,
             ],
-            outputs=[output, gallery],
+            outputs=[
+                output, 
+                gallery,
+                which_axis_1,
+                which_axis_2,
+                which_axis_3,
+                which_axis_5,
+                which_axis_6,
+            ],
         )
         def set_axis_wrapper(axis_name, which_axis, from_words, to_words, session_hash):
+            for ax in whichAxisMap:
+                if whichAxisMap[ax] == which_axis:
+                    whichAxisMap[ax] = "---"
+                    
             whichAxisMap["which_axis_4"] = which_axis
 
             flask_url = set_axis_user(
@@ -811,7 +883,15 @@ with gr.Blocks(css="#step_size_circular {background-color: #666666} #step_size_c
             <iframe id="html-frame" src="{flask_url}" style="width:100%; height:700px;"></iframe>
             """
             gallery_images = load_user_gallery(session_hash)
-            return html_content, gallery_images
+            return (
+                html_content, 
+                gallery_images,
+                whichAxisMap["which_axis_1"],
+                whichAxisMap["which_axis_2"],
+                whichAxisMap["which_axis_3"],
+                whichAxisMap["which_axis_5"],
+                whichAxisMap["which_axis_6"],
+            )
         
         @submit_5.click(
             inputs=[
@@ -821,9 +901,21 @@ with gr.Blocks(css="#step_size_circular {background-color: #666666} #step_size_c
                 to_words_5,
                 session_hash_state,
             ],
-            outputs=[output, gallery],
+            outputs=[
+                output, 
+                gallery,
+                which_axis_1,
+                which_axis_2,
+                which_axis_3,
+                which_axis_4,
+                which_axis_6,
+            ],
         )
         def set_axis_wrapper(axis_name, which_axis, from_words, to_words, session_hash):
+            for ax in whichAxisMap:
+                if whichAxisMap[ax] == which_axis:
+                    whichAxisMap[ax] = "---"
+                    
             whichAxisMap["which_axis_5"] = which_axis
 
             flask_url = set_axis_user(
@@ -833,7 +925,15 @@ with gr.Blocks(css="#step_size_circular {background-color: #666666} #step_size_c
             <iframe id="html-frame" src="{flask_url}" style="width:100%; height:700px;"></iframe>
             """
             gallery_images = load_user_gallery(session_hash)
-            return html_content, gallery_images
+            return (
+                html_content, 
+                gallery_images,
+                whichAxisMap["which_axis_1"],
+                whichAxisMap["which_axis_2"],
+                whichAxisMap["which_axis_3"],
+                whichAxisMap["which_axis_4"],
+                whichAxisMap["which_axis_6"],
+            )
         
         @submit_6.click(
             inputs=[
@@ -843,9 +943,21 @@ with gr.Blocks(css="#step_size_circular {background-color: #666666} #step_size_c
                 to_words_6,
                 session_hash_state,
             ],
-            outputs=[output, gallery],
+            outputs=[
+                output, 
+                gallery,
+                which_axis_1,
+                which_axis_2,
+                which_axis_3,
+                which_axis_4,
+                which_axis_5,
+            ],
         )
         def set_axis_wrapper(axis_name, which_axis, from_words, to_words, session_hash):
+            for ax in whichAxisMap:
+                if whichAxisMap[ax] == which_axis:
+                    whichAxisMap[ax] = "---"
+                    
             whichAxisMap["which_axis_6"] = which_axis
 
             flask_url = set_axis_user(
@@ -855,7 +967,15 @@ with gr.Blocks(css="#step_size_circular {background-color: #666666} #step_size_c
             <iframe id="html-frame" src="{flask_url}" style="width:100%; height:700px;"></iframe>
             """
             gallery_images = load_user_gallery(session_hash)
-            return html_content, gallery_images
+            return (
+                html_content, 
+                gallery_images,
+                whichAxisMap["which_axis_1"],
+                whichAxisMap["which_axis_2"],
+                whichAxisMap["which_axis_3"],
+                whichAxisMap["which_axis_4"],
+                whichAxisMap["which_axis_5"],
+            )
 
         @word_input.submit(
             inputs=[word_input, session_hash_state],
