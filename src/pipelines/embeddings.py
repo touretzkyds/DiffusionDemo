@@ -13,6 +13,9 @@ from src.util.base import (
     get_concat_embeddings,
     calculate_residual,
     get_axis_embeddings,
+    get_user_dir,
+    get_user_examples_dir,
+    get_user_viz_dir,
 )
 from src.util.params import num_inference_steps, guidance_scale, tokenizer, pipe
 from src.util.clip_config import (
@@ -29,7 +32,7 @@ from src.util.clip_config import (
 from PIL import Image
 import time
 
-from src.util.session import session_manager
+from serve import get_flask_tunnel_url
 
 age = get_axis_embeddings(young, old)
 gender = get_axis_embeddings(masculine, feminine)
@@ -72,33 +75,6 @@ user_data = {}
 def get_safe_filename(word):
     """Convert a word to a safe filename"""
     return "".join([c if c.isalnum() else "_" for c in word])
-
-
-def get_user_dir(session_hash):
-    """Get the main directory for a specific user's session"""
-    if not session_hash:
-        return None
-    user_dir = session_manager.get_session_path(session_hash)
-    print(f"User directory path: {user_dir.absolute()}")
-    return user_dir
-
-
-def get_user_examples_dir(session_hash):
-    """Get the examples directory for a specific user's session"""
-    if not session_hash:
-        return None
-    examples_dir = session_manager.get_file_path(session_hash, "examples")
-    examples_dir.mkdir(exist_ok=True)
-    return examples_dir
-
-
-def get_user_viz_dir(session_hash):
-    """Get the visualizations directory for a specific user's session"""
-    if not session_hash:
-        return None
-    viz_dir = session_manager.get_file_path(session_hash, "visualizations")
-    viz_dir.mkdir(exist_ok=True)
-    return viz_dir
 
 
 def generate_user_html(session_hash):
@@ -200,7 +176,9 @@ def init_user_session(request: gr.Request):
     html_path = generate_user_html(session_hash)
 
     timestamp = int(time.time())
-    flask_url = f"http://localhost:8050/plot/{session_hash}?t={timestamp}"
+    
+    flask_tunnel = get_flask_tunnel_url()
+    flask_url = f"{flask_tunnel}/plot/{session_hash}?t={timestamp}"
 
     return flask_url, session_hash, is_new
 
@@ -222,8 +200,8 @@ def update_user_fig(session_hash):
     html_path = generate_user_html(session_hash)
 
     timestamp = int(time.time())
-    return f"http://localhost:8050/plot/{session_hash}?t={timestamp}"
-
+    flask_tunnel = get_flask_tunnel_url()
+    return f"{flask_tunnel}/plot/{session_hash}?t={timestamp}"
 
 def add_word_user(new_example, session_hash):
     user_examples = user_data[session_hash]["examples"]
@@ -483,9 +461,6 @@ def load_user_gallery(session_hash):
     return example_images
 
 __all__ = [
-    "get_user_dir",
-    "get_user_examples_dir",
-    "get_user_viz_dir",
     "generate_user_html",
     "is_new_session",
     "init_user_session",

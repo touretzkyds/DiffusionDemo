@@ -1,8 +1,11 @@
 from flask import Flask, send_file
-from src.pipelines.embeddings import get_user_dir, get_user_examples_dir
+from src.util.base import get_user_dir, get_user_examples_dir
+from gradio.networking import setup_tunnel
+import secrets
 
 flask_app = Flask(__name__)
 
+flask_tunnel = None
 
 @flask_app.route("/plot/<session_hash>")
 def serve_user_plot(session_hash):
@@ -52,8 +55,17 @@ def serve_user_example_image(session_hash, image_name):
 
 
 def run_flask_server():
+    global flask_tunnel
     try:
+        print("Setting up Flask tunnel on port 8050")
+        flask_tunnel = setup_tunnel("0.0.0.0", 8050, secrets.token_urlsafe(32), None)
+        print(f"Flask tunnel URL: {flask_tunnel}")
+        
         print("Starting Flask server on port 8050")
         flask_app.run(host="0.0.0.0", port=8050, debug=False, use_reloader=False)
     except Exception as e:
         print(f"Error starting Flask server: {e}")
+
+
+def get_flask_tunnel_url():
+    return flask_tunnel

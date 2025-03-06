@@ -1,4 +1,4 @@
-import os
+import os, time
 import gradio as gr
 from src.util import *
 from src.pipelines import *
@@ -1156,6 +1156,8 @@ if __name__ == "__main__":
     flask_thread = Thread(target=run_flask_server)
     flask_thread.daemon = True
     flask_thread.start()
+    
+    time.sleep(2)
     
     try:
         run_gradio()
