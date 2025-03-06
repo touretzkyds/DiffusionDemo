@@ -287,6 +287,31 @@ def read_html(file_path):
         content = f.read()
     return content
 
+def get_user_dir(session_hash):
+    """Get the main directory for a specific user's session"""
+    if not session_hash:
+        return None
+    user_dir = session_manager.get_session_path(session_hash)
+    print(f"User directory path: {user_dir.absolute()}")
+    return user_dir
+
+
+def get_user_examples_dir(session_hash):
+    """Get the examples directory for a specific user's session"""
+    if not session_hash:
+        return None
+    examples_dir = session_manager.get_file_path(session_hash, "examples")
+    examples_dir.mkdir(exist_ok=True)
+    return examples_dir
+
+
+def get_user_viz_dir(session_hash):
+    """Get the visualizations directory for a specific user's session"""
+    if not session_hash:
+        return None
+    viz_dir = session_manager.get_file_path(session_hash, "visualizations")
+    viz_dir.mkdir(exist_ok=True)
+    return viz_dir
 
 __all__ = [
     "get_text_embeddings",
@@ -302,4 +327,7 @@ __all__ = [
     "export_as_gif",
     "export_as_zip",
     "read_html",
+    "get_user_dir",
+    "get_user_examples_dir",
+    "get_user_viz_dir",
 ]
