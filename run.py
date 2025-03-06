@@ -1,115 +1,14 @@
 import os
-import base64
 import gradio as gr
-from PIL import Image
 from src.util import *
-from io import BytesIO
 from src.pipelines import *
 from threading import Thread
-from dash import Dash, dcc, html, Input, Output, no_update, callback
+from serve import run_flask_server
 from src.util.session import session_manager
-
-app = Dash(__name__)
-
-def init_session(request: gr.Request):
-    session_dir = session_manager.get_session_path(request.session_hash)
-    return "Session initialized"
-
-def cleanup_session(request: gr.Request):
-    session_manager.cleanup_session(request.session_hash)
-
-initial_axis, initial_coords, initial_images, initial_fig = initialize_state()
-
-app.layout = html.Div(
-    className="container",
-    children=[
-        dcc.Graph(
-            id="graph", figure=initial_fig, clear_on_unhover=True, style={"height": "90vh"}
-        ),
-        dcc.Store(id="images-store", data=initial_images),
-        dcc.Store(id="examples-store", data=examples),
-        dcc.Tooltip(id="tooltip"),
-        html.Div(id="word-emb-txt", style={"background-color": "white"}),
-        html.Div(id="word-emb-vis"),
-        html.Div(
-            [
-                html.Button(id="btn-download-image", hidden=True),
-                dcc.Download(id="download-image"),
-            ]
-        ),
-    ],
-)
-
-@callback(
-    Output("tooltip", "show"),
-    Output("tooltip", "bbox"),
-    Output("tooltip", "children"),
-    Output("tooltip", "direction"),
-    Output("word-emb-txt", "children"),
-    Output("word-emb-vis", "children"),
-    Input("graph", "hoverData"),
-    Input("images-store", "data"),
-    Input("examples-store", "data"),
-)
-def display_hover(hoverData, images, examples):
-    if hoverData is None:
-        return False, no_update, no_update, no_update, no_update, no_update
-
-    hover_data = hoverData["points"][0]
-    bbox = hover_data["bbox"]
-    direction = "left"
-    index = hover_data["pointNumber"]
-
-    children = [
-        html.Img(
-            src=images[index],
-            style={"width": "250px"},
-        ),
-        html.P(
-            hover_data["text"],
-            style={
-                "color": "black",
-                "font-size": "20px",
-                "text-align": "center",
-                "background-color": "white",
-                "margin": "5px",
-            },
-        ),
-    ]
-
-    emb_children = [
-        html.Img(
-            src=generate_word_emb_vis(hover_data["text"]),
-            style={"width": "100%", "height": "25px"},
-        ),
-    ]
-
-    return True, bbox, children, direction, hover_data["text"], emb_children
-
-@callback(
-    Output("download-image", "data"),
-    Input("graph", "clickData"),
-    Input("images-store", "data"),
-    Input("examples-store", "data"),
-)
-def download_image(clickData, images, examples):
-    if clickData is None:
-        return no_update
-
-    click_data = clickData["points"][0]
-    index = click_data["pointNumber"]
-    txt = click_data["text"]
-
-    img_encoded = images[index]
-    img_decoded = base64.b64decode(img_encoded.split(",")[1])
-    img = Image.open(BytesIO(img_decoded))
-    img.save(f"{txt}.png")
-    return dcc.send_file(f"{txt}.png")
 
 with gr.Blocks(css="#step_size_circular {background-color: #666666} #step_size_circular textarea {background-color: #666666}") as demo:
     gr.Markdown("## Stable Diffusion Demo")
-    demo.load(init_session, inputs=None, outputs=None)
-    demo.close(cleanup_session)
+    session_hash_state = gr.State("")
 
     with gr.Tab("Latent Space"):
 
@@ -661,28 +560,34 @@ with gr.Blocks(css="#step_size_circular {background-color: #666666} #step_size_c
 
     with gr.Tab("CLIP Space"):
         with gr.TabItem("Embeddings"):
-            gr.Markdown(
-                "Visualize text embedding space in 3D with input texts and output images based on the chosen axis."
-            )
-            gr.HTML(read_html("DiffusionDemo/html/embeddings.html"))
-
-            coords_state = gr.State(value=initial_coords)
-            images_state = gr.State(value=initial_images)
-            examples_state = gr.State(value=examples.copy())
-            axis_state = gr.State(value=initial_axis)
-            axis_names_state = gr.State(value=axis_names.copy())
-            fig_state = gr.State(value=initial_fig)
-
             with gr.Row():
-                output = gr.HTML(
-                    f"""
-                        <iframe id="html" src="{dash_tunnel}" style="width:100%; height:700px;"></iframe>
-                        """
-                )
+                output = gr.HTML(value="Loading...", elem_id="embedding-html")
+
             with gr.Row():
                 word2add_rem = gr.Textbox(lines=1, label="Add/Remove word")
                 word2change = gr.Textbox(lines=1, label="Change image for word")
                 clear_words_button = gr.Button(value="Clear words")
+
+            with gr.Row():
+                with gr.Column(scale=1):
+                    word_input = gr.Textbox(
+                        label="Visualize embedding for word", lines=1
+                    )
+
+                with gr.Column(scale=1):
+                    embedding_visualization = gr.Image(
+                        type="pil", interactive=False, height="6vw"
+                    )
+
+            with gr.Row():
+                gallery = gr.Gallery(
+                    label="Images of words",
+                    show_label=True,
+                    elem_id="gallery",
+                    columns=4,
+                    height="auto",
+                    object_fit="contain",
+                )
 
             with gr.Accordion("Custom Semantic Dimensions", open=False):
                 with gr.Row():
@@ -775,150 +680,202 @@ with gr.Blocks(css="#step_size_circular {background-color: #666666} #step_size_c
                     to_words_6 = gr.Textbox(lines=1, label="Negative")
                     submit_6 = gr.Button("Submit")
 
+
+        def load_user_html(request: gr.Request):
+            flask_url, session_hash, is_new = init_user_session(request)
+            html_content = f"""
+            <iframe id="html-frame" src="{flask_url}" style="width:100%; height:700px;"></iframe>
+            """
+            if is_new:
+                gr.Info("New session initialized.")
+
+            gallery_images = load_user_gallery(session_hash)
+
+            return html_content, session_hash, gallery_images
+
+        demo.load(load_user_html, None, [output, session_hash_state, gallery])
+
         @word2add_rem.submit(
-            inputs=[word2add_rem, coords_state, images_state, examples_state, axis_state],
-            outputs=[output, word2add_rem, coords_state, images_state, examples_state]
+            inputs=[word2add_rem, session_hash_state],
+            outputs=[output, word2add_rem, gallery],
         )
-        def add_rem_word_and_clear(words, coords, images, examples, axis, request: gr.Request = None):
-            new_coords, new_images, new_examples = add_rem_word(words, coords, images, examples, axis, request=request)
-            return update_fig(new_coords, new_examples, initial_fig), "", new_coords, new_images, new_examples
+        def add_rem_word_handler(words, session_hash):
+            flask_url = add_rem_word_user(words, session_hash)
+            html_content = f"""
+            <iframe id="html-frame" src="{flask_url}" style="width:100%; height:700px;"></iframe>
+            """
+            gallery_images = load_user_gallery(session_hash)
+            return html_content, "", gallery_images
 
         @word2change.submit(
-            inputs=[word2change, coords_state, images_state, examples_state, axis_state],
-            outputs=[output, word2change, coords_state, images_state, examples_state]
+            inputs=[word2change, session_hash_state], outputs=[output, word2change, gallery]
         )
-        def change_word_and_clear(word, coords, images, examples, axis, request: gr.Request = None):
-            new_coords, new_images, new_examples = change_word(word, coords, images, examples, axis, request=request)
-            return update_fig(new_coords, new_examples, initial_fig), "", new_coords, new_images, new_examples
+        def change_word_handler(word, session_hash):
+            flask_url = change_word_user(word, session_hash)
+            html_content = f"""
+            <iframe id="html-frame" src="{flask_url}" style="width:100%; height:700px;"></iframe>
+            """
+            gallery_images = load_user_gallery(session_hash)
+            return html_content, "", gallery_images
 
-        @clear_words_button.click(
-            inputs=[coords_state, images_state, examples_state],
-            outputs=[output, coords_state, images_state, examples_state]
-        )
-        def clear_words_wrapper(coords, images, examples, request: gr.Request = None):
-            new_coords, new_images, new_examples = clear_words(coords, images, examples, request=request)
-            return update_fig(new_coords, new_examples, initial_fig), new_coords, new_images, new_examples
+        @clear_words_button.click(inputs=[session_hash_state], outputs=[output, gallery])
+        def clear_words_handler(session_hash):
+            clear_url = clear_words_user(session_hash)
+            html_content = f"""<iframe id="html-frame" src="{clear_url}" style="width:100%; height:700px;"></iframe>"""
+            gallery_images = load_user_gallery(session_hash)
+            return html_content, gallery_images
 
         @submit_1.click(
             inputs=[
-                axis_name_1, which_axis_1, from_words_1, to_words_1,
-                coords_state, examples_state, axis_state, axis_names_state
+                axis_name_1,
+                which_axis_1,
+                from_words_1,
+                to_words_1,
+                session_hash_state,
             ],
-            outputs=[
-                output,
-                which_axis_2, which_axis_3, which_axis_4, which_axis_5, which_axis_6,
-                coords_state, axis_state, axis_names_state
-            ]
+            outputs=[output, gallery],
         )
-        def handle_axis_submit_1(*args):
-            return handle_axis_submit(*args, 1)
+        def set_axis_wrapper(axis_name, which_axis, from_words, to_words, session_hash):
+            whichAxisMap["which_axis_1"] = which_axis
 
+            flask_url = set_axis_user(
+                axis_name, which_axis, from_words, to_words, session_hash
+            )
+            html_content = f"""
+            <iframe id="html-frame" src="{flask_url}" style="width:100%; height:700px;"></iframe>
+            """
+            gallery_images = load_user_gallery(session_hash)
+            return html_content, gallery_images
+        
         @submit_2.click(
             inputs=[
-                axis_name_2, which_axis_2, from_words_2, to_words_2,
-                coords_state, examples_state, axis_state, axis_names_state
+                axis_name_2,
+                which_axis_2,
+                from_words_2,
+                to_words_2,
+                session_hash_state,
             ],
-            outputs=[
-                output,
-                which_axis_1, which_axis_3, which_axis_4, which_axis_5, which_axis_6,
-                coords_state, axis_state, axis_names_state
-            ]
+            outputs=[output, gallery],
         )
-        def handle_axis_submit_2(*args):
-            return handle_axis_submit(*args, 2)
+        def set_axis_wrapper(axis_name, which_axis, from_words, to_words, session_hash):
+            whichAxisMap["which_axis_2"] = which_axis
 
+            flask_url = set_axis_user(
+                axis_name, which_axis, from_words, to_words, session_hash
+            )
+            html_content = f"""
+            <iframe id="html-frame" src="{flask_url}" style="width:100%; height:700px;"></iframe>
+            """
+            gallery_images = load_user_gallery(session_hash)
+            return html_content, gallery_images
+        
         @submit_3.click(
             inputs=[
-                axis_name_3, which_axis_3, from_words_3, to_words_3,
-                coords_state, examples_state, axis_state, axis_names_state
+                axis_name_3,
+                which_axis_3,
+                from_words_3,
+                to_words_3,
+                session_hash_state,
             ],
-            outputs=[
-                output,
-                which_axis_1, which_axis_2, which_axis_4, which_axis_5, which_axis_6,
-                coords_state, axis_state, axis_names_state
-            ]
+            outputs=[output, gallery],
         )
-        def handle_axis_submit_3(*args):
-            return handle_axis_submit(*args, 3)
+        def set_axis_wrapper(axis_name, which_axis, from_words, to_words, session_hash):
+            whichAxisMap["which_axis_3"] = which_axis
 
+            flask_url = set_axis_user(
+                axis_name, which_axis, from_words, to_words, session_hash
+            )
+            html_content = f"""
+            <iframe id="html-frame" src="{flask_url}" style="width:100%; height:700px;"></iframe>
+            """
+            gallery_images = load_user_gallery(session_hash)
+            return html_content, gallery_images
+        
         @submit_4.click(
             inputs=[
-                axis_name_4, which_axis_4, from_words_4, to_words_4,
-                coords_state, examples_state, axis_state, axis_names_state
+                axis_name_4,
+                which_axis_4,
+                from_words_4,
+                to_words_4,
+                session_hash_state,
             ],
-            outputs=[
-                output,
-                which_axis_1, which_axis_2, which_axis_3, which_axis_5, which_axis_6,
-                coords_state, axis_state, axis_names_state
-            ]
+            outputs=[output, gallery],
         )
-        def handle_axis_submit_4(*args):
-            return handle_axis_submit(*args, 4)
+        def set_axis_wrapper(axis_name, which_axis, from_words, to_words, session_hash):
+            whichAxisMap["which_axis_4"] = which_axis
 
+            flask_url = set_axis_user(
+                axis_name, which_axis, from_words, to_words, session_hash
+            )
+            html_content = f"""
+            <iframe id="html-frame" src="{flask_url}" style="width:100%; height:700px;"></iframe>
+            """
+            gallery_images = load_user_gallery(session_hash)
+            return html_content, gallery_images
+        
         @submit_5.click(
             inputs=[
-                axis_name_5, which_axis_5, from_words_5, to_words_5,
-                coords_state, examples_state, axis_state, axis_names_state
+                axis_name_5,
+                which_axis_5,
+                from_words_5,
+                to_words_5,
+                session_hash_state,
             ],
-            outputs=[
-                output,
-                which_axis_1, which_axis_2, which_axis_3, which_axis_4, which_axis_6,
-                coords_state, axis_state, axis_names_state
-            ]
+            outputs=[output, gallery],
         )
-        def handle_axis_submit_5(*args):
-            return handle_axis_submit(*args, 5)
+        def set_axis_wrapper(axis_name, which_axis, from_words, to_words, session_hash):
+            whichAxisMap["which_axis_5"] = which_axis
 
+            flask_url = set_axis_user(
+                axis_name, which_axis, from_words, to_words, session_hash
+            )
+            html_content = f"""
+            <iframe id="html-frame" src="{flask_url}" style="width:100%; height:700px;"></iframe>
+            """
+            gallery_images = load_user_gallery(session_hash)
+            return html_content, gallery_images
+        
         @submit_6.click(
             inputs=[
-                axis_name_6, which_axis_6, from_words_6, to_words_6,
-                coords_state, examples_state, axis_state, axis_names_state
+                axis_name_6,
+                which_axis_6,
+                from_words_6,
+                to_words_6,
+                session_hash_state,
             ],
-            outputs=[
-                output,
-                which_axis_1, which_axis_2, which_axis_3, which_axis_4, which_axis_5,
-                coords_state, axis_state, axis_names_state
-            ]
+            outputs=[output, gallery],
         )
-        def handle_axis_submit_6(*args):
-            return handle_axis_submit(*args, 6)
+        def set_axis_wrapper(axis_name, which_axis, from_words, to_words, session_hash):
+            whichAxisMap["which_axis_6"] = which_axis
 
-        def handle_axis_submit(
-            axis_name, which_axis, from_words, to_words,
-            coords, examples, axis, axis_names,
-            axis_num, request: gr.Request = None
-        ):
-            for ax in whichAxisMap:
-                if whichAxisMap[ax] == which_axis:
-                    whichAxisMap[ax] = "---"
-
-            whichAxisMap[f"which_axis_{axis_num}"] = which_axis
-            
-            new_coords, new_axis, new_axis_names = set_axis(
-                axis_name, which_axis, from_words, to_words,
-                coords, examples, axis, axis_names
+            flask_url = set_axis_user(
+                axis_name, which_axis, from_words, to_words, session_hash
             )
-            
-            initial_fig.update_layout(
-                scene=dict(
-                    xaxis_title=new_axis_names[0],
-                    yaxis_title=new_axis_names[1],
-                    zaxis_title=new_axis_names[2],
+            html_content = f"""
+            <iframe id="html-frame" src="{flask_url}" style="width:100%; height:700px;"></iframe>
+            """
+            gallery_images = load_user_gallery(session_hash)
+            return html_content, gallery_images
+
+        @word_input.submit(
+            inputs=[word_input, session_hash_state],
+            outputs=[embedding_visualization, word_input, gallery],
+        )
+        def handle_word_visualization(word, session_hash):
+            if not word.strip():
+                return None, "", load_user_gallery(session_hash)
+
+            emb_viz, generated_img, label = generate_word_embedding_visualization(
+                word, session_hash
+            )
+
+            if "not in examples" in label:
+                gr.Warning(
+                    f"'{word}' not in examples. Please add it first using the Add/Remove word field."
                 )
-            )
-            
-            other_axis_values = []
-            for j in range(1, 7):
-                if j != axis_num:
-                    other_axis_values.append(whichAxisMap[f"which_axis_{j}"])
-            
-            return (
-                update_fig(new_coords, examples, initial_fig),
-                *other_axis_values,
-                new_coords,
-                new_axis,
-                new_axis_names
-            )
+                return None, "", load_user_gallery(session_hash)
+
+            return emb_viz, "", load_user_gallery(session_hash)
 
         with gr.TabItem("Interpolate"):
             gr.Markdown(
@@ -1059,11 +1016,6 @@ with gr.Blocks(css="#step_size_circular {background-color: #666666} #step_size_c
                     This work was funded by a grant from NEOM Company, and by National Science Foundation award IIS-2112633.
                     """)
     
-
-def run_dash():
-    app.run(host="127.0.0.1", port="8000")
-
-
 def run_gradio():
     demo.queue(
         default_concurrency_limit=2,  
@@ -1080,9 +1032,10 @@ def run_gradio():
 
 if __name__ == "__main__":
     session_manager.start_cleanup_thread()
-    dash_thread = Thread(target=run_dash)
-    dash_thread.daemon = True
-    dash_thread.start()
+
+    flask_thread = Thread(target=run_flask_server)
+    flask_thread.daemon = True
+    flask_thread.start()
     
     try:
         run_gradio()
