@@ -517,7 +517,7 @@ with gr.Blocks(css="#step_size_circular {background-color: #666666} #step_size_c
             with gr.Row():
                 with gr.Column():
                     uploaded_img_inpaint = gr.Sketchpad(
-                        sources="upload", brush=gr.Brush(colors=["#ffff00"]), type="pil", label="Upload"
+                        sources="upload", brush=gr.Brush(colors=["#ffff00"]), type="pil", label="Upload", height=imageHeight
                     )
                     prompt_inpaint = gr.Textbox(
                         lines=1, label="Prompt", value="sunglasses"
