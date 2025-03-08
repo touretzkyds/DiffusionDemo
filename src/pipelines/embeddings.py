@@ -152,7 +152,11 @@ def init_user_session(request: gr.Request):
             scene_camera=dict(eye=dict(x=2, y=2, z=0.1)),
         )
 
-        user_fig.update_traces(hoverinfo="none", hovertemplate=None)
+        user_fig.update_traces(
+            hoverinfo="text+x+y+z",
+            hovertemplate="%{x:.2f}, %{y:.2f}, %{z:.2f}"
+        )
+        
         user_data[session_hash]["fig"] = user_fig
 
         examples_dir = get_user_examples_dir(session_hash)
@@ -210,6 +214,11 @@ def update_user_fig(session_hash):
             yaxis_title=user_data[session_hash]["axis_names"][1],
             zaxis_title=user_data[session_hash]["axis_names"][2],
         )
+    )
+    
+    user_data[session_hash]["fig"].update_traces(
+        hoverinfo="text+x+y+z",
+        hovertemplate="%{x:.2f}, %{y:.2f}, %{z:.2f}"
     )
 
     html_path = generate_user_html(session_hash)
