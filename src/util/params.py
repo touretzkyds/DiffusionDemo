@@ -10,6 +10,9 @@ from diffusers import (
     StableDiffusionPipeline,
 )
 
+from transformers import CLIPImageProcessor
+from diffusers.pipelines.stable_diffusion import StableDiffusionSafetyChecker
+
 torch_device = "cuda" if torch.cuda.is_available() else "cpu"
 
 isLCM = False
@@ -50,15 +53,17 @@ unet = UNet2DConditionModel.from_pretrained(model_path, subfolder="unet").to(
 )
 vae = AutoencoderKL.from_pretrained(model_path, subfolder="vae").to(torch_device)
 
+safety_checker=StableDiffusionSafetyChecker.from_pretrained("CompVis/stable-diffusion-safety-checker")
+feature_extractor=CLIPImageProcessor.from_pretrained("openai/clip-vit-base-patch32")
+
 pipe = StableDiffusionPipeline(
     tokenizer=tokenizer,
     text_encoder=text_encoder,
     unet=unet,
     scheduler=scheduler,
     vae=vae,
-    safety_checker=None,
-    feature_extractor=None,
-    requires_safety_checker=False,
+    safety_checker=safety_checker,
+    feature_extractor=feature_extractor,    
 ).to(torch_device)
 
 dash_tunnel = setup_tunnel("0.0.0.0", 8000, secrets.token_urlsafe(32), None)
@@ -96,4 +101,8 @@ __all__ = [
     "inpaint_model_path",
     "dash_tunnel",
     "pipe",
+    "cleanup_interval",
+    "cleanup_threshold",
+    "safety_checker",
+    "feature_extractor",
 ]

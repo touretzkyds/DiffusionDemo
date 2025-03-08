@@ -11,7 +11,7 @@ from src.util.clip_config import *
 import matplotlib.pyplot as plt
 import json
 from src.util.session import session_manager
-
+from diffusers.image_processor import VaeImageProcessor
 
 def get_text_embeddings(
     prompt,
@@ -100,6 +100,30 @@ def convert_to_pil_image(image):
     pil_images = [Image.fromarray(image) for image in images]
     return pil_images[0]
 
+def run_safety_check(image):
+    vae_scale_factor = 2 ** (len(vae.config.block_out_channels) - 1)
+    image_processor = VaeImageProcessor(vae_scale_factor=vae_scale_factor)
+    if torch.is_tensor(image):
+        feature_extractor_input = image_processor.postprocess(image, output_type="pil")
+    else:
+        feature_extractor_input = image_processor.numpy_to_pil(image)
+    safety_checker_input = feature_extractor(feature_extractor_input, return_tensors="pt").to(device=torch_device)
+    image, has_nsfw_concept = safety_checker(
+        images=image, clip_input=safety_checker_input.pixel_values.to(dtype=torch.float32)
+    )
+    if has_nsfw_concept is None:
+        do_denormalize = [True] * image.shape[0]
+    else:
+        do_denormalize = [not has_nsfw for has_nsfw in has_nsfw_concept]
+    image = image_processor.postprocess(image, output_type="latent", do_denormalize=do_denormalize)
+
+    if any(has_nsfw_concept):
+        gr.Warning(
+            "Potential NSFW content was detected in one or more images. A black image will be returned instead."
+            " Try again with a different prompt and/or seed."
+        )
+    return image, has_nsfw_concept
+
 
 def generate_images(
     latents,
@@ -136,15 +160,22 @@ def generate_images(
             Latents = 1 / 0.18215 * latents
             with torch.no_grad():
                 image = vae.decode(Latents).sample
-                images.append((convert_to_pil_image(image), "{}".format(i)))
-
+                images.append(image)
         latents = scheduler.step(noise_pred, t, latents).prev_sample
         i += 1
+
+    if intermediate:
+        image, nsfw = run_safety_check(images[-1])    
+        if any(nsfw):
+            images = [(convert_to_pil_image(image), "NSFW")]
+        else:
+            images = [(convert_to_pil_image(image), "{}".format(i)) for i, image in enumerate(images)]
 
     if not intermediate:
         Latents = 1 / 0.18215 * latents
         with torch.no_grad():
             image = vae.decode(Latents).sample
+            image, _ = run_safety_check(image)
         images = convert_to_pil_image(image)
 
     return images
