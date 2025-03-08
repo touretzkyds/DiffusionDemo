@@ -158,18 +158,33 @@ def init_user_session(request: gr.Request):
         examples_dir = get_user_examples_dir(session_hash)
 
         if examples_dir:
+            base_examples_dir = "DiffusionDemo/images/examples"
+            
             for example in user_data[session_hash]["examples"]:
-                image_path = os.path.join(
-                    examples_dir, f"{get_safe_filename(example)}.jpg"
-                )
-                if not os.path.exists(image_path):
+                safe_filename = get_safe_filename(example)
+                dest_path = os.path.join(examples_dir, f"{safe_filename}.jpg")
+                
+                if os.path.exists(dest_path):
+                    continue
+                
+                source_path = os.path.join(base_examples_dir, f"{safe_filename}.jpg")
+                
+                if os.path.exists(source_path):
+                    try:
+                        import shutil
+                        shutil.copy2(source_path, dest_path)
+                        print(f"Copied image for '{example}' from pre-generated source")
+                    except Exception as e:
+                        print(f"Error copying image for '{example}': {e}")
+                else:
                     try:
                         image = pipe(
                             prompt=example,
                             num_inference_steps=num_inference_steps,
                             guidance_scale=guidance_scale,
                         ).images[0]
-                        image.save(image_path, format="JPEG")
+                        image.save(dest_path, format="JPEG")
+                        print(f"Generated new image for '{example}' as pre-generated source was not found")
                     except Exception as e:
                         print(f"Error generating initial image for '{example}': {e}")
 
@@ -433,29 +448,43 @@ def load_user_gallery(session_hash):
         return []
 
     example_images = []
+    base_examples_dir = "DiffusionDemo/images/examples"
 
     for example in user_data[session_hash]["examples"]:
-        image_path = examples_dir / f"{get_safe_filename(example)}.jpg"
-
-        if not image_path.exists():
+        safe_filename = get_safe_filename(example)
+        dest_path = os.path.join(examples_dir, f"{safe_filename}.jpg")
+        
+        if os.path.exists(dest_path):
+            try:
+                image = Image.open(dest_path)
+                example_images.append((image, example))
+                continue
+            except Exception as e:
+                print(f"Error loading image for '{example}': {e}")
+        
+        source_path = os.path.join(base_examples_dir, f"{safe_filename}.jpg")
+        
+        if os.path.exists(source_path):
+            try:
+                import shutil
+                shutil.copy2(source_path, dest_path)
+                image = Image.open(dest_path)
+                example_images.append((image, example))
+                print(f"Copied image for '{example}' from pre-generated source")
+            except Exception as e:
+                print(f"Error copying image for '{example}': {e}")
+        else:
             try:
                 image = pipe(
                     prompt=example,
                     num_inference_steps=num_inference_steps,
                     guidance_scale=guidance_scale,
                 ).images[0]
-
-                image.save(str(image_path), format="JPEG")
+                image.save(dest_path, format="JPEG")
                 example_images.append((image, example))
+                print(f"Generated new image for '{example}' as pre-generated source was not found")
             except Exception as e:
                 print(f"Error generating image for '{example}': {e}")
-                continue
-        else:
-            try:
-                image = Image.open(str(image_path))
-                example_images.append((image, example))
-            except Exception as e:
-                print(f"Error loading image for '{example}': {e}")
                 continue
 
     return example_images
