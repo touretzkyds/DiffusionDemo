@@ -18,7 +18,7 @@ torch_device = "cuda" if torch.cuda.is_available() else "cpu"
 isLCM = False
 HF_ACCESS_TOKEN = ""
 
-model_path = "segmind/small-sd"
+model_path = "Lykon/dreamshaper-8"
 inpaint_model_path = "Lykon/dreamshaper-8-inpainting"
 prompt = "Self-portrait oil painting, a beautiful cyborg with golden hair, 8k"
 promptA = "Self-portrait oil painting, a beautiful man with golden hair, 8k"
