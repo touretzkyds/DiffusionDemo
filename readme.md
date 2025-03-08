@@ -28,6 +28,7 @@ To run the demo, click "Open in Colab". Follow the instructions to execute the c
 
 Here are some additional references you might find interesting:
 
+- [Cats in Latent Space](https://youtu.be/hb-KT66rCT8?si=RyCQCG7qU-iBugjV)
 - [Diffusion Explainer: Stable Diffusion Explained with Visualization](https://poloclub.github.io/diffusion-explainer/)
 - [The Illustrated Stable Diffusion](https://jalammar.github.io/illustrated-stable-diffusion/)
 
