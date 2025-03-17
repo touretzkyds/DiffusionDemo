@@ -1136,19 +1136,6 @@ with gr.Blocks(css="#step_size_circular {background-color: #666666} #step_size_c
                     This work was funded by a grant from NEOM Company, and by National Science Foundation award IIS-2112633.
                     """)
     
-def run_gradio():
-    demo.queue(
-        default_concurrency_limit=2,  
-        max_size=4,  
-        api_open=False 
-    )
-    os.makedirs("outputs", exist_ok=True)
-    _, _, public_url = demo.launch(
-        share=True,
-        max_threads=8  
-    )
-    return public_url
-
 
 if __name__ == "__main__":
     session_manager.start_cleanup_thread()
@@ -1160,7 +1147,8 @@ if __name__ == "__main__":
     time.sleep(2)
     
     try:
-        run_gradio()
+        os.makedirs("outputs", exist_ok=True)
+        demo.queue().launch(share=True)
     except KeyboardInterrupt:
         print("Server closed")
         session_manager.stop_cleanup_thread()
