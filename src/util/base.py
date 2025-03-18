@@ -19,7 +19,7 @@ def get_text_embeddings(
     text_encoder=text_encoder,
     torch_device=torch_device,
     batch_size=1,
-    negative_prompt="",
+    negative_prompt=negative_prompt,
 ):
     text_input = tokenizer(
         prompt,

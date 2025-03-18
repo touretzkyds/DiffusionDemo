@@ -23,7 +23,7 @@ inpaint_model_path = "Lykon/dreamshaper-8-inpainting"
 prompt = "Self-portrait oil painting, a beautiful cyborg with golden hair, 8k"
 promptA = "Self-portrait oil painting, a beautiful man with golden hair, 8k"
 promptB = "Self-portrait oil painting, a beautiful woman with golden hair, 8k"
-negative_prompt = "a photo frame"
+negative_prompt = "(nsfw), nude, naked, breasts, underwear, pornography, hentai, sexual, explicit, lewd, obscene, indecent, gore, blood, injury, mutilation, corpse, violence, weapon, gun, knife, killing, death, torture, drugs, narcotics, smoking, alcohol"
 
 num_images = 5
 degree = 360
@@ -66,7 +66,7 @@ pipe = StableDiffusionPipeline(
     feature_extractor=feature_extractor,    
 ).to(torch_device)
 
-dash_tunnel = setup_tunnel("0.0.0.0", 8000, secrets.token_urlsafe(32), None)
+# dash_tunnel = setup_tunnel("0.0.0.0", 8000, secrets.token_urlsafe(32), None)
 
 cleanup_interval = 30  # Run user session directory cleanup every 30 seconds
 cleanup_threshold = 30  # Delete user session directory if not accessed for 30 seconds
@@ -99,7 +99,7 @@ __all__ = [
     "HF_ACCESS_TOKEN",
     "model_path",
     "inpaint_model_path",
-    "dash_tunnel",
+    # "dash_tunnel",
     "pipe",
     "cleanup_interval",
     "cleanup_threshold",

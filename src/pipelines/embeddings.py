@@ -17,7 +17,7 @@ from src.util.base import (
     get_user_examples_dir,
     get_user_viz_dir,
 )
-from src.util.params import num_inference_steps, guidance_scale, tokenizer, pipe
+from src.util.params import num_inference_steps, guidance_scale, tokenizer, pipe, negative_prompt
 from src.util.clip_config import (
     masculine,
     feminine,
@@ -48,6 +48,7 @@ def generate_examples(
     for example in examples:
         image = pipe(
             prompt=example,
+            negative_prompt=negative_prompt,
             num_inference_steps=num_inference_steps,
             guidance_scale=guidance_scale,
         ).images[0]
@@ -184,6 +185,7 @@ def init_user_session(request: gr.Request):
                     try:
                         image = pipe(
                             prompt=example,
+                            negative_prompt=negative_prompt,
                             num_inference_steps=num_inference_steps,
                             guidance_scale=guidance_scale,
                         ).images[0]
@@ -239,6 +241,7 @@ def add_word_user(new_example, session_hash):
 
     image = pipe(
         prompt=new_example,
+        negative_prompt=negative_prompt,
         num_inference_steps=num_inference_steps,
         guidance_scale=guidance_scale,
     ).images[0]
@@ -431,6 +434,7 @@ def generate_word_embedding_visualization(word, session_hash):
         else:
             image = pipe(
                 prompt=word,
+                negative_prompt=negative_prompt,
                 num_inference_steps=num_inference_steps,
                 guidance_scale=guidance_scale,
             ).images[0]
@@ -486,6 +490,7 @@ def load_user_gallery(session_hash):
             try:
                 image = pipe(
                     prompt=example,
+                    negative_prompt=negative_prompt,
                     num_inference_steps=num_inference_steps,
                     guidance_scale=guidance_scale,
                 ).images[0]

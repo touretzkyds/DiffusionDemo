@@ -14,6 +14,7 @@ def inpaint(dict, num_inference_steps, seed, prompt="", progress=gr.Progress(), 
     init_image = dict["background"].convert("RGB").resize((imageHeight, imageWidth))
     output = inpaint_pipe(
         prompt=prompt,
+        negative_prompt=negative_prompt,
         image=init_image,
         mask_image=mask,
         guidance_scale=guidance_scale,
