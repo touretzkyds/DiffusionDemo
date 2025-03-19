@@ -137,6 +137,7 @@ def generate_images(
     intermediate=False,
     progress=gr.Progress(),
 ):
+    scheduler = type(scheduler).from_config(scheduler.config)
     scheduler.set_timesteps(num_inference_steps)
     latents = latents * scheduler.init_noise_sigma
     images = []
