@@ -118,6 +118,7 @@ def run_safety_check(image):
     image = image_processor.postprocess(image, output_type="latent", do_denormalize=do_denormalize)
 
     if any(has_nsfw_concept):
+        image = torch.full_like(image, -1.0)
         gr.Warning(
             "Potential NSFW content was detected in one or more images. A black image will be returned instead."
             " Try again with a different prompt and/or seed."
