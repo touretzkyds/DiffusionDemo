@@ -106,7 +106,7 @@ with gr.Blocks(css="#step_size_circular {background-color: #666666} #step_size_c
             zip_path = export_as_zip(images, fname, tab_config, request=request)
             progress(1, desc="Exporting as gif")
             gif_path = export_as_gif(images, filename="denoising.gif", request=request)
-            return images, gif_path, zip_path
+            return gr.Gallery(label="Images", value=images, selected_index=0), gif_path, zip_path
 
         seed_denoise.change(
             fn=generate_seed_vis, inputs=[seed_denoise], outputs=[seed_vis_denoise]
