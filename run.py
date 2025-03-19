@@ -560,6 +560,11 @@ with gr.Blocks(css="#step_size_circular {background-color: #666666} #step_size_c
 
     with gr.Tab("CLIP Space"):
         with gr.TabItem("Embeddings"):
+            gr.Markdown(
+                "Visualize text embedding space in 3D with input texts and output images based on the chosen axis."
+            )
+            gr.HTML(read_html("DiffusionDemo/html/embeddings.html"))
+
             with gr.Row():
                 output = gr.HTML(value="Loading...", elem_id="embedding-html")
 
