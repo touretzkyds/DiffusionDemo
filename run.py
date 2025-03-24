@@ -984,23 +984,21 @@ with gr.Blocks(css="#step_size_circular {background-color: #666666} #step_size_c
 
         @word_input.submit(
             inputs=[word_input, session_hash_state],
-            outputs=[embedding_visualization, word_input, gallery],
+            outputs=[embedding_visualization, word_input, gallery, output],
         )
         def handle_word_visualization(word, session_hash):
             if not word.strip():
-                return None, "", load_user_gallery(session_hash)
+                return None, "", load_user_gallery(session_hash), output.value
 
             emb_viz, generated_img, label = generate_word_embedding_visualization(
                 word, session_hash
             )
 
-            if "not in examples" in label:
-                gr.Warning(
-                    f"'{word}' not in examples. Please add it first using the Add/Remove word field."
-                )
-                return None, "", load_user_gallery(session_hash)
-
-            return emb_viz, "", load_user_gallery(session_hash)
+            flask_url = update_user_fig(session_hash)
+            html_content = f"""
+            <iframe id="html-frame" src="{flask_url}" style="width:100%; height:700px;"></iframe>
+            """
+            return emb_viz, "", load_user_gallery(session_hash), html_content
 
         with gr.TabItem("Interpolate"):
             gr.Markdown(

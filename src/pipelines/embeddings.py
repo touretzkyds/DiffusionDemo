@@ -412,7 +412,7 @@ def generate_word_embedding_visualization(word, session_hash):
             return None, None, f"Invalid session"
 
         if word not in user_data[session_hash]["examples"]:
-            return None, None, f"Error: '{word}' not in examples"
+            add_rem_word_user(word, session_hash)
 
         examples_dir = get_user_examples_dir(session_hash)
         viz_dir = get_user_viz_dir(session_hash)
