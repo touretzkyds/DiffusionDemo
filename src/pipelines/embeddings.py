@@ -381,6 +381,7 @@ def generate_word_emb_vis(prompt, save_to_file=False, viz_dir=None):
     plt.imshow([emb], cmap="inferno", aspect="auto")
     plt.xticks([])
     plt.yticks([])
+    plt.title(f'{prompt}', pad=10, fontsize=48)
     plt.tight_layout()
 
     buf = BytesIO()
