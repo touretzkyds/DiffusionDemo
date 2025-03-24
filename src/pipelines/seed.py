@@ -25,7 +25,7 @@ def display_seed_images(
         "Number of Inference Steps per Image": num_inference_steps,
     }
     zip_path = export_as_zip(images, fname, tab_config, request=request)
-    return gr.Gallery(label="Images", value=images, selected_index=0), zip_path
+    return [gr.Gallery(label="Images", value=images, selected_index=0), zip_path] + [prompt] * 8
 
 
 __all__ = ["display_seed_images"]

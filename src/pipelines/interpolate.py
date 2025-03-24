@@ -46,6 +46,6 @@ def display_interpolate_images(
     }
     zip_path = export_as_zip(images, fname, tab_config, request=request)
     gif_path = export_as_gif(images, filename="interpolate.gif", reverse=True, request=request)
-    return gr.Gallery(label="Images", value=images, selected_index=0), gif_path, zip_path
+    return [gr.Gallery(label="Images", value=images, selected_index=0), gif_path, zip_path] + [promptA] * 8
 
 __all__ = ["display_interpolate_images"]

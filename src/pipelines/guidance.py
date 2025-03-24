@@ -33,7 +33,7 @@ def display_guidance_images(
         "Seed": seed,
     }
     zip_path = export_as_zip(images, fname, tab_config, request=request)
-    return gr.Gallery(label="Images", value=images, selected_index=0), zip_path
+    return [gr.Gallery(label="Images", value=images, selected_index=0), zip_path] + [prompt] * 8
 
 
 __all__ = ["display_guidance_images"]

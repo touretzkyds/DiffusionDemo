@@ -30,7 +30,7 @@ def display_negative_images(
     imgs_list.append((images, "Without Negative Prompt"))
     imgs_list.append((images_neg, "With Negative Prompt"))
     zip_path = export_as_zip(imgs_list, fname, tab_config, request=request)
-    return images, images_neg, zip_path
+    return [images, images_neg, zip_path] + [prompt] * 8
 
 
 __all__ = ["display_negative_images"]
