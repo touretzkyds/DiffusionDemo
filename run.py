@@ -26,7 +26,7 @@ with gr.Blocks(css="#step_size_circular {background-color: #666666} #step_size_c
                         value="Self-portrait oil painting, a beautiful cyborg with golden hair, 8k",
                     )
 
-                    with gr.Row():
+                    with gr.Row(equal_height=True):
                         seed_beginner = gr.Slider(
                             minimum=0, maximum=100, step=1, value=14, label="Seed"
                         )
@@ -62,7 +62,7 @@ with gr.Blocks(css="#step_size_circular {background-color: #666666} #step_size_c
                         label="Number of Inference Steps",
                     )
 
-                    with gr.Row():
+                    with gr.Row(equal_height=True):
                         seed_denoise = gr.Slider(
                             minimum=0, maximum=100, step=1, value=14, label="Seed"
                         )
@@ -143,7 +143,7 @@ with gr.Blocks(css="#step_size_circular {background-color: #666666} #step_size_c
                         label="Number of Inference Steps per Image",
                     )
 
-                    with gr.Row():
+                    with gr.Row(equal_height=True):
                         seed_perturb = gr.Slider(
                             minimum=0, maximum=100, step=1, value=14, label="Seed"
                         )
@@ -212,7 +212,7 @@ with gr.Blocks(css="#step_size_circular {background-color: #666666} #step_size_c
                         label="Number of Inference Steps per Image",
                     )
 
-                    with gr.Row():
+                    with gr.Row(equal_height=True):
                         seed_circular = gr.Slider(
                             minimum=0, maximum=100, step=1, value=14, label="Seed"
                         )
@@ -265,7 +265,7 @@ with gr.Blocks(css="#step_size_circular {background-color: #666666} #step_size_c
                         label="Number of Inference Steps per Image",
                     )
 
-                    with gr.Row():
+                    with gr.Row(equal_height=True):
                         seed_poke = gr.Slider(
                             minimum=0, maximum=100, step=1, value=14, label="Seed"
                         )
@@ -363,7 +363,7 @@ with gr.Blocks(css="#step_size_circular {background-color: #666666} #step_size_c
                         lines=1, value="1, 8, 20, 30", label="Guidance Scale Values"
                     )
 
-                    with gr.Row():
+                    with gr.Row(equal_height=True):
                         seed_guidance = gr.Slider(
                             minimum=0, maximum=100, step=1, value=14, label="Seed"
                         )
@@ -390,7 +390,7 @@ with gr.Blocks(css="#step_size_circular {background-color: #666666} #step_size_c
             with gr.Row():
                 with gr.Column():
                     uploaded_img_inpaint = gr.Sketchpad(
-                        sources="upload", brush=gr.Brush(colors=["#ffff00"]), type="pil", label="Upload", height=imageHeight
+                        sources="upload", brush=gr.Brush(colors=["#ffff00"]), type="pil", label="Upload"
                     )
                     prompt_inpaint = gr.Textbox(
                         lines=1, label="Prompt", value="sunglasses"
@@ -403,7 +403,7 @@ with gr.Blocks(css="#step_size_circular {background-color: #666666} #step_size_c
                         label="Number of Inference Steps per Image",
                     )
 
-                    with gr.Row():
+                    with gr.Row(equal_height=True):
                         seed_inpaint = gr.Slider(
                             minimum=0, maximum=100, step=1, value=14, label="Seed"
                         )
@@ -441,12 +441,12 @@ with gr.Blocks(css="#step_size_circular {background-color: #666666} #step_size_c
             with gr.Row():
                 output = gr.HTML(value="Loading...", elem_id="embedding-html")
 
-            with gr.Row():
+            with gr.Row(equal_height=True):
                 word2add_rem = gr.Textbox(lines=1, label="Add/Remove word")
                 word2change = gr.Textbox(lines=1, label="Change image for word")
                 clear_words_button = gr.Button(value="Clear words")
 
-            with gr.Row():
+            with gr.Row(equal_height=True):
                 with gr.Column(scale=1):
                     word_input = gr.Textbox(
                         label="Visualize embedding for word", lines=1
@@ -467,12 +467,12 @@ with gr.Blocks(css="#step_size_circular {background-color: #666666} #step_size_c
                     object_fit="contain",
                 )
                 
-            with gr.Row():
-                download_gallery_button = gr.Button("Make Gallery to ZIP")
-                zip_output_gallery = gr.File(label="Download ZIP")
+            with gr.Row(equal_height=True):
+                download_gallery_button = gr.Button("Make Gallery to ZIP", size='md')
+                zip_output_gallery = gr.File(label="Download ZIP", scale=1)
 
             with gr.Accordion("Custom Semantic Dimensions", open=False):
-                with gr.Row():
+                with gr.Row(equal_height=True):
                     axis_name_1 = gr.Textbox(label="Axis name", value="gender")
                     which_axis_1 = gr.Dropdown(
                         choices=["X - Axis", "Y - Axis", "Z - Axis", "---"],
@@ -491,7 +491,7 @@ with gr.Blocks(css="#step_size_circular {background-color: #666666} #step_size_c
                     )
                     submit_1 = gr.Button("Submit")
 
-                with gr.Row():
+                with gr.Row(equal_height=True):
                     axis_name_2 = gr.Textbox(label="Axis name", value="age")
                     which_axis_2 = gr.Dropdown(
                         choices=["X - Axis", "Y - Axis", "Z - Axis", "---"],
@@ -506,7 +506,7 @@ with gr.Blocks(css="#step_size_circular {background-color: #666666} #step_size_c
                     )
                     submit_2 = gr.Button("Submit")
 
-                with gr.Row():
+                with gr.Row(equal_height=True):
                     axis_name_3 = gr.Textbox(label="Axis name", value="residual")
                     which_axis_3 = gr.Dropdown(
                         choices=["X - Axis", "Y - Axis", "Z - Axis", "---"],
@@ -517,7 +517,7 @@ with gr.Blocks(css="#step_size_circular {background-color: #666666} #step_size_c
                     to_words_3 = gr.Textbox(lines=1, label="Negative")
                     submit_3 = gr.Button("Submit")
 
-                with gr.Row():
+                with gr.Row(equal_height=True):
                     axis_name_4 = gr.Textbox(label="Axis name", value="number")
                     which_axis_4 = gr.Dropdown(
                         choices=["X - Axis", "Y - Axis", "Z - Axis", "---"],
@@ -534,7 +534,7 @@ with gr.Blocks(css="#step_size_circular {background-color: #666666} #step_size_c
                     )
                     submit_4 = gr.Button("Submit")
 
-                with gr.Row():
+                with gr.Row(equal_height=True):
                     axis_name_5 = gr.Textbox(label="Axis name", value="royalty")
                     which_axis_5 = gr.Dropdown(
                         choices=["X - Axis", "Y - Axis", "Z - Axis", "---"],
@@ -551,7 +551,7 @@ with gr.Blocks(css="#step_size_circular {background-color: #666666} #step_size_c
                     )
                     submit_5 = gr.Button("Submit")
 
-                with gr.Row():
+                with gr.Row(equal_height=True):
                     axis_name_6 = gr.Textbox(label="Axis name")
                     which_axis_6 = gr.Dropdown(
                         choices=["X - Axis", "Y - Axis", "Z - Axis", "---"],
@@ -988,7 +988,7 @@ with gr.Blocks(css="#step_size_circular {background-color: #666666} #step_size_c
                         label="Number of Inference Steps per Image",
                     )
 
-                    with gr.Row():
+                    with gr.Row(equal_height=True):
                         seed_interpolate = gr.Slider(
                             minimum=0, maximum=100, step=1, value=14, label="Seed"
                         )
@@ -1033,7 +1033,7 @@ with gr.Blocks(css="#step_size_circular {background-color: #666666} #step_size_c
                         label="Number of Inference Steps per Image",
                     )
 
-                    with gr.Row():
+                    with gr.Row(equal_height=True):
                         seed_negative = gr.Slider(
                             minimum=0, maximum=100, step=1, value=14, label="Seed"
                         )
