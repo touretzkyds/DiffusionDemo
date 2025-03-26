@@ -9,7 +9,7 @@ from serve import run_flask_server
 from src.util.session import session_manager
 from src.pipelines.embeddings import user_data, base64_to_image
 
-with gr.Blocks(css="#step_size_circular {background-color: #666666} #step_size_circular textarea {background-color: #666666}") as demo:
+with gr.Blocks(css="#step_size_circular {background-color: #666666} #step_size_circular textarea {background-color: #666666}", theme=gr.themes.Origin()) as demo:
     gr.Markdown("## Stable Diffusion Demo")
     session_hash_state = gr.State("")
 
