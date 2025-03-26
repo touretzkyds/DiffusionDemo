@@ -58,7 +58,7 @@ def run_flask_server():
     global flask_tunnel
     try:
         print("Setting up Flask tunnel on port 8050")
-        flask_tunnel = setup_tunnel("0.0.0.0", 8050, secrets.token_urlsafe(32), None)
+        flask_tunnel = setup_tunnel("0.0.0.0", 8050, secrets.token_urlsafe(32), None, None)
         print(f"Flask tunnel URL: {flask_tunnel}")
         
         print("Starting Flask server on port 8050")
