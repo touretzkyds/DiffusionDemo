@@ -5,6 +5,7 @@ from src.pipelines import *
 from threading import Thread
 from serve import run_flask_server
 from src.util.session import session_manager
+from src.pipelines.embeddings import user_data
 
 with gr.Blocks(css="#step_size_circular {background-color: #666666} #step_size_circular textarea {background-color: #666666}") as demo:
     gr.Markdown("## Stable Diffusion Demo")
@@ -555,6 +556,31 @@ with gr.Blocks(css="#step_size_circular {background-color: #666666} #step_size_c
                     to_words_6 = gr.Textbox(lines=1, label="Negative")
                     submit_6 = gr.Button("Submit")
 
+            embeddings_storage = gr.BrowserState()
+
+        @demo.load(inputs=[embeddings_storage, session_hash_state], outputs=[embeddings_storage])
+        def init_storage(storage, session_hash):
+            if not session_hash:
+                return storage
+            
+            if storage is None:
+                storage = {}
+            
+            if session_hash in storage and "examples" in storage[session_hash]:
+                if session_hash not in user_data:
+                    user_data[session_hash] = {
+                        "examples": [],
+                        "images": {},
+                        "coords": np.array([]),
+                        "axis": axis.copy(),
+                        "axis_names": axis_names.copy(),
+                    }
+                
+                user_data[session_hash]["examples"] = storage[session_hash]["examples"].copy()
+                if "images" in storage[session_hash]:
+                    user_data[session_hash]["images"] = storage[session_hash]["images"].copy()
+            
+            return storage
 
         def load_user_html(request: gr.Request):
             flask_url, session_hash, is_new = init_user_session(request)
@@ -563,42 +589,95 @@ with gr.Blocks(css="#step_size_circular {background-color: #666666} #step_size_c
             """
             if is_new:
                 gr.Info("New session initialized.")
+                embeddings_storage.value = {
+                    "images": {},
+                    "embeddings": {},
+                    "visualizations": {}
+                }
 
             gallery_images = load_user_gallery(session_hash)
-
             return html_content, session_hash, gallery_images
 
         demo.load(load_user_html, None, [output, session_hash_state, gallery])
 
         @word2add_rem.submit(
-            inputs=[word2add_rem, session_hash_state],
-            outputs=[output, word2add_rem, gallery],
+            inputs=[word2add_rem, session_hash_state, embeddings_storage],
+            outputs=[output, word2add_rem, gallery, embeddings_storage]
         )
-        def add_rem_word_handler(words, session_hash):
+        def add_rem_word_handler(words, session_hash, storage):
+            if storage is None:
+                storage = {
+                    "images": {},
+                    "embeddings": {},
+                    "visualizations": {}
+                }
+                
             flask_url = add_rem_word_user(words, session_hash)
             html_content = f"""
             <iframe id="html-frame" src="{flask_url}" style="width:100%; height:700px;"></iframe>
             """
             gallery_images = load_user_gallery(session_hash)
-            return html_content, "", gallery_images
+            
+            if session_hash not in storage:
+                storage[session_hash] = {"examples": [], "images": {}}
+            
+            if session_hash in user_data:
+                storage[session_hash]["examples"] = user_data[session_hash]["examples"].copy()
+                if "images" in user_data[session_hash]:
+                    storage[session_hash]["images"] = user_data[session_hash]["images"].copy()
+            
+            return html_content, "", gallery_images, storage
 
         @word2change.submit(
-            inputs=[word2change, session_hash_state], outputs=[output, word2change, gallery]
+            inputs=[word2change, session_hash_state, embeddings_storage],
+            outputs=[output, word2change, gallery, embeddings_storage]
         )
-        def change_word_handler(word, session_hash):
+        def change_word_handler(word, session_hash, storage):
+            if storage is None:
+                storage = {
+                    "images": {},
+                    "embeddings": {},
+                    "visualizations": {}
+                }
+                
             flask_url = change_word_user(word, session_hash)
             html_content = f"""
             <iframe id="html-frame" src="{flask_url}" style="width:100%; height:700px;"></iframe>
             """
             gallery_images = load_user_gallery(session_hash)
-            return html_content, "", gallery_images
+            
+            if session_hash not in storage:
+                storage[session_hash] = {"examples": [], "images": {}}
+            
+            if session_hash in user_data:
+                storage[session_hash]["examples"] = user_data[session_hash]["examples"].copy()
+                if "images" in user_data[session_hash]:
+                    storage[session_hash]["images"] = user_data[session_hash]["images"].copy()
+            
+            return html_content, "", gallery_images, storage
 
-        @clear_words_button.click(inputs=[session_hash_state], outputs=[output, gallery])
-        def clear_words_handler(session_hash):
+        @clear_words_button.click(
+            inputs=[session_hash_state, embeddings_storage],
+            outputs=[output, gallery, embeddings_storage]
+        )
+        def clear_words_handler(session_hash, storage):
+            if storage is None:
+                storage = {
+                    "images": {},
+                    "embeddings": {},
+                    "visualizations": {}
+                }
+                
             clear_url = clear_words_user(session_hash)
-            html_content = f"""<iframe id="html-frame" src="{clear_url}" style="width:100%; height:700px;"></iframe>"""
+            html_content = f"""
+            <iframe id="html-frame" src="{clear_url}" style="width:100%; height:700px;"></iframe>
+            """
             gallery_images = load_user_gallery(session_hash)
-            return html_content, gallery_images
+            
+            if session_hash in storage:
+                storage[session_hash] = {"examples": [], "images": {}}
+            
+            return html_content, gallery_images, storage
 
         @submit_1.click(
             inputs=[

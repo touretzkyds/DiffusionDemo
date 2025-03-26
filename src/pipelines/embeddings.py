@@ -1,3 +1,5 @@
+import io
+import os
 import random
 import numpy as np
 import gradio as gr
@@ -6,7 +8,7 @@ import matplotlib.pyplot as plt
 import base64
 from io import BytesIO
 import plotly.express as px
-import os
+from PIL import Image
 
 from src.util.base import (
     get_word_embeddings,
@@ -129,11 +131,23 @@ def init_user_session(request: gr.Request):
     if is_new:
         user_data[session_hash] = {
             "examples": default_examples.copy(),
-            "images": default_images.copy(),
+            "images": {}, 
             "coords": default_coords.copy(),
             "axis": axis.copy(),
             "axis_names": axis_names.copy(),
         }
+
+        for example in user_data[session_hash]["examples"]:
+            try:
+                image = pipe(
+                    prompt=example,
+                    negative_prompt=negative_prompt,
+                    num_inference_steps=num_inference_steps,
+                    guidance_scale=guidance_scale,
+                ).images[0]
+                user_data[session_hash]["images"][example] = image_to_base64(image)
+            except Exception as e:
+                print(f"Error generating initial image for '{example}': {e}")
 
         user_fig = px.scatter_3d(
             x=user_data[session_hash]["coords"][:, 0],
@@ -160,44 +174,43 @@ def init_user_session(request: gr.Request):
         
         user_data[session_hash]["fig"] = user_fig
 
-        examples_dir = get_user_examples_dir(session_hash)
+    elif "coords" not in user_data[session_hash] or len(user_data[session_hash]["coords"]) != len(user_data[session_hash]["examples"]):
+        user_data[session_hash]["coords"] = (
+            get_concat_embeddings(user_data[session_hash]["examples"])
+            @ user_data[session_hash]["axis"].T
+        )
+        user_data[session_hash]["coords"][:, 1] = 5 * (
+            1.0 - user_data[session_hash]["coords"][:, 1]
+        )
+        
+        if "fig" not in user_data[session_hash]:
+            user_fig = px.scatter_3d(
+                x=user_data[session_hash]["coords"][:, 0],
+                y=user_data[session_hash]["coords"][:, 1],
+                z=user_data[session_hash]["coords"][:, 2],
+                labels={
+                    "x": user_data[session_hash]["axis_names"][0],
+                    "y": user_data[session_hash]["axis_names"][1],
+                    "z": user_data[session_hash]["axis_names"][2],
+                },
+                text=user_data[session_hash]["examples"],
+                height=750,
+            )
 
-        if examples_dir:
-            base_examples_dir = "DiffusionDemo/images/examples"
+            user_fig.update_layout(
+                margin=dict(l=0, r=0, b=0, t=0),
+                scene_camera=dict(eye=dict(x=2, y=2, z=0.1)),
+            )
+
+            user_fig.update_traces(
+                hoverinfo="text+x+y+z",
+                hovertemplate="%{x:.2f}, %{y:.2f}, %{z:.2f}"
+            )
             
-            for example in user_data[session_hash]["examples"]:
-                safe_filename = get_safe_filename(example)
-                dest_path = os.path.join(examples_dir, f"{safe_filename}.jpg")
-                
-                if os.path.exists(dest_path):
-                    continue
-                
-                source_path = os.path.join(base_examples_dir, f"{safe_filename}.jpg")
-                
-                if os.path.exists(source_path):
-                    try:
-                        import shutil
-                        shutil.copy2(source_path, dest_path)
-                        print(f"Copied image for '{example}' from pre-generated source")
-                    except Exception as e:
-                        print(f"Error copying image for '{example}': {e}")
-                else:
-                    try:
-                        image = pipe(
-                            prompt=example,
-                            negative_prompt=negative_prompt,
-                            num_inference_steps=num_inference_steps,
-                            guidance_scale=guidance_scale,
-                        ).images[0]
-                        image.save(dest_path, format="JPEG")
-                        print(f"Generated new image for '{example}' as pre-generated source was not found")
-                    except Exception as e:
-                        print(f"Error generating initial image for '{example}': {e}")
+            user_data[session_hash]["fig"] = user_fig
 
     html_path = generate_user_html(session_hash)
-
     timestamp = int(time.time())
-    
     flask_tunnel = get_flask_tunnel_url()
     flask_url = f"{flask_tunnel}/plot/{session_hash}?t={timestamp}"
 
@@ -232,7 +245,6 @@ def update_user_fig(session_hash):
 def add_word_user(new_example, session_hash):
     user_examples = user_data[session_hash]["examples"]
     user_coords = user_data[session_hash]["coords"]
-    user_images = user_data[session_hash]["images"]
     user_axis = user_data[session_hash]["axis"]
 
     new_coord = get_concat_embeddings([new_example]) @ user_axis.T
@@ -246,16 +258,10 @@ def add_word_user(new_example, session_hash):
         guidance_scale=guidance_scale,
     ).images[0]
 
-    examples_dir = get_user_examples_dir(session_hash)
-    safe_filename = get_safe_filename(new_example)
-    image_path = examples_dir / f"{safe_filename}.jpg"
-    image.save(str(image_path), format="JPEG")
-
-    buffer = BytesIO()
-    image.save(buffer, format="JPEG")
-    encoded_image = base64.b64encode(buffer.getvalue()).decode("utf-8")
-
-    user_data[session_hash]["images"].append("data:image/jpeg;base64, " + encoded_image)
+    if "images" not in user_data[session_hash]:
+        user_data[session_hash]["images"] = {}
+    
+    user_data[session_hash]["images"][new_example] = image_to_base64(image)
     user_data[session_hash]["examples"].append(new_example)
 
     return update_user_fig(session_hash)
@@ -264,7 +270,6 @@ def add_word_user(new_example, session_hash):
 def remove_word_user(word_to_remove, session_hash):
     user_examples = user_data[session_hash]["examples"]
     user_coords = user_data[session_hash]["coords"]
-    user_images = user_data[session_hash]["images"]
 
     examplesMap = {example: index for index, example in enumerate(user_examples)}
     if word_to_remove not in examplesMap:
@@ -272,25 +277,10 @@ def remove_word_user(word_to_remove, session_hash):
 
     index = examplesMap[word_to_remove]
 
-    examples_dir = get_user_examples_dir(session_hash)
-    safe_filename = get_safe_filename(word_to_remove)
-    image_path = examples_dir / f"{safe_filename}.jpg"
-    if image_path.exists():
-        try:
-            image_path.unlink()
-        except Exception as e:
-            print(f"Warning: Could not remove image file: {e}")
-
-    viz_dir = get_user_viz_dir(session_hash)
-    viz_path = viz_dir / f"{safe_filename}_emb.png"
-    if viz_path.exists():
-        try:
-            viz_path.unlink()
-        except Exception as e:
-            print(f"Warning: Could not remove visualization file: {e}")
+    if "images" in user_data[session_hash]:
+        user_data[session_hash]["images"].pop(word_to_remove, None)
 
     user_data[session_hash]["coords"] = np.delete(user_coords, index, 0)
-    user_data[session_hash]["images"].pop(index)
     user_data[session_hash]["examples"].pop(index)
 
     return update_user_fig(session_hash)
@@ -450,59 +440,58 @@ def generate_word_embedding_visualization(word, session_hash):
 
 
 def load_user_gallery(session_hash):
-    """Load the gallery of example images for this user"""
+    """Load the gallery of example images from browser storage"""
     if not session_hash:
         return []
 
     if session_hash not in user_data:
         return []
 
-    examples_dir = get_user_examples_dir(session_hash)
-    if not examples_dir:
-        return []
-
     example_images = []
-    base_examples_dir = "DiffusionDemo/images/examples"
-
+    
     for example in user_data[session_hash]["examples"]:
-        safe_filename = get_safe_filename(example)
-        dest_path = os.path.join(examples_dir, f"{safe_filename}.jpg")
-        
-        if os.path.exists(dest_path):
-            try:
-                image = Image.open(dest_path)
-                example_images.append((image, example))
-                continue
-            except Exception as e:
-                print(f"Error loading image for '{example}': {e}")
-        
-        source_path = os.path.join(base_examples_dir, f"{safe_filename}.jpg")
-        
-        if os.path.exists(source_path):
-            try:
-                import shutil
-                shutil.copy2(source_path, dest_path)
-                image = Image.open(dest_path)
-                example_images.append((image, example))
-                print(f"Copied image for '{example}' from pre-generated source")
-            except Exception as e:
-                print(f"Error copying image for '{example}': {e}")
-        else:
-            try:
-                image = pipe(
-                    prompt=example,
-                    negative_prompt=negative_prompt,
-                    num_inference_steps=num_inference_steps,
-                    guidance_scale=guidance_scale,
-                ).images[0]
-                image.save(dest_path, format="JPEG")
-                example_images.append((image, example))
-                print(f"Generated new image for '{example}' as pre-generated source was not found")
-            except Exception as e:
-                print(f"Error generating image for '{example}': {e}")
-                continue
+        try:
+            if example in user_data[session_hash]["images"]:
+                img_str = user_data[session_hash]["images"][example]
+                img = base64_to_image(img_str)
+                if img:
+                    example_images.append((img, example))
+                    continue
+            
+            image = pipe(
+                prompt=example,
+                negative_prompt=negative_prompt,
+                num_inference_steps=num_inference_steps,
+                guidance_scale=guidance_scale,
+            ).images[0]
+            
+            user_data[session_hash]["images"][example] = image_to_base64(image)
+            example_images.append((image, example))
+            
+        except Exception as e:
+            print(f"Error handling image for '{example}': {e}")
+            continue
 
     return example_images
+
+
+def image_to_base64(img):
+    if img is None:
+        return ""
+    img = img.resize((512, 512))  
+    buffer = io.BytesIO()
+    img.save(buffer, format="JPEG", quality=85)
+    img_str = base64.b64encode(buffer.getvalue()).decode('utf-8')
+    return img_str
+
+def base64_to_image(img_str):
+    if not img_str:
+        return None
+    try:
+        img_data = base64.b64decode(img_str)
+        return Image.open(io.BytesIO(img_data))
+    except:
+        return None
 
 __all__ = [
     "generate_user_html",
