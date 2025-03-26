@@ -1,11 +1,13 @@
-import os, time
+import numpy as np
 import gradio as gr
+import os, io, time
+from PIL import Image
 from src.util import *
 from src.pipelines import *
 from threading import Thread
 from serve import run_flask_server
 from src.util.session import session_manager
-from src.pipelines.embeddings import user_data
+from src.pipelines.embeddings import user_data, base64_to_image
 
 with gr.Blocks(css="#step_size_circular {background-color: #666666} #step_size_circular textarea {background-color: #666666}") as demo:
     gr.Markdown("## Stable Diffusion Demo")
@@ -464,6 +466,10 @@ with gr.Blocks(css="#step_size_circular {background-color: #666666} #step_size_c
                     height="auto",
                     object_fit="contain",
                 )
+                
+            with gr.Row():
+                download_gallery_button = gr.Button("Make Gallery to ZIP")
+                zip_output_gallery = gr.File(label="Download ZIP")
 
             with gr.Accordion("Custom Semantic Dimensions", open=False):
                 with gr.Row():
@@ -1237,6 +1243,22 @@ with gr.Blocks(css="#step_size_circular {background-color: #666666} #step_size_c
                 prompt_guidance,
             ],
         )
+
+        @download_gallery_button.click(
+            inputs=[session_hash_state],
+            outputs=[zip_output_gallery]
+        )
+        def download_gallery_as_zip(session_hash, request: gr.Request = None):
+            images_dict = user_data[session_hash]["images"]
+            images_list = []
+            for word, img_str in images_dict.items():
+                if img_str is not None:
+                    img = base64_to_image(img_str)
+                    images_list.append((img, word))
+            
+            zip_path = export_as_zip(images_list, "embeddings", {}, request=request)
+            gr.Info(f"Gallery images prepared for download. Please download ZIP")
+            return gr.update(value=zip_path)
 
     with gr.Tab("Credits"):
         gr.Markdown("""
