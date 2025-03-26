@@ -131,23 +131,50 @@ def init_user_session(request: gr.Request):
     if is_new:
         user_data[session_hash] = {
             "examples": default_examples.copy(),
-            "images": {}, 
+            "images": {},  
             "coords": default_coords.copy(),
             "axis": axis.copy(),
             "axis_names": axis_names.copy(),
         }
 
+        base_examples_dir = "DiffusionDemo/images/examples"
+        
         for example in user_data[session_hash]["examples"]:
-            try:
-                image = pipe(
-                    prompt=example,
-                    negative_prompt=negative_prompt,
-                    num_inference_steps=num_inference_steps,
-                    guidance_scale=guidance_scale,
-                ).images[0]
-                user_data[session_hash]["images"][example] = image_to_base64(image)
-            except Exception as e:
-                print(f"Error generating initial image for '{example}': {e}")
+            safe_filename = get_safe_filename(example)
+            source_path = os.path.join(base_examples_dir, f"{safe_filename}.jpg")
+            
+            if os.path.exists(source_path):
+                try:
+                    with open(source_path, 'rb') as f:
+                        img_data = f.read()
+                    img_str = base64.b64encode(img_data).decode('utf-8')
+                    user_data[session_hash]["images"][example] = img_str
+                    print(f"Loaded pre-generated image for '{example}'")
+                except Exception as e:
+                    print(f"Error loading pre-generated image for '{example}': {e}")
+                    try:
+                        image = pipe(
+                            prompt=example,
+                            negative_prompt=negative_prompt,
+                            num_inference_steps=num_inference_steps,
+                            guidance_scale=guidance_scale,
+                        ).images[0]
+                        user_data[session_hash]["images"][example] = image_to_base64(image)
+                        print(f"Generated fallback image for '{example}'")
+                    except Exception as e2:
+                        print(f"Error generating fallback image for '{example}': {e2}")
+            else:
+                try:
+                    print(f"No pre-generated image found for '{example}', generating one...")
+                    image = pipe(
+                        prompt=example,
+                        negative_prompt=negative_prompt,
+                        num_inference_steps=num_inference_steps,
+                        guidance_scale=guidance_scale,
+                    ).images[0]
+                    user_data[session_hash]["images"][example] = image_to_base64(image)
+                except Exception as e:
+                    print(f"Error generating image for '{example}': {e}")
 
         user_fig = px.scatter_3d(
             x=user_data[session_hash]["coords"][:, 0],
@@ -440,7 +467,7 @@ def generate_word_embedding_visualization(word, session_hash):
 
 
 def load_user_gallery(session_hash):
-    """Load the gallery of example images from browser storage"""
+    """Load the gallery of example images"""
     if not session_hash:
         return []
 
@@ -465,11 +492,14 @@ def load_user_gallery(session_hash):
                 guidance_scale=guidance_scale,
             ).images[0]
             
+            if "images" not in user_data[session_hash]:
+                user_data[session_hash]["images"] = {}
+                
             user_data[session_hash]["images"][example] = image_to_base64(image)
             example_images.append((image, example))
             
         except Exception as e:
-            print(f"Error handling image for '{example}': {e}")
+            print(f"Error handling image for gallery: '{example}': {e}")
             continue
 
     return example_images
