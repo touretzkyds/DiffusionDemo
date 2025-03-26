@@ -1276,7 +1276,9 @@ with gr.Blocks(css="#step_size_circular {background-color: #666666} #step_size_c
         ### Credits
         
         Author: Adithya Kameswara Rao, Carnegie Mellon University.
+                    
         Advisor: David S. Touretzky, Carnegie Mellon University.
+                    
         This work was funded by a grant from NEOM Company, and by National Science Foundation award IIS-2112633.
         """)
     
