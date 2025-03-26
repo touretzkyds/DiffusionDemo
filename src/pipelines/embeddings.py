@@ -523,6 +523,26 @@ def base64_to_image(img_str):
     except:
         return None
 
+def update_gallery_zip(session_hash, request=None):
+    """Automatically update the gallery zip file whenever changes are made to the gallery"""
+    if not session_hash or session_hash not in user_data:
+        return None
+    
+    images_dict = user_data[session_hash]["images"]
+    images_list = []
+    for word, img_str in images_dict.items():
+        if img_str is not None:
+            img = base64_to_image(img_str)
+            if img:
+                images_list.append((img, word))
+    
+    if not images_list:
+        return None
+    
+    from src.util import export_as_zip
+    zip_path = export_as_zip(images_list, "embeddings", {}, request=request)
+    return zip_path
+
 __all__ = [
     "generate_user_html",
     "is_new_session",
@@ -537,4 +557,5 @@ __all__ = [
     "generate_word_emb_vis",
     "generate_word_embedding_visualization",
     "load_user_gallery",
+    "update_gallery_zip",
 ]

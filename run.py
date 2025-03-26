@@ -7,7 +7,7 @@ from src.pipelines import *
 from threading import Thread
 from serve import run_flask_server
 from src.util.session import session_manager
-from src.pipelines.embeddings import user_data, base64_to_image
+from src.pipelines.embeddings import user_data, update_gallery_zip
 
 with gr.Blocks(css="#step_size_circular {background-color: #666666} #step_size_circular textarea {background-color: #666666}", theme=gr.themes.Origin()) as demo:
     gr.Markdown("## Stable Diffusion Demo")
@@ -468,8 +468,7 @@ with gr.Blocks(css="#step_size_circular {background-color: #666666} #step_size_c
                 )
                 
             with gr.Row(equal_height=True):
-                download_gallery_button = gr.Button("Make Gallery to ZIP", size='md')
-                zip_output_gallery = gr.File(label="Download ZIP", scale=1)
+                zip_output_gallery = gr.File(label="Download Gallery ZIP", scale=1)
 
             with gr.Accordion("Custom Semantic Dimensions", open=False):
                 with gr.Row(equal_height=True):
@@ -564,10 +563,10 @@ with gr.Blocks(css="#step_size_circular {background-color: #666666} #step_size_c
 
             embeddings_storage = gr.BrowserState()
 
-        @demo.load(inputs=[embeddings_storage, session_hash_state], outputs=[embeddings_storage])
+        @demo.load(inputs=[embeddings_storage, session_hash_state], outputs=[embeddings_storage, zip_output_gallery])
         def init_storage(storage, session_hash):
             if not session_hash:
-                return storage
+                return storage, None
             
             if storage is None:
                 storage = {}
@@ -586,7 +585,8 @@ with gr.Blocks(css="#step_size_circular {background-color: #666666} #step_size_c
                 if "images" in storage[session_hash]:
                     user_data[session_hash]["images"] = storage[session_hash]["images"].copy()
             
-            return storage
+            zip_path = update_gallery_zip(session_hash)
+            return storage, zip_path
 
         def load_user_html(request: gr.Request):
             flask_url, session_hash, is_new = init_user_session(request)
@@ -602,13 +602,14 @@ with gr.Blocks(css="#step_size_circular {background-color: #666666} #step_size_c
                 }
 
             gallery_images = load_user_gallery(session_hash)
-            return html_content, session_hash, gallery_images
+            zip_path = update_gallery_zip(session_hash, request)
+            return html_content, session_hash, gallery_images, zip_path
 
-        demo.load(load_user_html, None, [output, session_hash_state, gallery])
+        demo.load(load_user_html, None, [output, session_hash_state, gallery, zip_output_gallery])
 
         @word2add_rem.submit(
             inputs=[word2add_rem, session_hash_state, embeddings_storage],
-            outputs=[output, word2add_rem, gallery, embeddings_storage]
+            outputs=[output, word2add_rem, gallery, embeddings_storage, zip_output_gallery]
         )
         def add_rem_word_handler(words, session_hash, storage):
             if storage is None:
@@ -632,11 +633,12 @@ with gr.Blocks(css="#step_size_circular {background-color: #666666} #step_size_c
                 if "images" in user_data[session_hash]:
                     storage[session_hash]["images"] = user_data[session_hash]["images"].copy()
             
-            return html_content, "", gallery_images, storage
+            zip_path = update_gallery_zip(session_hash)
+            return html_content, "", gallery_images, storage, zip_path
 
         @word2change.submit(
             inputs=[word2change, session_hash_state, embeddings_storage],
-            outputs=[output, word2change, gallery, embeddings_storage]
+            outputs=[output, word2change, gallery, embeddings_storage, zip_output_gallery]
         )
         def change_word_handler(word, session_hash, storage):
             if storage is None:
@@ -660,11 +662,12 @@ with gr.Blocks(css="#step_size_circular {background-color: #666666} #step_size_c
                 if "images" in user_data[session_hash]:
                     storage[session_hash]["images"] = user_data[session_hash]["images"].copy()
             
-            return html_content, "", gallery_images, storage
+            zip_path = update_gallery_zip(session_hash)
+            return html_content, "", gallery_images, storage, zip_path
 
         @clear_words_button.click(
             inputs=[session_hash_state, embeddings_storage],
-            outputs=[output, gallery, embeddings_storage]
+            outputs=[output, gallery, embeddings_storage, zip_output_gallery]
         )
         def clear_words_handler(session_hash, storage):
             if storage is None:
@@ -682,8 +685,7 @@ with gr.Blocks(css="#step_size_circular {background-color: #666666} #step_size_c
             
             if session_hash in storage:
                 storage[session_hash] = {"examples": [], "images": {}}
-            
-            return html_content, gallery_images, storage
+            return html_content, gallery_images, storage, None
 
         @submit_1.click(
             inputs=[
@@ -939,11 +941,11 @@ with gr.Blocks(css="#step_size_circular {background-color: #666666} #step_size_c
 
         @word_input.submit(
             inputs=[word_input, session_hash_state],
-            outputs=[embedding_visualization, word_input, gallery, output],
+            outputs=[embedding_visualization, word_input, gallery, output, zip_output_gallery],
         )
         def handle_word_visualization(word, session_hash):
             if not word.strip():
-                return None, "", load_user_gallery(session_hash), output.value
+                return None, "", load_user_gallery(session_hash), output.value, None
 
             emb_viz, generated_img, label = generate_word_embedding_visualization(
                 word, session_hash
@@ -953,7 +955,9 @@ with gr.Blocks(css="#step_size_circular {background-color: #666666} #step_size_c
             html_content = f"""
             <iframe id="html-frame" src="{flask_url}" style="width:100%; height:700px;"></iframe>
             """
-            return emb_viz, "", load_user_gallery(session_hash), html_content
+            
+            zip_path = update_gallery_zip(session_hash)
+            return emb_viz, "", load_user_gallery(session_hash), html_content, zip_path
 
         with gr.TabItem("Interpolate"):
             gr.Markdown(
@@ -1243,22 +1247,6 @@ with gr.Blocks(css="#step_size_circular {background-color: #666666} #step_size_c
                 prompt_guidance,
             ],
         )
-
-        @download_gallery_button.click(
-            inputs=[session_hash_state],
-            outputs=[zip_output_gallery]
-        )
-        def download_gallery_as_zip(session_hash, request: gr.Request = None):
-            images_dict = user_data[session_hash]["images"]
-            images_list = []
-            for word, img_str in images_dict.items():
-                if img_str is not None:
-                    img = base64_to_image(img_str)
-                    images_list.append((img, word))
-            
-            zip_path = export_as_zip(images_list, "embeddings", {}, request=request)
-            gr.Info(f"Gallery images prepared for download. Please download ZIP")
-            return gr.update(value=zip_path)
 
     with gr.Tab("Credits"):
         gr.Markdown("""
