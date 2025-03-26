@@ -24,6 +24,7 @@ prompt = "Self-portrait oil painting, a beautiful cyborg with golden hair, 8k"
 promptA = "Self-portrait oil painting, a beautiful man with golden hair, 8k"
 promptB = "Self-portrait oil painting, a beautiful woman with golden hair, 8k"
 negative_prompt = "(nsfw), nude, naked, breasts, underwear, pornography, hentai, sexual, explicit, lewd, obscene, indecent, gore, blood, injury, mutilation, corpse, violence, weapon, gun, knife, killing, death, torture, drugs, narcotics, smoking, alcohol"
+bad_concepts = ['sexual', 'nude', 'sex', '18+', 'naked', 'nsfw', 'porn', 'dick', 'vagina', 'naked person (approximation)', 'explicit content', 'uncensored', 'fuck', 'nipples', 'nipples (approximation)', 'naked breasts', 'areola']
 
 num_images = 5
 degree = 360
@@ -105,4 +106,5 @@ __all__ = [
     "cleanup_threshold",
     "safety_checker",
     "feature_extractor",
+    "bad_concepts"
 ]

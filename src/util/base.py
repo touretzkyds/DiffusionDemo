@@ -1,15 +1,15 @@
-import io
 import os
+import json
 import torch
-import zipfile
 import numpy as np
 import gradio as gr
+from torch import nn
 from PIL import Image
 from tqdm.auto import tqdm
 from src.util.params import *
 from src.util.clip_config import *
 import matplotlib.pyplot as plt
-import json
+from src.util.params import bad_concepts
 from src.util.session import session_manager
 from diffusers.image_processor import VaeImageProcessor
 
@@ -100,7 +100,52 @@ def convert_to_pil_image(image):
     pil_images = [Image.fromarray(image) for image in images]
     return pil_images[0]
 
-def run_safety_check(image):
+@torch.no_grad()
+def custom_safety_check(clip_input, images, filter_strength=-0.1):
+    checker = safety_checker
+    
+    with torch.amp.autocast(device_type="cuda"):
+        pooled_output = checker.vision_model(clip_input)[1] 
+        image_embeds = checker.visual_projection(pooled_output)
+
+        cos_dist = cosine_distance(image_embeds, checker.concept_embeds).cpu().numpy()
+
+        result = []
+        batch_size = image_embeds.shape[0]
+        for i in range(batch_size):
+            result_img = {"concept_scores": {}, "bad_concepts": []}
+            adjustment = filter_strength  # Use negative value to make filter weaker
+
+            for concet_idx in range(len(cos_dist[0])):
+                concept_cos = cos_dist[i][concet_idx]
+                concept_threshold = checker.concept_embeds_weights[concet_idx].item()
+                result_img["concept_scores"][concet_idx] = round(concept_cos - concept_threshold + adjustment, 3)
+                if result_img["concept_scores"][concet_idx] > 0:
+                    result_img["bad_concepts"].append(concet_idx)
+                    print("NSFW concept found:", bad_concepts[concet_idx])
+
+            result.append(result_img)
+
+        has_nsfw_concepts = [len(res["bad_concepts"]) > 0 for res in result]
+
+        for idx, has_nsfw_concept in enumerate(has_nsfw_concepts):
+            if has_nsfw_concept:
+                if torch.is_tensor(images):
+                    images[idx] = torch.zeros_like(images[idx])
+                else:
+                    images[idx] = np.zeros(images[idx].shape)
+        
+        if not any(has_nsfw_concepts):
+            print("No NSFW found in the image")
+
+        return images, has_nsfw_concepts
+
+def cosine_distance(image_embeds, text_embeds):
+    normalized_image_embeds = nn.functional.normalize(image_embeds)
+    normalized_text_embeds = nn.functional.normalize(text_embeds)
+    return torch.mm(normalized_image_embeds, normalized_text_embeds.t())
+
+def run_safety_check(image, filter_strength=0.0):
     vae_scale_factor = 2 ** (len(vae.config.block_out_channels) - 1)
     image_processor = VaeImageProcessor(vae_scale_factor=vae_scale_factor)
     if torch.is_tensor(image):
@@ -108,9 +153,8 @@ def run_safety_check(image):
     else:
         feature_extractor_input = image_processor.numpy_to_pil(image)
     safety_checker_input = feature_extractor(feature_extractor_input, return_tensors="pt").to(device=torch_device)
-    image, has_nsfw_concept = safety_checker(
-        images=image, clip_input=safety_checker_input.pixel_values.to(dtype=torch.float32)
-    )
+    image, has_nsfw_concept = custom_safety_check(safety_checker_input.pixel_values, image, filter_strength)
+    
     if has_nsfw_concept is None:
         do_denormalize = [True] * image.shape[0]
     else:
@@ -124,7 +168,6 @@ def run_safety_check(image):
             " Try again with a different prompt and/or seed."
         )
     return image, has_nsfw_concept
-
 
 def generate_images(
     latents,
