@@ -1248,14 +1248,37 @@ with gr.Blocks(css="#step_size_circular {background-color: #666666} #step_size_c
             ],
         )
 
-    with gr.Tab("Credits"):
+    with gr.Tab("About"):
         gr.Markdown("""
-                    Author: Adithya Kameswara Rao, Carnegie Mellon University.
-
-                    Advisor: David S. Touretzky, Carnegie Mellon University.
-
-                    This work was funded by a grant from NEOM Company, and by National Science Foundation award IIS-2112633.
-                    """)
+        This demonstration provides an in-depth exploration of stable diffusion models, walking you through the inner workings in a step-by-step manner. You can experiment with various aspects of the model to better understand how text-to-image generation works.
+        
+        ### Diffusion Model Used
+        
+        This demo uses [Dreamshaper 8](https://huggingface.co/lykon/dreamshaper-8), a Stable Diffusion model fine-tuned on stable-diffusion-v1-5. Dreamshaper 8 is designed to handle both artistic and realistic styles, with good capabilities for both photorealism and anime-style content.
+        
+        ### NSFW Content Filtering
+        
+        This demo implements content safety using the Stable Diffusion Safety Checker component. The safety system:
+        
+        - Uses a CLIP-based model to analyze generated images
+        - Compares image embeddings to known unsafe content patterns
+        - Blocks generation of potentially inappropriate imagery
+        
+        ### References
+        
+        If you're interested in learning more about diffusion models:
+        
+        - [Cats in Latent Space](https://youtu.be/hb-KT66rCT8?si=RyCQCG7qU-iBugjV) - An intuitive visual explanation of latent diffusion
+        - [Diffusion Explainer: Stable Diffusion Explained with Visualization](https://poloclub.github.io/diffusion-explainer/) - Interactive explanation of diffusion models
+        - [The Illustrated Stable Diffusion](https://jalammar.github.io/illustrated-stable-diffusion/) - Visual guide to understanding Stable Diffusion
+        - [Red-Teaming the Stable Diffusion Safety Filter](https://arxiv.org/abs/2210.04610) - Research paper explaining Stable Diffusion safety filter
+        
+        ### Credits
+        
+        Author: Adithya Kameswara Rao, Carnegie Mellon University.
+        Advisor: David S. Touretzky, Carnegie Mellon University.
+        This work was funded by a grant from NEOM Company, and by National Science Foundation award IIS-2112633.
+        """)
     
 
 if __name__ == "__main__":
