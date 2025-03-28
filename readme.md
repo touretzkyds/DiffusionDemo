@@ -1,5 +1,6 @@
 # DiffusionDemo
 
+[![Open Website](https://img.shields.io/badge/Open-Website-blue?logo=globe)](https://diffusion-demo.cis240773.projects.jetstream-cloud.org)
 [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/touretzkyds/DiffusionDemo/blob/master/demo.ipynb)
 
 This repository provides an in-depth exploration of stable diffusion models, walking readers through the inner workings in a step-by-step manner. 
