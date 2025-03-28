@@ -56,7 +56,7 @@ def display_perturb_images(
         "Seed": seed,
     }
     zip_path = export_as_zip(images, fname, tab_config, request=request)
-    return [gr.Gallery(label="Images", value=images, selected_index=0, preview=True), zip_path] + [prompt] * 8
+    return [gr.Gallery(label="Images", value=images), zip_path] + [prompt] * 8
 
 
 __all__ = ["display_perturb_images"]
