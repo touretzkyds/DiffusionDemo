@@ -73,7 +73,7 @@ with gr.Blocks(css="#step_size_circular {background-color: #666666} #step_size_c
                     generate_images_button_denoise = gr.Button("Generate Images")
 
                 with gr.Column():
-                    images_output_denoise = gr.Gallery(label="Images", selected_index=0)
+                    images_output_denoise = gr.Gallery(label="Images", selected_index=0, preview=True)
                     gif_denoise = gr.Image(label="GIF")
                     zip_output_denoise = gr.File(label="Download ZIP")
 
@@ -107,7 +107,7 @@ with gr.Blocks(css="#step_size_circular {background-color: #666666} #step_size_c
                     generate_images_button_seed = gr.Button("Generate Images")
 
                 with gr.Column():
-                    images_output_seed = gr.Gallery(label="Images", selected_index=0)
+                    images_output_seed = gr.Gallery(label="Images", selected_index=0, preview=True)
                     zip_output_seed = gr.File(label="Download ZIP")
 
         with gr.TabItem("Perturbations"):
@@ -154,7 +154,7 @@ with gr.Blocks(css="#step_size_circular {background-color: #666666} #step_size_c
                     generate_images_button_perturb = gr.Button("Generate Images")
 
                 with gr.Column():
-                    images_output_perturb = gr.Gallery(label="Image", selected_index=0)
+                    images_output_perturb = gr.Gallery(label="Image", selected_index=0, preview=True)
                     zip_output_perturb = gr.File(label="Download ZIP")
 
         seed_perturb.change(
@@ -223,7 +223,7 @@ with gr.Blocks(css="#step_size_circular {background-color: #666666} #step_size_c
                     generate_images_button_circular = gr.Button("Generate Images")
 
                 with gr.Column():
-                    images_output_circular = gr.Gallery(label="Image", selected_index=0)
+                    images_output_circular = gr.Gallery(label="Image", selected_index=0, preview=True)
                     gif_circular = gr.Image(label="GIF")
                     zip_output_circular = gr.File(label="Download ZIP")
 
@@ -375,7 +375,7 @@ with gr.Blocks(css="#step_size_circular {background-color: #666666} #step_size_c
 
                 with gr.Column():
                     images_output_guidance = gr.Gallery(
-                        label="Images", selected_index=0
+                        label="Images", selected_index=0, preview=True
                     )
                     zip_output_guidance = gr.File(label="Download ZIP")
 
@@ -465,6 +465,7 @@ with gr.Blocks(css="#step_size_circular {background-color: #666666} #step_size_c
                     columns=4,
                     height="auto",
                     object_fit="contain",
+                    preview=True
                 )
                 
             with gr.Row(equal_height=True):
@@ -1004,7 +1005,7 @@ with gr.Blocks(css="#step_size_circular {background-color: #666666} #step_size_c
 
                 with gr.Column():
                     images_output_interpolate = gr.Gallery(
-                        label="Interpolated Images", selected_index=0
+                        label="Interpolated Images", selected_index=0, preview=True
                     )
                     gif_interpolate = gr.Image(label="GIF")
                     zip_output_interpolate = gr.File(label="Download ZIP")
@@ -1092,7 +1093,7 @@ with gr.Blocks(css="#step_size_circular {background-color: #666666} #step_size_c
             zip_path = export_as_zip(images, fname, tab_config, request=request)
             progress(1, desc="Exporting as gif")
             gif_path = export_as_gif(images, filename="denoising.gif", request=request)
-            return [gr.Gallery(label="Images", value=images, selected_index=0), gif_path, zip_path] + [prompt] * 8
+            return [gr.Gallery(label="Images", value=images, selected_index=0, preview=True), gif_path, zip_path] + [prompt] * 8
 
         generate_images_button_seed.click(
             fn=display_seed_images,

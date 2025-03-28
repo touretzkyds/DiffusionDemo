@@ -50,7 +50,7 @@ def display_circular_images(
     
     zip_path = export_as_zip(images, fname, tab_config, request=request)
     gif_path = export_as_gif(images, filename="circular.gif", request=request)
-    return [gr.Gallery(label="Images", value=images, selected_index=0), gif_path, zip_path] + [prompt] * 8
+    return [gr.Gallery(label="Images", value=images, selected_index=0, preview=True), gif_path, zip_path] + [prompt] * 8
 
 
 __all__ = ["display_circular_images"]
