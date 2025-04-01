@@ -35,6 +35,12 @@ This demo uses:
 - **Backend**: Python with PyTorch and the Diffusers library
 - **Visualization**: Plotly for 3D embedding visualization
 
+## Documentation
+
+For a detailed understanding of the application's structure and how the components work together:
+- **[Architecture Documentation](docs/architecture.md)**: Explains the system components, data flow, and how different parts of the application interact
+- **[Deployment Documentation](docs/deployment.md)**: Instructions for deploying the application
+
 ## Educational Purpose
 
 This application is designed to:
