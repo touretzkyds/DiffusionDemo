@@ -1,22 +1,40 @@
+<!-- 
+  Circular Path Demonstration Documentation
+  
+  This file provides the explanatory content for the Circular Path tab in the Diffusion Demo.
+  It explains how users can generate images along a circular trajectory in latent space,
+  creating a continuous animation that returns to its starting point.
+-->
+
 <details open>
+    <!-- Section header with orange background -->
     <summary style="background-color: #CE6400; padding-left: 10px;">
         About
     </summary>
+    <!-- Main content container with lighter orange background and flex layout -->
     <div style="display: flex; flex-direction: row; background-color: #D87F2B; padding-left: 10px;">
+        <!-- Left column for explanatory text -->
         <div style="flex: 1;">
+            <!-- Introduction to the circular path concept -->
             <p style="margin-top: 10px">
                 This tab generates a circular trajectory through latent space that begins and ends with the same image. 
                 If we specify a large number of steps around the circle, the successive images will be closely related, resulting in a gradual deformation that produces a nice animation.
             </p>
+            
+            <!-- Controls section header -->
             <p style="font-weight: bold;">
                 Additional Controls:
             </p>  
+            
+            <!-- Explanation of the steps parameter -->
             <p style="font-weight: bold;">
                 Number of Steps around the Circle:
             </p>
             <p>
                 Specify the number of images to produce along the circular path.
             </p>
+            
+            <!-- Explanation of the proportion parameter -->
             <p style="font-weight: bold;">
                 Proportion of Circle:
             </p>
@@ -26,7 +44,13 @@
                 Using a high step count with a small number of degrees allows you to explore very subtle image transformations.
             </p>
         </div>
+        
+        <!-- Right column for the illustrative image -->
         <div style="flex: 1; align-content: center;">
-            <img src="https://raw.githubusercontent.com/touretzkyds/DiffusionDemo/docker/images/circular.png" style="max-width: 100%; height: auto; margin-top: 10px; margin-bottom: 10px; padding-left: 10px;">
+            <!-- Visual example of circular path traversal -->
+            <img src="https://raw.githubusercontent.com/touretzkyds/DiffusionDemo/docker/images/circular.png" 
+                 style="max-width: 100%; height: auto; margin-top: 10px; margin-bottom: 10px; padding-left: 10px;"
+                 alt="Illustration of circular path in latent space">
         </div>
     </div>
+</details>

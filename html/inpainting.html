@@ -1,14 +1,33 @@
+<!-- 
+  Inpainting Demonstration Documentation
+  
+  This file provides the explanatory content for the Inpainting tab in the Diffusion Demo.
+  It explains how inpainting allows for targeted, localized image editing by replacing
+  specific regions with new content guided by a text prompt, contrasting this with
+  the more global changes produced by the poke method.
+-->
+
 <details open>
+    <!-- Section header with orange background -->
     <summary style="background-color: #CE6400; padding-left: 10px;">
         About
     </summary>
+    <!-- Main content container with lighter orange background and flex layout -->
     <div style="display: flex; flex-direction: row; background-color: #D87F2B; padding-left: 10px;">
+        <!-- Left column for explanatory text -->
         <div style="flex: 1;">
+            <!-- Explanation of inpainting vs. poke methods -->
             <p style="margin-top: 10px">
                 Unlike poke, which globally alters the target image via a perturbation in the initial latent noise, inpainting alters just the region of the perturbation and allows us to specify the change we want to make.
             </p>
         </div>
+        
+        <!-- Right column for the illustrative image -->
         <div style="flex: 1; align-content: center;">
-            <img src="https://raw.githubusercontent.com/touretzkyds/DiffusionDemo/docker/images/inpainting.png" style="max-width: 100%; height: auto; margin-top: 10px; margin-bottom: 10px; padding-left: 10px;">
+            <!-- Visual example showing inpainting process and results -->
+            <img src="https://raw.githubusercontent.com/touretzkyds/DiffusionDemo/docker/images/inpainting.png" 
+                 style="max-width: 100%; height: auto; margin-top: 10px; margin-bottom: 10px; padding-left: 10px;"
+                 alt="Demonstration of inpainting process with masked region and resulting edited image">
         </div>
     </div>
+</details>

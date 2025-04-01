@@ -1,16 +1,33 @@
+<!-- 
+  Denoising Process Demonstration Documentation
+  
+  This file provides the explanatory content for the Denoising tab in the Diffusion Demo.
+  It explains how users can visualize the step-by-step denoising process that transforms
+  random noise into a coherent image, showing the progressive refinement at each step.
+-->
+
 <details open> 
+    <!-- Section header with orange background -->
     <summary style="background-color: #CE6400; padding-left: 10px;">
         About
     </summary>
+    <!-- Main content container with lighter orange background and flex layout -->
     <div style="display: flex; flex-direction: row; background-color: #D87F2B; padding-left: 10px;">
+        <!-- Left column for explanatory text -->
         <div style="flex: 1;">
+            <!-- Introduction to the denoising process visualization -->
             <p style="margin-top: 10px">
                 This tab displays the intermediate images generated during the denoising process. 
                 Seeing these intermediate images provides insight into how the diffusion model progressively adds detail at each step.
             </p>
         </div>
+        
+        <!-- Right column for the illustrative image -->
         <div style="flex: 1; align-content: center;">
-            <img src="https://raw.githubusercontent.com/touretzkyds/DiffusionDemo/docker/images/denoising.png" style="max-width: 100%; height: auto; margin-top: 10px; margin-bottom: 10px; padding-left: 10px;">
+            <!-- Visual example of the denoising progression -->
+            <img src="https://raw.githubusercontent.com/touretzkyds/DiffusionDemo/docker/images/denoising.png" 
+                 style="max-width: 100%; height: auto; margin-top: 10px; margin-bottom: 10px; padding-left: 10px;"
+                 alt="Progression of denoising steps from noise to final image">
         </div>
     </div>
 </details>

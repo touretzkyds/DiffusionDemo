@@ -1,15 +1,34 @@
+<!-- 
+  Negative Prompt Demonstration Documentation
+  
+  This file provides the explanatory content for the Negative Prompt tab in the Diffusion Demo.
+  It explains how negative prompts can be used to guide the generation process away from
+  certain characteristics or features, allowing for more precise control over the output
+  by explicitly specifying what should be avoided in the generated image.
+-->
+
 <details open>
+    <!-- Section header with orange background -->
     <summary style="background-color: #CE6400; padding-left: 10px;">
         About
     </summary>
+    <!-- Main content container with lighter orange background and flex layout -->
     <div style="display: flex; flex-direction: row; background-color: #D87F2B; padding-left: 10px;">
+        <!-- Left column for explanatory text -->
         <div style="flex: 1;">
+            <!-- Explanation of negative prompts and their effects -->
             <p style="margin-top: 10px">
                 Negative prompts steer images away from unwanted features. 
-                For example, “red” as a negative prompt makes the generated image unlikely to have reddish hues. 
+                For example, "red" as a negative prompt makes the generated image unlikely to have reddish hues. 
             </p>
         </div>
+        
+        <!-- Right column for the illustrative image -->
         <div style="flex: 1; align-content: center;">
-            <img src="https://raw.githubusercontent.com/touretzkyds/DiffusionDemo/docker/images/negative.png" style="max-width: 100%; height: auto; margin-top: 10px; margin-bottom: 10px; padding-left: 10px;">
+            <!-- Visual example comparing images with and without negative prompts -->
+            <img src="https://raw.githubusercontent.com/touretzkyds/DiffusionDemo/docker/images/negative.png" 
+                 style="max-width: 100%; height: auto; margin-top: 10px; margin-bottom: 10px; padding-left: 10px;"
+                 alt="Comparison of images generated with and without negative prompts">
         </div>
     </div>
+</details>

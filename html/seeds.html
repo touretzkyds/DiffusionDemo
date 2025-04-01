@@ -1,17 +1,35 @@
+<!-- 
+  Seed Variation Demonstration Documentation
+  
+  This file provides the explanatory content for the Seeds tab in the Diffusion Demo.
+  It explains how different random seeds affect image generation, producing diverse
+  results even with identical text prompts. This demonstrates the role of initial noise
+  in the diffusion process and helps users understand that a single prompt can yield
+  many different valid interpretations.
+-->
+
 <details open>
+    <!-- Section header with orange background -->
     <summary style="background-color: #CE6400; padding-left: 10px;">
         About
     </summary>
+    <!-- Main content container with lighter orange background and flex layout -->
     <div style="display: flex; flex-direction: row; background-color: #D87F2B; padding-left: 10px;">
+        <!-- Left column for explanatory text -->
         <div style="flex: 1;">
+            <!-- Explanation of how seeds affect image generation -->
             <p style="margin-top: 10px">
                 Seeds create the initial noise that gets refined into the target image. 
                 Different seeds produce different noise patterns, hence the target image will differ even when prompted by the same text. 
                 This tab produces multiple target images from the same text prompt to showcase how changing the seed changes the target image.
             </p>
+            
+            <!-- Controls section header -->
             <p style="font-weight: bold;">
                 Additional Controls:
             </p>  
+            
+            <!-- Explanation of the number of seeds parameter -->
             <p style="font-weight: bold;">
                 Number of Seeds:
             </p>
@@ -19,7 +37,13 @@
                 Specify how many seed values to use.
             </p>
         </div>
+        
+        <!-- Right column for the illustrative image -->
         <div style="flex: 1; align-content: center;">
-            <img src="https://raw.githubusercontent.com/touretzkyds/DiffusionDemo/docker/images/seeds.png" style="max-width: 100%; height: auto; margin-top: 10px; margin-bottom: 10px; padding-left: 10px;">
+            <!-- Visual example showing multiple images from different seeds -->
+            <img src="https://raw.githubusercontent.com/touretzkyds/DiffusionDemo/docker/images/seeds.png" 
+                 style="max-width: 100%; height: auto; margin-top: 10px; margin-bottom: 10px; padding-left: 10px;"
+                 alt="Grid of different images generated from the same prompt with different seeds">
         </div>
     </div>
+</details>

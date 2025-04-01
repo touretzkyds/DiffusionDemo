@@ -1,9 +1,22 @@
+<!-- 
+  Guidance Scale Demonstration Documentation
+  
+  This file provides the explanatory content for the Guidance Scale tab in the Diffusion Demo.
+  It explains how the guidance scale parameter affects image generation by controlling
+  how closely the model adheres to the text prompt, with examples of different settings
+  and their visual impacts on the generated images.
+-->
+
 <details open>
+    <!-- Section header with orange background -->
     <summary style="background-color: #CE6400; padding-left: 10px;">
         About
     </summary>
+    <!-- Main content container with lighter orange background and flex layout -->
     <div style="display: flex; flex-direction: row; background-color: #D87F2B; padding-left: 10px;">
+        <!-- Left column for explanatory text -->
         <div style="flex: 1;">
+            <!-- Explanation of guidance scale and its effects -->
             <p style="margin-top: 10px">
                 Guidance is responsible for making the target image adhere to the prompt. 
                 A higher value enforces this relation, whereas a lower value does not. 
@@ -11,7 +24,13 @@
                 The default value of 8 produces normal-looking images that reasonably adhere to the prompt.
             </p>
         </div>
+        
+        <!-- Right column for the illustrative image -->
         <div style="flex: 1; align-content: center;">
-            <img src="https://raw.githubusercontent.com/touretzkyds/DiffusionDemo/docker/images/guidance.png" style="max-width: 100%; height: auto; margin-top: 10px; margin-bottom: 10px; padding-left: 10px;">
+            <!-- Visual example showing different guidance scale values and their effects -->
+            <img src="https://raw.githubusercontent.com/touretzkyds/DiffusionDemo/docker/images/guidance.png" 
+                 style="max-width: 100%; height: auto; margin-top: 10px; margin-bottom: 10px; padding-left: 10px;"
+                 alt="Comparison of different guidance scale values and their effects on image generation">
         </div>
     </div>
+</details>

@@ -1,19 +1,36 @@
+<!-- 
+  CLIP Embeddings Visualization Documentation
+  
+  This file provides the explanatory content for the Embeddings tab in the Diffusion Demo.
+  It guides users on how to explore the semantic feature space of CLIP embeddings,
+  visualize relationships between words in 3D space, and understand how 
+  these embeddings relate to generated images and semantic dimensions.
+-->
+
 <head>
+    <!-- External stylesheet for consistent styling across the application -->
     <link rel="stylesheet" type="text/css" href="styles.css">
 </head>
 
 <details open>
+    <!-- Section header with orange background -->
     <summary style="background-color: #CE6400; padding-left: 10px;">
         About
     </summary>
+    <!-- Main content container with lighter orange background -->
     <div style="background-color: #D87F2B; padding-left: 10px;">
+        <!-- Basic Exploration section header -->
         <p style="font-weight: bold;">
             Basic Exploration
         </p>
+        
+        <!-- Introduction to the embeddings visualization interface -->
         The top part of the embeddings tab is the 3D plot of semantic feature space. 
         At the bottom of the tab there are expandable panels that can be opened to reveal more advanced features
 
+        <!-- Instructions for interacting with the 3D visualization -->
         <ul>
+            <!-- Navigation instructions -->
             <li>
                 <strong>
                     Explore the 3D semantic feature space:
@@ -22,6 +39,8 @@
                 Use the scroll wheel to zoom in and out. 
                 Hold down the control key and click and drag to pan the view.
             </li>
+            
+            <!-- Image generation from point hover -->
             <li>
                 <strong>
                     Find the generated image:
@@ -29,12 +48,16 @@
                 Hover over a point in the semantic feature space, and a window will pop up showing a generated image from this one-word prompt. 
                 On left click, the image will be downloaded.
             </li>
+            
+            <!-- Embedding vector visualization -->
             <li>
                 <strong>
                     Find the embedding vector display:
                 </strong> 
                 Hover over a word in the 3D semantic feature space, and an embedding vector display at the bottom of the tab shows the corresponding embedding vector.
             </li>
+            
+            <!-- Adding/removing words from the visualization -->
             <li>
                 <strong>
                     Add/remove words from the 3D plot:
@@ -42,6 +65,8 @@
                 Type a word in the Add/Remove word text box below the 3D plot to add a word to the plot, or if the word is already present, remove it from the plot. 
                 You can also type multiple words separated by spaces or commas.
             </li>
+            
+            <!-- Regenerating images for specific words -->
             <li>
                 <strong>
                     Change image for word in the 3D plot:
@@ -50,20 +75,26 @@
             </li>
         </ul>
         
+        <!-- Advanced Semantic Dimensions section -->
         <p style="font-weight: bold; margin-top: 10px;">
             Semantic Dimensions
         </p>
         <ul>
+            <!-- Selecting different semantic dimensions -->
             <li>
                 <strong>Select a different semantic dimension.</strong><br>
                 Open the Custom Semantic Dimensions panel and choose another dimension for the X or Y or Z axis. 
                 See how the display changes.
             </li>
+            
+            <!-- Modifying existing semantic dimensions -->
             <li>
                 <strong>Alter a semantic dimension.</strong><br>
                 Examine the positive and negative word pairs used to define the semantic dimension. 
                 You can change these pairs to alter the semantic dimension.
             </li>
+            
+            <!-- Creating new semantic dimensions -->
             <li>
                 <strong>Define a new semantic dimension.</strong><br>
                 Pick a new semantic dimension that you can define using pairs of opposed words. 

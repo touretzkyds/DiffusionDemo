@@ -1,24 +1,44 @@
+<!-- 
+  Latent Space Perturbations Demonstration Documentation
+  
+  This file provides the explanatory content for the Perturbations tab in the Diffusion Demo.
+  It explains how small changes in the latent space (perturbations) affect image generation,
+  allowing users to explore variations around a base image by controlling the direction
+  and magnitude of these perturbations, and visualizing how local regions in latent space
+  correspond to similar but distinct images.
+-->
+
 <details open>
+    <!-- Section header with orange background -->
     <summary style="background-color: #CE6400; padding-left: 10px;">
         About
     </summary>
+    <!-- Main content container with lighter orange background and flex layout -->
     <div style="display: flex; flex-direction: row; background-color: #D87F2B; padding-left: 10px;">
+        <!-- Left column for explanatory text -->
         <div style="flex: 1;">
+            <!-- Introduction to the perturbation concept -->
             <p style="margin-top: 10px">
                 Perturbations enables the exploration of the latent space around a seed. 
                 Perturbing the noise from an initial seed towards the noise from a different seed illustrates the variations in images obtainable from a local region of latent space. 
                 Using a small perturbation size produces target images that closely resemble the one from the initial seed. 
                 Larger perturbations traverse more distance in latent space towards the second seed, resulting in greater variation in the generated images.
             </p>
+            
+            <!-- Controls section header -->
             <p style="font-weight: bold;">
                 Additional Controls:
             </p>  
+            
+            <!-- Explanation of the number of perturbations parameter -->
             <p style="font-weight: bold;">
                 Number of Perturbations:
             </p>
             <p>
                 Specify the number of perturbations to create, i.e., the number of seeds to use. More perturbations produce more images.
             </p>
+            
+            <!-- Explanation of the perturbation size parameter -->
             <p style="font-weight: bold;">
                 Perturbation Size:
             </p>
@@ -29,7 +49,13 @@
                 A value such as 0.1 is recommended.
             </p>
         </div>
+        
+        <!-- Right column for the illustrative image -->
         <div style="flex: 1; align-content: center;">
-            <img src="https://raw.githubusercontent.com/touretzkyds/DiffusionDemo/docker/images/perturbations.png" style="max-width: 100%; height: auto; margin-top: 10px; margin-bottom: 10px; padding-left: 10px;">
+            <!-- Visual example of perturbations and their effects -->
+            <img src="https://raw.githubusercontent.com/touretzkyds/DiffusionDemo/docker/images/perturbations.png" 
+                 style="max-width: 100%; height: auto; margin-top: 10px; margin-bottom: 10px; padding-left: 10px;"
+                 alt="Multiple images showing variations generated through different perturbations of the same seed">
         </div>
     </div>
+</details>

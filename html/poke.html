@@ -1,21 +1,45 @@
+<!-- 
+  Latent Space Poking Demonstration Documentation
+  
+  This file provides the explanatory content for the Poke tab in the Diffusion Demo.
+  It explains how modifications to a specific region of the initial latent noise
+  (poking) can have both local and global effects on the generated image, demonstrating
+  the complex relationships between different parts of the latent representation and
+  the resulting visual features.
+-->
+
 <details open>
+    <!-- Section header with orange background -->
     <summary style="background-color: #CE6400; padding-left: 10px;">
         About
     </summary>
+    <!-- Main content container with lighter orange background and flex layout -->
     <div style="display: flex; flex-direction: row; background-color: #D87F2B; padding-left: 10px;">
+        <!-- Left column for explanatory text -->
         <div style="flex: 1;">
+            <!-- Explanation of the latent space poking concept -->
             <p style="margin-top: 10px">
                 Poke explores how perturbations in a local region of the initial latent noise impact the target image. 
                 A small perturbation to the initial latent noise gets carried through the denoising process, demonstrating the global effect it can produce. 
             </p>
+            
+            <!-- Controls section header -->
             <p style="font-weight: bold;">
                 Additional Controls:
             </p>  
+            
+            <!-- Explanation of the position and size controls -->
             <p>
                 You can adjust the perturbation through the X, Y, height, and width controls. 
             </p>
         </div>
+        
+        <!-- Right column for the illustrative image -->
         <div style="flex: 1; align-content: center;">
-            <img src="https://raw.githubusercontent.com/touretzkyds/DiffusionDemo/docker/images/poke.png" style="max-width: 100%; height: auto; margin-top: 10px; margin-bottom: 10px; padding-left: 10px;">
+            <!-- Visual example showing original and poked images -->
+            <img src="https://raw.githubusercontent.com/touretzkyds/DiffusionDemo/docker/images/poke.png" 
+                 style="max-width: 100%; height: auto; margin-top: 10px; margin-bottom: 10px; padding-left: 10px;"
+                 alt="Comparison of original image and image after regional latent space modification">
         </div>
     </div>
+</details>

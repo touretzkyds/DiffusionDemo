@@ -1,16 +1,33 @@
+<!-- 
+  Prompt Interpolation Demonstration Documentation
+  
+  This file provides the explanatory content for the Interpolation tab in the Diffusion Demo.
+  It explains how the system creates smooth transitions between two different text prompts,
+  generating a sequence of intermediate images that gradually transform from one concept
+  to another, resulting in an animation that visualizes the semantic path between ideas.
+-->
+
 <details open>
+    <!-- Section header with orange background -->
     <summary style="background-color: #CE6400; padding-left: 10px;">
         About
     </summary>
+    <!-- Main content container with lighter orange background and flex layout -->
     <div style="display: flex; flex-direction: row; background-color: #D87F2B; padding-left: 10px;">
+        <!-- Left column for explanatory text -->
         <div style="flex: 1;">
+            <!-- Introduction to the prompt interpolation concept -->
             <p style="margin-top: 10px">
                 This tab generates noise patterns for two text prompts and then interpolates between them, gradually transforming from the first to the second. 
                 With a large number of perturbation steps the transformation is very gradual and makes a nice animation.
             </p>
+            
+            <!-- Controls section header -->
             <p style="font-weight: bold;">
                 Additional Controls:
             </p>  
+            
+            <!-- Explanation of the interpolation steps parameter -->
             <p style="font-weight: bold;">
                 Number of Interpolation Steps:
             </p>
@@ -18,7 +35,13 @@
                 Defines the number of intermediate images to generate between the two prompts.
             </p>
         </div>
+        
+        <!-- Right column for the illustrative image -->
         <div style="flex: 1; align-content: center;">
-            <img src="https://raw.githubusercontent.com/touretzkyds/DiffusionDemo/docker/images/interpolate.png" style="max-width: 100%; height: auto; margin-top: 10px; margin-bottom: 10px; padding-left: 10px;">
+            <!-- Visual example of interpolation between two concepts -->
+            <img src="https://raw.githubusercontent.com/touretzkyds/DiffusionDemo/docker/images/interpolate.png" 
+                 style="max-width: 100%; height: auto; margin-top: 10px; margin-bottom: 10px; padding-left: 10px;"
+                 alt="Sequence of images showing gradual transformation from one prompt to another">
         </div>
     </div>
+</details>
