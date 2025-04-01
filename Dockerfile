@@ -4,6 +4,9 @@
 # It uses PyTorch with CUDA for hardware acceleration and sets up the necessary dependencies
 # for running the Gradio-based UI and diffusion model inference.
 #
+# NOTE: This Dockerfile should be placed outside the DiffusionDemo repository directory.
+# The COPY command assumes the DiffusionDemo directory is in the same location as this Dockerfile.
+#
 # References:
 # - https://huggingface.co/spaces/SpacesExamples/Gradio-Docker-Template-nvidia-cuda/blob/main/Dockerfile
 # - https://www.gradio.app/guides/deploying-gradio-with-docker
