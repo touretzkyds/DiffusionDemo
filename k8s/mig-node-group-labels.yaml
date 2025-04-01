@@ -1,0 +1,17 @@
+apiVersion: nfd.k8s-sigs.io/v1alpha1
+kind: NodeFeatureRule
+metadata:
+  name: mig-node-group-labels
+spec:
+  rules:
+    - name: "Label MIG nodes"
+      labels:
+        "my-custom-label/is-this-a-mig-node": "true"
+        "nvidia.com/mig.config": "all-3g.20gb"
+      matchFeatures:
+        - feature: system.name
+          matchExpressions:
+            nodename:
+              op: InRegexp
+              value:
+                - "-default-worker-"
