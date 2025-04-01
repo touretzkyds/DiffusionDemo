@@ -55,8 +55,23 @@ This application is designed to:
 ### Local Development
 
 1. Clone the repository
-2. Install dependencies: `pip install -r requirements.txt`
+2. Install dependencies:
+   - Use `environment.yml` with Conda (`conda env create -f environment.yml`) for a fully reproducible environment including Python version.
+   - Use `requirements.txt` with pip (`pip install -r requirements.txt`) in existing environments or for Docker builds.
 3. Run the application: `python DiffusionDemo/run.py`
+
+### Docker Deployment
+
+For a simple deployment on a machine with GPU:
+
+```bash
+# Pull and run the pre-built Docker image
+docker run -p 7860:7860 --rm --runtime=nvidia --gpus all \
+  -v ~/.cache/huggingface:/root/.cache/huggingface \
+  akameswa/diffusion-demo-cuda-slim:latest
+```
+
+Then access the application at `http://localhost:7860`
 
 ### Deployment on Jetstream2 Kubernetes
 
