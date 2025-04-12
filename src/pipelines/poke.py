@@ -10,9 +10,11 @@ relationship between latent representations and visual features.
 
 import os
 import gradio as gr
+import torch
+import numpy as np
 from src.util.base import *
 from src.util.params import *
-from PIL import Image, ImageDraw
+from PIL import Image, ImageDraw, ImageOps
 from src.util.session import session_manager
 
 
@@ -22,9 +24,9 @@ def visualize_poke(
     """
     Visualize the region being modified in both original and poked images.
     
-    This function draws a rectangle around the modified region to help users
+    This function creates noise visualizations with a highlighted region to help users
     understand which part of the latent space is being altered. It visualizes
-    the region on both the original and modified images for comparison.
+    the region on both the original and modified noise visualizations, as well as the actual images.
     
     Args:
         pokeX (int): X-coordinate of the center of the poke region (in latent space)
@@ -37,8 +39,8 @@ def visualize_poke(
         
     Returns:
         tuple: (
-            PIL.Image: Visualization blank image with poke region highlighted,
-            PIL.Image: Visualization blank image with poke region highlighted, 
+            PIL.Image: Noise visualization with poke region highlighted in yellow,
+            PIL.Image: Different noise visualization with poke region highlighted in yellow, 
             PIL.Image: Original generated image with poke region highlighted,
             PIL.Image: Modified generated image with poke region highlighted
         )
@@ -60,9 +62,27 @@ def visualize_poke(
         (pokeX * 8 + pokeWidth * 8 // 2, pokeY * 8 + pokeHeight * 8 // 2),  # Bottom-right corner
     ]
 
-    # Create blank images for visualization
-    blank1 = Image.new("RGB", (imageWidth, imageHeight))
-    blank2 = Image.new("RGB", (imageWidth, imageHeight))
+    # Generate random noise images for visualization
+    torch.manual_seed(42)  # Fixed seed for the first noise visualization
+    noise1 = torch.randn(1, 3, imageHeight, imageWidth)
+    noise1 = (noise1 * 0.1 + 0.5).clamp(0, 1)  # Scale to [0.4, 0.6] for gentle contrast
+    noise1_np = noise1[0].permute(1, 2, 0).numpy()
+    
+    # Convert to grayscale by averaging RGB channels
+    grayscale_noise1 = np.mean(noise1_np, axis=2)
+    grayscale_noise1 = np.stack([grayscale_noise1] * 3, axis=2)
+    noise1_image = Image.fromarray((grayscale_noise1 * 255).astype(np.uint8))
+    
+    # Different seed for the second noise visualization
+    torch.manual_seed(43)  
+    noise2 = torch.randn(1, 3, imageHeight, imageWidth)
+    noise2 = (noise2 * 0.1 + 0.5).clamp(0, 1)  # Scale to [0.4, 0.6] for gentle contrast
+    noise2_np = noise2[0].permute(1, 2, 0).numpy()
+    
+    # Convert to grayscale by averaging RGB channels
+    grayscale_noise2 = np.mean(noise2_np, axis=2)
+    grayscale_noise2 = np.stack([grayscale_noise2] * 3, axis=2)
+    noise2_image = Image.fromarray((grayscale_noise2 * 255).astype(np.uint8))
     
     # Get the session directory for storing/retrieving images
     session_dir = session_manager.get_session_path(request.session_hash if request else "default")
@@ -70,27 +90,49 @@ def visualize_poke(
     poked_path = session_dir / "poked.png"
 
     # Try to load existing images if available, otherwise use blank images
+    blank = Image.new("RGB", (imageWidth, imageHeight))
     if original_path.exists() and poked_path.exists():
         oImg = Image.open(original_path)
         pImg = Image.open(poked_path)
     else:
-        oImg = blank1.copy()
-        pImg = blank2.copy()
+        oImg = blank.copy()
+        pImg = blank.copy()
 
     # Create drawing objects for all images
-    blankRec1 = ImageDraw.Draw(blank1)
-    blankRec2 = ImageDraw.Draw(blank2)
+    noise1_draw = ImageDraw.Draw(noise1_image)
+    noise2_draw = ImageDraw.Draw(noise2_image)
     oRec = ImageDraw.Draw(oImg)
     pRec = ImageDraw.Draw(pImg)
 
+    # Create a yellow tinted overlay for the poke region
+    # Extract the region to be tinted from both noise images
+    poke_region1 = noise1_image.crop((shape[0][0], shape[0][1], shape[1][0], shape[1][1]))
+    poke_region2 = noise2_image.crop((shape[0][0], shape[0][1], shape[1][0], shape[1][1]))
+    
+    # Create yellow tint (add a yellow cast while preserving texture)
+    yellow_tint = np.array([255, 255, 180])  # Light yellow color
+    
+    # Apply yellow tint to the poke regions
+    poke_region1_np = np.array(poke_region1)
+    poke_region1_np = poke_region1_np * 0.7 + yellow_tint * 0.3  # Blend with yellow
+    poke_region1 = Image.fromarray(poke_region1_np.astype(np.uint8))
+    
+    poke_region2_np = np.array(poke_region2)
+    poke_region2_np = poke_region2_np * 0.7 + yellow_tint * 0.3  # Blend with yellow
+    poke_region2 = Image.fromarray(poke_region2_np.astype(np.uint8))
+    
+    # Paste the tinted regions back into the noise images
+    noise1_image.paste(poke_region1, (shape[0][0], shape[0][1]))
+    noise2_image.paste(poke_region2, (shape[0][0], shape[0][1]))
+    
     # Draw the rectangle indicating the modified region on all images
-    blankRec1.rectangle(shape, outline="white")
-    blankRec2.rectangle(shape, outline="white")
+    noise1_draw.rectangle(shape, outline="white")
+    noise2_draw.rectangle(shape, outline="white")
     oRec.rectangle(shape, outline="white")
     pRec.rectangle(shape, outline="white")
 
-    # Return all four images: two visualization blanks and two actual images
-    return blank1, blank2, oImg, pImg
+    # Return all four images: two noise visualizations and two actual images
+    return noise1_image, noise2_image, oImg, pImg
 
 
 def display_poke_images(
