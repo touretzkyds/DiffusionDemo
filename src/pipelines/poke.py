@@ -37,8 +37,10 @@ def visualize_poke(
         
     Returns:
         tuple: (
-            PIL.Image: Original image with poke region highlighted,
-            PIL.Image: Modified image with poke region highlighted
+            PIL.Image: Visualization blank image with poke region highlighted,
+            PIL.Image: Visualization blank image with poke region highlighted, 
+            PIL.Image: Original generated image with poke region highlighted,
+            PIL.Image: Modified generated image with poke region highlighted
         )
     """
     # Check if the poke region extends outside the valid latent space boundaries
@@ -58,8 +60,9 @@ def visualize_poke(
         (pokeX * 8 + pokeWidth * 8 // 2, pokeY * 8 + pokeHeight * 8 // 2),  # Bottom-right corner
     ]
 
-    # Create a blank image as fallback
-    blank = Image.new("RGB", (imageWidth, imageHeight))
+    # Create blank images for visualization
+    blank1 = Image.new("RGB", (imageWidth, imageHeight))
+    blank2 = Image.new("RGB", (imageWidth, imageHeight))
     
     # Get the session directory for storing/retrieving images
     session_dir = session_manager.get_session_path(request.session_hash if request else "default")
@@ -71,18 +74,23 @@ def visualize_poke(
         oImg = Image.open(original_path)
         pImg = Image.open(poked_path)
     else:
-        oImg = blank
-        pImg = blank
+        oImg = blank1.copy()
+        pImg = blank2.copy()
 
-    # Create drawing objects for both images
+    # Create drawing objects for all images
+    blankRec1 = ImageDraw.Draw(blank1)
+    blankRec2 = ImageDraw.Draw(blank2)
     oRec = ImageDraw.Draw(oImg)
     pRec = ImageDraw.Draw(pImg)
 
-    # Draw the rectangle indicating the modified region on both images
+    # Draw the rectangle indicating the modified region on all images
+    blankRec1.rectangle(shape, outline="white")
+    blankRec2.rectangle(shape, outline="white")
     oRec.rectangle(shape, outline="white")
     pRec.rectangle(shape, outline="white")
 
-    return oImg, pImg
+    # Return all four images: two visualization blanks and two actual images
+    return blank1, blank2, oImg, pImg
 
 
 def display_poke_images(

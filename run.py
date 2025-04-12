@@ -403,14 +403,24 @@ with gr.Blocks(css="#step_size_circular {background-color: #666666} #step_size_c
                     generate_images_button_poke = gr.Button("Generate Images")
 
                 with gr.Column():
-                    # Original image display
-                    original_images_output_poke = gr.Image(
-                        value=visualize_poke(32, 32, 8, 8)[0], label="Original Image"
-                    )
-                    # Poked image display
-                    poked_images_output_poke = gr.Image(
-                        value=visualize_poke(32, 32, 8, 8)[1], label="Poked Image"
-                    )
+                    with gr.Row():
+                        # Original images display (left two panels)
+                        original_viz_output_poke = gr.Image(
+                            value=visualize_poke(32, 32, 8, 8)[0], label="Latent Image"
+                        )
+
+                        original_images_output_poke = gr.Image(
+                            value=visualize_poke(32, 32, 8, 8)[2], label="Original Image"
+                        )
+
+                    with gr.Row():                        
+                        # Poked images display (right two panels)
+                        poked_viz_output_poke = gr.Image(
+                            value=visualize_poke(32, 32, 8, 8)[1], label="Poked Latent Image"
+                        )
+                        poked_images_output_poke = gr.Image(
+                            value=visualize_poke(32, 32, 8, 8)[3], label="Poked Image"
+                        )
                     # Download option
                     zip_output_poke = gr.File(label="Download ZIP")
 
@@ -418,22 +428,22 @@ with gr.Blocks(css="#step_size_circular {background-color: #666666} #step_size_c
         pokeX.change(
             visualize_poke,
             inputs=[pokeX, pokeY, pokeHeight, pokeWidth],
-            outputs=[original_images_output_poke, poked_images_output_poke],
+            outputs=[original_viz_output_poke, poked_viz_output_poke, original_images_output_poke, poked_images_output_poke],
         )
         pokeY.change(
             visualize_poke,
             inputs=[pokeX, pokeY, pokeHeight, pokeWidth],
-            outputs=[original_images_output_poke, poked_images_output_poke],
+            outputs=[original_viz_output_poke, poked_viz_output_poke, original_images_output_poke, poked_images_output_poke],
         )
         pokeHeight.change(
             visualize_poke,
             inputs=[pokeX, pokeY, pokeHeight, pokeWidth],
-            outputs=[original_images_output_poke, poked_images_output_poke],
+            outputs=[original_viz_output_poke, poked_viz_output_poke, original_images_output_poke, poked_images_output_poke],
         )
         pokeWidth.change(
             visualize_poke,
             inputs=[pokeX, pokeY, pokeHeight, pokeWidth],
-            outputs=[original_images_output_poke, poked_images_output_poke],
+            outputs=[original_viz_output_poke, poked_viz_output_poke, original_images_output_poke, poked_images_output_poke],
         )
         # Update seed visualization when slider changes
         seed_poke.change(
@@ -1390,6 +1400,8 @@ with gr.Blocks(css="#step_size_circular {background-color: #666666} #step_size_c
                 pokeWidth,
             ],
             outputs=[
+                original_viz_output_poke,
+                poked_viz_output_poke,
                 original_images_output_poke,
                 poked_images_output_poke,
                 zip_output_poke,
@@ -1429,7 +1441,7 @@ with gr.Blocks(css="#step_size_circular {background-color: #666666} #step_size_c
             )
             
             # Visualize the poke region on both images
-            images, modImages = visualize_poke(pokeX, pokeY, pokeHeight, pokeWidth, request=request)
+            blank1, blank2, images, modImages = visualize_poke(pokeX, pokeY, pokeHeight, pokeWidth, request=request)
             
             # Create metadata for the exports
             fname = "poke"
@@ -1446,6 +1458,8 @@ with gr.Blocks(css="#step_size_circular {background-color: #666666} #step_size_c
             
             # Prepare images for ZIP export
             imgs_list = []
+            imgs_list.append((blank1, "Visualization Original"))
+            imgs_list.append((blank2, "Visualization Poked"))
             imgs_list.append((images, "Original Image"))
             imgs_list.append((modImages, "Poked Image"))
             
@@ -1453,7 +1467,7 @@ with gr.Blocks(css="#step_size_circular {background-color: #666666} #step_size_c
             zip_path = export_as_zip(imgs_list, fname, tab_config, request=request)
             
             # Return outputs and propagate prompt to other tabs
-            return [images, modImages, zip_path] + [prompt] * 8
+            return [blank1, blank2, images, modImages, zip_path] + [prompt] * 8
         
         # Connect Guidance tab button to backend function
         generate_images_button_guidance.click(
