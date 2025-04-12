@@ -406,20 +406,20 @@ with gr.Blocks(css="#step_size_circular {background-color: #666666} #step_size_c
                     with gr.Row():
                         # Original images display (left two panels)
                         original_viz_output_poke = gr.Image(
-                            value=visualize_poke(32, 32, 8, 8)[0], label="Latent Image"
+                            value=visualize_poke(32, 32, 8, 8, 14)[0], label="Latent Image"
                         )
 
                         original_images_output_poke = gr.Image(
-                            value=visualize_poke(32, 32, 8, 8)[2], label="Original Image"
+                            value=visualize_poke(32, 32, 8, 8, 14)[2], label="Original Image"
                         )
 
                     with gr.Row():                        
                         # Poked images display (right two panels)
                         poked_viz_output_poke = gr.Image(
-                            value=visualize_poke(32, 32, 8, 8)[1], label="Poked Latent Image"
+                            value=visualize_poke(32, 32, 8, 8, 14)[1], label="Poked Latent Image"
                         )
                         poked_images_output_poke = gr.Image(
-                            value=visualize_poke(32, 32, 8, 8)[3], label="Poked Image"
+                            value=visualize_poke(32, 32, 8, 8, 14)[3], label="Poked Image"
                         )
                     # Download option
                     zip_output_poke = gr.File(label="Download ZIP")
@@ -427,27 +427,35 @@ with gr.Blocks(css="#step_size_circular {background-color: #666666} #step_size_c
         # Update poking visualization when parameters change
         pokeX.change(
             visualize_poke,
-            inputs=[pokeX, pokeY, pokeHeight, pokeWidth],
+            inputs=[pokeX, pokeY, pokeHeight, pokeWidth, seed_poke],
             outputs=[original_viz_output_poke, poked_viz_output_poke, original_images_output_poke, poked_images_output_poke],
         )
         pokeY.change(
             visualize_poke,
-            inputs=[pokeX, pokeY, pokeHeight, pokeWidth],
+            inputs=[pokeX, pokeY, pokeHeight, pokeWidth, seed_poke],
             outputs=[original_viz_output_poke, poked_viz_output_poke, original_images_output_poke, poked_images_output_poke],
         )
         pokeHeight.change(
             visualize_poke,
-            inputs=[pokeX, pokeY, pokeHeight, pokeWidth],
+            inputs=[pokeX, pokeY, pokeHeight, pokeWidth, seed_poke],
             outputs=[original_viz_output_poke, poked_viz_output_poke, original_images_output_poke, poked_images_output_poke],
         )
         pokeWidth.change(
             visualize_poke,
-            inputs=[pokeX, pokeY, pokeHeight, pokeWidth],
+            inputs=[pokeX, pokeY, pokeHeight, pokeWidth, seed_poke],
             outputs=[original_viz_output_poke, poked_viz_output_poke, original_images_output_poke, poked_images_output_poke],
         )
         # Update seed visualization when slider changes
         seed_poke.change(
-            fn=generate_seed_vis, inputs=[seed_poke], outputs=[seed_vis_poke]
+            fn=generate_seed_vis, 
+            inputs=[seed_poke],
+            outputs=[seed_vis_poke],
+        )
+
+        seed_poke.change(
+            fn=visualize_poke,
+            inputs=[pokeX, pokeY, pokeHeight, pokeWidth, seed_poke],
+            outputs=[original_viz_output_poke, poked_viz_output_poke, original_images_output_poke, poked_images_output_poke],
         )
 
         # ----- Guidance Section -----
@@ -1440,8 +1448,10 @@ with gr.Blocks(css="#step_size_circular {background-color: #666666} #step_size_c
                 request=request
             )
             
-            # Visualize the poke region on both images
-            blank1, blank2, images, modImages = visualize_poke(pokeX, pokeY, pokeHeight, pokeWidth, request=request)
+            # Visualize the poke region on both images - using the user's seed
+            blank1, blank2, images, modImages = visualize_poke(
+                pokeX, pokeY, pokeHeight, pokeWidth, seed=seed, request=request
+            )
             
             # Create metadata for the exports
             fname = "poke"

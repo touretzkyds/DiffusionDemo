@@ -19,7 +19,7 @@ from src.util.session import session_manager
 
 
 def visualize_poke(
-    pokeX, pokeY, pokeHeight, pokeWidth, imageHeight=imageHeight, imageWidth=imageWidth, request: gr.Request = None
+    pokeX, pokeY, pokeHeight, pokeWidth, seed=14, imageHeight=imageHeight, imageWidth=imageWidth, request: gr.Request = None
 ):
     """
     Visualize the region being modified in both original and poked images.
@@ -33,6 +33,7 @@ def visualize_poke(
         pokeY (int): Y-coordinate of the center of the poke region (in latent space)
         pokeHeight (int): Height of the poke region (in latent space)
         pokeWidth (int): Width of the poke region (in latent space)
+        seed (int): Random seed for noise generation (matched with user's selection)
         imageHeight (int): Height of the output image
         imageWidth (int): Width of the output image
         request (gr.Request, optional): Gradio request containing session information
@@ -62,8 +63,8 @@ def visualize_poke(
         (pokeX * 8 + pokeWidth * 8 // 2, pokeY * 8 + pokeHeight * 8 // 2),  # Bottom-right corner
     ]
 
-    # Generate random noise images for visualization
-    torch.manual_seed(42)  # Fixed seed for the first noise visualization
+    # Generate random noise images for visualization using the user's seed
+    torch.manual_seed(seed)  # Use user's seed for first noise visualization
     noise1 = torch.randn(1, 3, imageHeight, imageWidth)
     noise1 = (noise1 * 0.1 + 0.5).clamp(0, 1)  # Scale to [0.4, 0.6] for gentle contrast
     noise1_np = noise1[0].permute(1, 2, 0).numpy()
@@ -73,8 +74,8 @@ def visualize_poke(
     grayscale_noise1 = np.stack([grayscale_noise1] * 3, axis=2)
     noise1_image = Image.fromarray((grayscale_noise1 * 255).astype(np.uint8))
     
-    # Different seed for the second noise visualization
-    torch.manual_seed(43)  
+    # Use seed+1 for the second noise visualization
+    torch.manual_seed(seed + 1)
     noise2 = torch.randn(1, 3, imageHeight, imageWidth)
     noise2 = (noise2 * 0.1 + 0.5).clamp(0, 1)  # Scale to [0.4, 0.6] for gentle contrast
     noise2_np = noise2[0].permute(1, 2, 0).numpy()
