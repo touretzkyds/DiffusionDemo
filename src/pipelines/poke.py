@@ -24,9 +24,8 @@ def visualize_poke(
     """
     Visualize the region being modified in both original and poked images.
     
-    This function creates noise visualizations with a highlighted region to help users
-    understand which part of the latent space is being altered. It visualizes
-    the region on both the original and modified noise visualizations, as well as the actual images.
+    This function creates visualizations of the actual latent noise used in image generation
+    with a highlighted region to help users understand which part of the latent space is being altered.
     
     Args:
         pokeX (int): X-coordinate of the center of the poke region (in latent space)
@@ -40,14 +39,13 @@ def visualize_poke(
         
     Returns:
         tuple: (
-            PIL.Image: Noise visualization with poke region highlighted in yellow,
-            PIL.Image: Different noise visualization with poke region highlighted in yellow, 
+            PIL.Image: Original latent noise visualization with poke region highlighted in yellow,
+            PIL.Image: Modified latent noise visualization with poke region highlighted in yellow, 
             PIL.Image: Original generated image with poke region highlighted,
             PIL.Image: Modified generated image with poke region highlighted
         )
     """
     # Check if the poke region extends outside the valid latent space boundaries
-    # Note: The latent space is 1/8 the size of the pixel space
     if (
         (pokeX - pokeWidth // 2 < 0)
         or (pokeX + pokeWidth // 2 > imageWidth // 8)
@@ -63,27 +61,41 @@ def visualize_poke(
         (pokeX * 8 + pokeWidth * 8 // 2, pokeY * 8 + pokeHeight * 8 // 2),  # Bottom-right corner
     ]
 
-    # Generate random noise images for visualization using the user's seed
-    torch.manual_seed(seed)  # Use user's seed for first noise visualization
-    noise1 = torch.randn(1, 3, imageHeight, imageWidth)
-    noise1 = (noise1 * 0.1 + 0.5).clamp(0, 1)  # Scale to [0.4, 0.6] for gentle contrast
-    noise1_np = noise1[0].permute(1, 2, 0).numpy()
+    # Generate the actual latent vectors used for image generation
+    original_latents, modified_latents = generate_modified_latents(
+        True, seed, pokeX, pokeY, pokeHeight, pokeWidth, imageHeight, imageWidth
+    )
     
-    # Convert to grayscale by averaging RGB channels
-    grayscale_noise1 = np.mean(noise1_np, axis=2)
-    grayscale_noise1 = np.stack([grayscale_noise1] * 3, axis=2)
-    noise1_image = Image.fromarray((grayscale_noise1 * 255).astype(np.uint8))
+    # Convert latent noise to visualizable images
+    # First, we need to normalize the latent vectors to [0, 1] range for visualization
+    # Original latents visualization
+    latent_channels = original_latents.shape[1]
     
-    # Use seed+1 for the second noise visualization
-    torch.manual_seed(seed + 1)
-    noise2 = torch.randn(1, 3, imageHeight, imageWidth)
-    noise2 = (noise2 * 0.1 + 0.5).clamp(0, 1)  # Scale to [0.4, 0.6] for gentle contrast
-    noise2_np = noise2[0].permute(1, 2, 0).numpy()
+    # We'll create grayscale visualizations by averaging across the latent channels
+    original_viz = torch.mean(original_latents, dim=1, keepdim=True)  # Average across channels
     
-    # Convert to grayscale by averaging RGB channels
-    grayscale_noise2 = np.mean(noise2_np, axis=2)
-    grayscale_noise2 = np.stack([grayscale_noise2] * 3, axis=2)
-    noise2_image = Image.fromarray((grayscale_noise2 * 255).astype(np.uint8))
+    # Normalize to [0, 1] range
+    original_viz = (original_viz - original_viz.min()) / (original_viz.max() - original_viz.min())
+    
+    # Convert to PIL image with proper resizing to match the image size
+    original_viz = torch.nn.functional.interpolate(
+        original_viz, size=(imageHeight, imageWidth), mode='bilinear'
+    )
+    original_viz_np = original_viz[0, 0].cpu().numpy()  # Shape: [H, W]
+    
+    # Convert to RGB by duplicating the channel
+    original_viz_rgb = np.stack([original_viz_np] * 3, axis=2)
+    original_viz_image = Image.fromarray((original_viz_rgb * 255).astype(np.uint8))
+    
+    # Same for modified latents
+    modified_viz = torch.mean(modified_latents, dim=1, keepdim=True)
+    modified_viz = (modified_viz - modified_viz.min()) / (modified_viz.max() - modified_viz.min())
+    modified_viz = torch.nn.functional.interpolate(
+        modified_viz, size=(imageHeight, imageWidth), mode='bilinear'
+    )
+    modified_viz_np = modified_viz[0, 0].cpu().numpy()
+    modified_viz_rgb = np.stack([modified_viz_np] * 3, axis=2)
+    modified_viz_image = Image.fromarray((modified_viz_rgb * 255).astype(np.uint8))
     
     # Get the session directory for storing/retrieving images
     session_dir = session_manager.get_session_path(request.session_hash if request else "default")
@@ -100,15 +112,15 @@ def visualize_poke(
         pImg = blank.copy()
 
     # Create drawing objects for all images
-    noise1_draw = ImageDraw.Draw(noise1_image)
-    noise2_draw = ImageDraw.Draw(noise2_image)
+    orig_viz_draw = ImageDraw.Draw(original_viz_image)
+    mod_viz_draw = ImageDraw.Draw(modified_viz_image)
     oRec = ImageDraw.Draw(oImg)
     pRec = ImageDraw.Draw(pImg)
 
     # Create a yellow tinted overlay for the poke region
-    # Extract the region to be tinted from both noise images
-    poke_region1 = noise1_image.crop((shape[0][0], shape[0][1], shape[1][0], shape[1][1]))
-    poke_region2 = noise2_image.crop((shape[0][0], shape[0][1], shape[1][0], shape[1][1]))
+    # Extract the region to be tinted from both noise visualizations
+    poke_region1 = original_viz_image.crop((shape[0][0], shape[0][1], shape[1][0], shape[1][1]))
+    poke_region2 = modified_viz_image.crop((shape[0][0], shape[0][1], shape[1][0], shape[1][1]))
     
     # Create yellow tint (add a yellow cast while preserving texture)
     yellow_tint = np.array([255, 255, 180])  # Light yellow color
@@ -122,18 +134,18 @@ def visualize_poke(
     poke_region2_np = poke_region2_np * 0.7 + yellow_tint * 0.3  # Blend with yellow
     poke_region2 = Image.fromarray(poke_region2_np.astype(np.uint8))
     
-    # Paste the tinted regions back into the noise images
-    noise1_image.paste(poke_region1, (shape[0][0], shape[0][1]))
-    noise2_image.paste(poke_region2, (shape[0][0], shape[0][1]))
+    # Paste the tinted regions back into the noise visualizations
+    original_viz_image.paste(poke_region1, (shape[0][0], shape[0][1]))
+    modified_viz_image.paste(poke_region2, (shape[0][0], shape[0][1]))
     
     # Draw the rectangle indicating the modified region on all images
-    noise1_draw.rectangle(shape, outline="white")
-    noise2_draw.rectangle(shape, outline="white")
+    orig_viz_draw.rectangle(shape, outline="white")
+    mod_viz_draw.rectangle(shape, outline="white")
     oRec.rectangle(shape, outline="white")
     pRec.rectangle(shape, outline="white")
 
     # Return all four images: two noise visualizations and two actual images
-    return noise1_image, noise2_image, oImg, pImg
+    return original_viz_image, modified_viz_image, oImg, pImg
 
 
 def display_poke_images(
