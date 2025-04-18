@@ -55,12 +55,6 @@ def visualize_poke(
         # Warn the user if the region goes out of bounds
         gr.Warning("Modification outside image")
     
-    # Calculate rectangle coordinates in pixel space (×8 from latent space)
-    shape = [
-        (pokeX * 8 - pokeWidth * 8 // 2, pokeY * 8 - pokeHeight * 8 // 2),  # Top-left corner
-        (pokeX * 8 + pokeWidth * 8 // 2, pokeY * 8 + pokeHeight * 8 // 2),  # Bottom-right corner
-    ]
-
     # Generate the actual latent vectors used for image generation
     original_latents, modified_latents = generate_modified_latents(
         True, seed, pokeX, pokeY, pokeHeight, pokeWidth, imageHeight, imageWidth
@@ -77,9 +71,9 @@ def visualize_poke(
     # Normalize to [0, 1] range
     original_viz = (original_viz - original_viz.min()) / (original_viz.max() - original_viz.min())
     
-    # Convert to PIL image with proper resizing to match the image size
+    # Convert to PIL image with proper resizing to match the 2x latent size
     original_viz = torch.nn.functional.interpolate(
-        original_viz, size=(imageHeight, imageWidth), mode='bilinear'
+        original_viz, size=(128, 128), mode='nearest'
     )
     original_viz_np = original_viz[0, 0].cpu().numpy()  # Shape: [H, W]
     
@@ -91,7 +85,7 @@ def visualize_poke(
     modified_viz = torch.mean(modified_latents, dim=1, keepdim=True)
     modified_viz = (modified_viz - modified_viz.min()) / (modified_viz.max() - modified_viz.min())
     modified_viz = torch.nn.functional.interpolate(
-        modified_viz, size=(imageHeight, imageWidth), mode='bilinear'
+        modified_viz, size=(128, 128), mode='nearest'
     )
     modified_viz_np = modified_viz[0, 0].cpu().numpy()
     modified_viz_rgb = np.stack([modified_viz_np] * 3, axis=2)
@@ -114,8 +108,12 @@ def visualize_poke(
     # Create drawing objects for all images
     orig_viz_draw = ImageDraw.Draw(original_viz_image)
     mod_viz_draw = ImageDraw.Draw(modified_viz_image)
-    oRec = ImageDraw.Draw(oImg)
-    pRec = ImageDraw.Draw(pImg)
+    
+    # Calculate rectangle coordinates in 2x from latent space
+    shape = [
+        (pokeX * 2 - pokeWidth * 2 // 2, pokeY * 2 - pokeHeight * 2 // 2),  # Top-left corner
+        (pokeX * 2 + pokeWidth * 2 // 2, pokeY * 2 + pokeHeight * 2 // 2),  # Bottom-right corner
+    ]
 
     # Create a yellow tinted overlay for the poke region
     # Extract the region to be tinted from both noise visualizations
@@ -141,8 +139,6 @@ def visualize_poke(
     # Draw the rectangle indicating the modified region on all images
     orig_viz_draw.rectangle(shape, outline="white")
     mod_viz_draw.rectangle(shape, outline="white")
-    oRec.rectangle(shape, outline="white")
-    pRec.rectangle(shape, outline="white")
 
     # Return all four images: two noise visualizations and two actual images
     return original_viz_image, modified_viz_image, oImg, pImg
