@@ -335,7 +335,7 @@ with gr.Blocks(css="#step_size_circular {background-color: #666666} #step_size_c
         # ----- Poke Section -----
         # Perturb a region in the image and observe the effect
         with gr.TabItem("Poke"):
-            gr.Markdown("Perturb a region in the image and observe the effect.")
+            gr.Markdown("Perturb a region in the image and observe the effect. Explores how changes to a small part of the latent image produce global effects in the target image. Changing only a single pixel has very subtle effects; changing larger regions has more dramatic effects.")
             # Load HTML documentation for this feature
             gr.HTML(read_html("DiffusionDemo/html/poke.html"))
 
