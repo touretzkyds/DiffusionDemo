@@ -27,49 +27,49 @@ from src.util.session import session_manager
 from src.pipelines.embeddings import user_data, update_gallery_zip
 
 # Site visit tracking script
-js = """
-(function(window, document, dataLayerName, id) {
-    window[dataLayerName] = window[dataLayerName] || [];
-    window[dataLayerName].push({
-        start: (new Date).getTime(),
-        event: "stg.start"
-    });
+# js = """
+# (function(window, document, dataLayerName, id) {
+#     window[dataLayerName] = window[dataLayerName] || [];
+#     window[dataLayerName].push({
+#         start: (new Date).getTime(),
+#         event: "stg.start"
+#     });
 
-    var scripts = document.getElementsByTagName('script')[0];
-    var tags = document.createElement('script');
+#     var scripts = document.getElementsByTagName('script')[0];
+#     var tags = document.createElement('script');
 
-    var qP = [];
-    if (dataLayerName !== "dataLayer") {
-        qP.push("data_layer_name=" + dataLayerName);
-    }
-    var qPString = qP.length > 0 ? ("?" + qP.join("&")) : "";
+#     var qP = [];
+#     if (dataLayerName !== "dataLayer") {
+#         qP.push("data_layer_name=" + dataLayerName);
+#     }
+#     var qPString = qP.length > 0 ? ("?" + qP.join("&")) : "";
 
-    tags.async = true;
-    tags.src = "https://touretzky.containers.piwik.pro/" + id + ".js" + qPString;
-    scripts.parentNode.insertBefore(tags, scripts);
+#     tags.async = true;
+#     tags.src = "https://touretzky.containers.piwik.pro/" + id + ".js" + qPString;
+#     scripts.parentNode.insertBefore(tags, scripts);
 
-    !function(a, n, i) {
-        a[n] = a[n] || {};
-        for (var c = 0; c < i.length; c++) {
-            !function(i) {
-                a[n][i] = a[n][i] || {};
-                a[n][i].api = a[n][i].api || function() {
-                    var a = [].slice.call(arguments, 0);
-                    if (typeof a[0] === "string") {
-                        window[dataLayerName].push({
-                            event: n + "." + i + ":" + a[0],
-                            parameters: [].slice.call(arguments, 1)
-                        });
-                    }
-                }
-            }(i[c]);
-        }
-    }(window, "ppms", ["tm", "cm"]);
-})(window, document, 'dataLayer', '4b7bbce9-fa06-4d16-9dc6-6b0146eb8c31');
-"""
+#     !function(a, n, i) {
+#         a[n] = a[n] || {};
+#         for (var c = 0; c < i.length; c++) {
+#             !function(i) {
+#                 a[n][i] = a[n][i] || {};
+#                 a[n][i].api = a[n][i].api || function() {
+#                     var a = [].slice.call(arguments, 0);
+#                     if (typeof a[0] === "string") {
+#                         window[dataLayerName].push({
+#                             event: n + "." + i + ":" + a[0],
+#                             parameters: [].slice.call(arguments, 1)
+#                         });
+#                     }
+#                 }
+#             }(i[c]);
+#         }
+#     }(window, "ppms", ["tm", "cm"]);
+# })(window, document, 'dataLayer', '4b7bbce9-fa06-4d16-9dc6-6b0146eb8c31');
+# """
 
 # Initialize the main Gradio interface with a dark theme
-with gr.Blocks(css="#step_size_circular {background-color: #666666} #step_size_circular textarea {background-color: #666666}", theme=gr.themes.Origin(), js=js) as demo:
+with gr.Blocks(css="#step_size_circular {background-color: #666666} #step_size_circular textarea {background-color: #666666}", theme=gr.themes.Origin()) as demo:
     # Main application header
     gr.Markdown("## Stable Diffusion Demo")
     
@@ -1346,6 +1346,71 @@ with gr.Blocks(css="#step_size_circular {background-color: #666666} #step_size_c
                     )
                     # Download option
                     zip_output_negative = gr.File(label="Download ZIP")
+
+        # ----- Filter Section -----
+        # Demonstrate the effect of content filtering
+        with gr.TabItem("Filter"):
+            gr.Markdown("Demonstrate how content filtering works with different thresholds.")
+            # Load HTML documentation for this feature
+            gr.HTML(read_html("DiffusionDemo/html/filter.html"))
+
+            with gr.Row():
+                with gr.Column():
+                    # Text prompt input
+                    prompt_filter = gr.Textbox(
+                        lines=1,
+                        label="Prompt",
+                        value="A child with their cat in a park",
+                    )
+                    # Filter concept input
+                    filter_concept = gr.Textbox(
+                        lines=1,
+                        label="Filter Concept",
+                        value="cat",
+                    )
+                    # Control for number of images to generate
+                    num_images_filter = gr.Slider(
+                        minimum=1, maximum=20, step=1, value=5, label="Number of Images"
+                    )
+                    # Control for inference steps per image
+                    num_inference_steps_filter = gr.Slider(
+                        minimum=2,
+                        maximum=100,
+                        step=1,
+                        value=8,
+                        label="Number of Inference Steps per Image",
+                    )
+                    # Control for filter threshold
+                    filter_threshold = gr.Slider(
+                        minimum=-1,
+                        maximum=1,
+                        step=0.001,
+                        value=0.0,
+                        label="Filter Threshold",
+                    )
+                    
+                    # Generation button
+                    generate_images_button_filter = gr.Button("Generate Images")
+
+                # Output displays
+                with gr.Column():
+                    # Gallery for filtered images
+                    images_output_filter = gr.Gallery(label="Images with Filter Scores")
+                    # Download option
+                    zip_output_filter = gr.File(label="Download ZIP")
+
+        # Connect Filter tab button to backend function
+        generate_images_button_filter.click(
+            fn=display_filter_images,
+            inputs=[
+                prompt_filter,
+                filter_concept,
+                num_images_filter,
+                num_inference_steps_filter,
+                filter_threshold,
+            ],
+            outputs=[images_output_filter, zip_output_filter],
+        )
 
         # Update seed visualization when slider changes
         seed_negative.change(

@@ -1,0 +1,54 @@
+<!-- 
+  Filter Demonstration Documentation
+  
+  This file provides the explanatory content for the Filter tab in the Diffusion Demo.
+  It explains how content filtering works in diffusion models, demonstrating how 
+  different concepts are detected and filtered with configurable thresholds.
+-->
+
+<details open>
+    <!-- Section header with orange background -->
+    <summary style="background-color: #CE6400; padding-left: 10px;">
+        About
+    </summary>
+    <!-- Main content container with lighter orange background and flex layout -->
+    <div style="display: flex; flex-direction: row; background-color: #D87F2B; padding-left: 10px;">
+        <!-- Left column for explanatory text -->
+        <div style="flex: 1;">
+            <!-- Explanation of the filter mechanism -->
+            <p style="margin-top: 10px">
+                This tab demonstrates how content filtering works in diffusion models. The model analyzes generated images to detect specific concepts that may be filtered based on a threshold value.
+                Images are generated using your prompt, then analyzed for similarity to the filter concept you specify. Images with a similarity score above the threshold are marked as filtered.
+            </p>
+            
+            <!-- Controls section header -->
+            <p style="font-weight: bold;">
+                Additional Controls:
+            </p>  
+            
+            <!-- Explanation of the filter concept parameter -->
+            <p style="font-weight: bold;">
+                Filter Concept:
+            </p>
+            <p>
+                The concept to filter for in generated images. For example, entering "cat" will detect and filter images containing cats if they score above the threshold.
+            </p>
+            
+            <!-- Explanation of the threshold parameter -->
+            <p style="font-weight: bold;">
+                Filter Threshold:
+            </p>
+            <p>
+                Sets the sensitivity of the filter.
+            </p>
+        </div>
+        
+        <!-- Right column for the illustrative image -->
+        <div style="flex: 1; align-content: center;">
+            <!-- Visual example of the filter -->
+            <img src="https://raw.githubusercontent.com/touretzkyds/DiffusionDemo/docker/images/filter.png" 
+                 style="max-width: 100%; height: auto; margin-top: 10px; margin-bottom: 10px; padding-left: 10px;"
+                 alt="Comparison of different filter thresholds and their effects on image generation">
+        </div>
+    </div>
+</details>

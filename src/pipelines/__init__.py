@@ -7,3 +7,4 @@ from .perturbations import *
 from .negative import *
 from .guidance import *
 from .inpainting import *
+from .filter import *
