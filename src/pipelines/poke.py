@@ -102,8 +102,19 @@ def visualize_poke(
         oImg = Image.open(original_path)
         pImg = Image.open(poked_path)
     else:
-        oImg = blank.copy()
-        pImg = blank.copy()
+        # Generate new images using the current seed
+        oImg, pImg = display_poke_images(
+            prompt=prompt,
+            seed=seed,
+            num_inference_steps=8,
+            poke=True,
+            pokeX=pokeX,
+            pokeY=pokeY,
+            pokeHeight=pokeHeight,
+            pokeWidth=pokeWidth,
+            intermediate=False,
+            request=request
+        )
 
     # Create drawing objects for all images
     orig_viz_draw = ImageDraw.Draw(original_viz_image)
