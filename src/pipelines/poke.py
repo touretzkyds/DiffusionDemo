@@ -137,8 +137,8 @@ def visualize_poke(
     modified_viz_image.paste(poke_region2, (shape[0][0], shape[0][1]))
     
     # Draw the rectangle indicating the modified region on all images
-    orig_viz_draw.rectangle(shape, outline="white")
-    mod_viz_draw.rectangle(shape, outline="white")
+    orig_viz_draw.rectangle(shape, outline="green")
+    mod_viz_draw.rectangle(shape, outline="green")
 
     # Return all four images: two noise visualizations and two actual images
     return original_viz_image, modified_viz_image, oImg, pImg
