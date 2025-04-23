@@ -384,7 +384,7 @@ with gr.Blocks(css="#step_size_circular {background-color: #666666} #step_size_c
                     )
                     pokeHeight = gr.Slider(
                         label="pokeHeight",
-                        minimum=0,
+                        minimum=1,
                         maximum=64,
                         step=1,
                         value=8,
@@ -392,7 +392,7 @@ with gr.Blocks(css="#step_size_circular {background-color: #666666} #step_size_c
                     )
                     pokeWidth = gr.Slider(
                         label="pokeWidth",
-                        minimum=0,
+                        minimum=1,
                         maximum=64,
                         step=1,
                         value=8,
