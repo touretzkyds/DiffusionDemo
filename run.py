@@ -26,8 +26,50 @@ from serve import run_flask_server
 from src.util.session import session_manager
 from src.pipelines.embeddings import user_data, update_gallery_zip
 
+# Site visit tracking script
+js = """
+(function(window, document, dataLayerName, id) {
+    window[dataLayerName] = window[dataLayerName] || [];
+    window[dataLayerName].push({
+        start: (new Date).getTime(),
+        event: "stg.start"
+    });
+
+    var scripts = document.getElementsByTagName('script')[0];
+    var tags = document.createElement('script');
+
+    var qP = [];
+    if (dataLayerName !== "dataLayer") {
+        qP.push("data_layer_name=" + dataLayerName);
+    }
+    var qPString = qP.length > 0 ? ("?" + qP.join("&")) : "";
+
+    tags.async = true;
+    tags.src = "https://touretzky.containers.piwik.pro/" + id + ".js" + qPString;
+    scripts.parentNode.insertBefore(tags, scripts);
+
+    !function(a, n, i) {
+        a[n] = a[n] || {};
+        for (var c = 0; c < i.length; c++) {
+            !function(i) {
+                a[n][i] = a[n][i] || {};
+                a[n][i].api = a[n][i].api || function() {
+                    var a = [].slice.call(arguments, 0);
+                    if (typeof a[0] === "string") {
+                        window[dataLayerName].push({
+                            event: n + "." + i + ":" + a[0],
+                            parameters: [].slice.call(arguments, 1)
+                        });
+                    }
+                }
+            }(i[c]);
+        }
+    }(window, "ppms", ["tm", "cm"]);
+})(window, document, 'dataLayer', '4b7bbce9-fa06-4d16-9dc6-6b0146eb8c31');
+"""
+
 # Initialize the main Gradio interface with a dark theme
-with gr.Blocks(css="#step_size_circular {background-color: #666666} #step_size_circular textarea {background-color: #666666}", theme=gr.themes.Origin()) as demo:
+with gr.Blocks(css="#step_size_circular {background-color: #666666} #step_size_circular textarea {background-color: #666666}", theme=gr.themes.Origin(), js=js) as demo:
     # Main application header
     gr.Markdown("## Stable Diffusion Demo")
     
