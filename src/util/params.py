@@ -80,7 +80,7 @@ unet = UNet2DConditionModel.from_pretrained(model_path, subfolder="unet").to(
 vae = AutoencoderKL.from_pretrained(model_path, subfolder="vae").to(torch_device)
 
 # Load safety components
-safety_checker = StableDiffusionSafetyChecker.from_pretrained("CompVis/stable-diffusion-safety-checker")
+safety_checker = StableDiffusionSafetyChecker.from_pretrained("CompVis/stable-diffusion-safety-checker", use_safetensors=True)
 feature_extractor = CLIPImageProcessor.from_pretrained("openai/clip-vit-base-patch32")
 
 # Initialize the full Stable Diffusion pipeline
