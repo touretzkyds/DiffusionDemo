@@ -1360,7 +1360,7 @@ with gr.Blocks(css="#step_size_circular {background-color: #666666} #step_size_c
                     prompt_filter = gr.Textbox(
                         lines=1,
                         label="Prompt",
-                        value="A child with their cat in a park",
+                        value="A child with their pet",
                     )
                     # Filter concept input
                     filter_concept = gr.Textbox(
