@@ -1385,7 +1385,7 @@ with gr.Blocks(css="#step_size_circular {background-color: #666666} #step_size_c
                         minimum=-1,
                         maximum=1,
                         step=0.001,
-                        value=0.0,
+                        value=0.03,
                         label="Filter Threshold",
                     )
                     
