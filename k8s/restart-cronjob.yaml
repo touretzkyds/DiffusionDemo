@@ -1,0 +1,69 @@
+# k8s/rbac-restart.yaml
+---
+# Service account for the cronjob to restart deployment
+kind: ServiceAccount
+apiVersion: v1
+metadata:
+  name: deployment-restart
+  namespace: default
+---
+# Role with permissions to restart the specific deployment
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: deployment-restart
+  namespace: default
+rules:
+  - apiGroups: ["apps", "extensions"]
+    resources: ["deployments"]
+    resourceNames: ["diffusion-demo-deployment"]
+    verbs: ["get", "patch", "list", "watch"]
+---
+# Bind the role to the service account
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: deployment-restart
+  namespace: default
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: deployment-restart
+subjects:
+  - kind: ServiceAccount
+    name: deployment-restart
+    namespace: default
+
+---
+# k8s/cronjob-restart.yaml
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: diffusion-demo-daily-restart
+  namespace: default
+spec:
+  # Every 2 days at 2 AM UTC
+  schedule: '0 2 */2 * *'
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 1
+  failedJobsHistoryLimit: 1
+  jobTemplate:
+    spec:
+      backoffLimit: 2
+      activeDeadlineSeconds: 600
+      template:
+        spec:
+          serviceAccountName: deployment-restart
+          restartPolicy: Never
+          containers:
+            - name: kubectl
+              image: bitnami/kubectl:latest
+              command:
+                - bash
+                - -c
+                - >-
+                  echo "Starting deployment restart..." &&
+                  kubectl rollout restart deployment/diffusion-demo-deployment &&
+                  echo "Waiting for rollout to complete..." &&
+                  kubectl rollout status deployment/diffusion-demo-deployment --timeout=300s &&
+                  echo "Deployment restart completed successfully!"

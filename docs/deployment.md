@@ -126,6 +126,7 @@ metadata:
     app: diffusion-demo
 spec:
   replicas: 1
+  minReadySeconds: 120
   strategy:
     type: RollingUpdate
     rollingUpdate:
@@ -146,12 +147,8 @@ spec:
         - containerPort: 7860
         resources:
           requests:
-            cpu: "4"
-            memory: "15Gi"
             nvidia.com/gpu: 1
           limits:
-            cpu: "4"
-            memory: "15Gi"
             nvidia.com/gpu: 1
 ```
 
@@ -170,6 +167,86 @@ spec:
     - protocol: TCP
       port: 80
       targetPort: 7860
+```
+
+### CronJob for Automated Restarts
+**Important:** Gradio applications have a 72-hour sharing limit that can cause the CLIP space embedding graph to become inaccessible. To circumvent this limitation and ensure continuous availability, deploy a CronJob that performs rolling restarts every 2 days. This approach ensures zero downtime as it creates new pods before terminating old ones.
+
+```yaml
+# RBAC Configuration
+---
+# Service account for the cronjob to restart deployment
+kind: ServiceAccount
+apiVersion: v1
+metadata:
+  name: deployment-restart
+  namespace: default
+---
+# Role with permissions to restart the specific deployment
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: deployment-restart
+  namespace: default
+rules:
+  - apiGroups: ["apps", "extensions"]
+    resources: ["deployments"]
+    resourceNames: ["diffusion-demo-deployment"]
+    verbs: ["get", "patch", "list", "watch"]
+---
+# Bind the role to the service account
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: deployment-restart
+  namespace: default
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: deployment-restart
+subjects:
+  - kind: ServiceAccount
+    name: deployment-restart
+    namespace: default
+
+---
+# CronJob Configuration
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: diffusion-demo-restart
+  namespace: default
+spec:
+  # Every 2 days at 2 AM UTC
+  schedule: '0 2 */2 * *'
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 1
+  failedJobsHistoryLimit: 1
+  jobTemplate:
+    spec:
+      backoffLimit: 2
+      activeDeadlineSeconds: 600
+      template:
+        spec:
+          serviceAccountName: deployment-restart
+          restartPolicy: Never
+          containers:
+            - name: kubectl
+              image: bitnami/kubectl:latest
+              command:
+                - bash
+                - -c
+                - >-
+                  echo "Starting deployment restart..." &&
+                  kubectl rollout restart deployment/diffusion-demo-deployment &&
+                  echo "Waiting for rollout to complete..." &&
+                  kubectl rollout status deployment/diffusion-demo-deployment --timeout=300s &&
+                  echo "Deployment restart completed successfully!"
+```
+
+Apply the CronJob configuration:
+```bash
+kubectl apply -f restart-cronjob.yaml
 ```
 
 ## 9. Dockerization
@@ -310,4 +387,5 @@ kubectl create -f certificate.yaml
 
 ## Notes
 - Replace all placeholders (e.g., YOUR_CREDENTIAL_ID, YOUR_SECRET, your_dockerhub_username, your-email@domain.com, and your domain names) with your actual values.
+- The CronJob ensures continuous availability by circumventing Gradio's 72-hour sharing limitation through automated rolling restarts.
 - Follow the linked tutorials for further details.

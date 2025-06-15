@@ -22,7 +22,7 @@ spec:
     spec:
       containers:
       - name: diffusion-demo
-        image: akameswa/diffusion-demo-cuda-slim:latest
+        image: akameswa/diffusion-demo-cuda-slim:use_safetensors-safety_checker
         ports:
         - containerPort: 7860
         resources:
