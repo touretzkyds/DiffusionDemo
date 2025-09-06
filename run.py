@@ -69,8 +69,7 @@ from src.pipelines.embeddings import user_data, update_gallery_zip
 # """
 
 # Initialize the main Gradio interface with a dark theme
-with gr.Blocks(css="#step_size_circular {background-color: #666666} #step_size_circular textarea {background-color: #666666}", theme=gr.themes.Origin()) as demo:
-    # Main application header
+with gr.Blocks(css="#step_size_circular {background-color: #FFFACD} #step_size_circular textarea {background-color: #FFFACD}", theme=gr.themes.Origin()) as demo:    # Main application header
     gr.Markdown("## Stable Diffusion Demo")
     
     # State variable to track the user's session across interactions
