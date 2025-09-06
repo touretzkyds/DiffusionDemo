@@ -180,7 +180,12 @@ with gr.Blocks(css="#step_size_circular {background-color: #FFFACD} #step_size_c
                     prompt_seed = gr.Textbox(
                         lines=1,
                         label="Prompt",
-                        value="Self-portrait oil painting, a beautiful cyborg with golden hair, 8k",
+                        value="close-up view of a kindly old man wearing a tartan cap, standing under a tree",
+                    )
+                    
+                    # Starting seed parameter
+                    starting_seed = gr.Slider(
+                        minimum=0, maximum=100000, step=1, value=0, label="Starting Seed"
                     )
                     
                     # Control for number of different seeds to use
@@ -1471,7 +1476,7 @@ with gr.Blocks(css="#step_size_circular {background-color: #FFFACD} #step_size_c
         # Connect Seeds tab button to backend function
         generate_images_button_seed.click(
             fn=display_seed_images,
-            inputs=[prompt_seed, num_inference_steps_seed, num_images_seed],
+            inputs=[prompt_seed, num_inference_steps_seed, num_images_seed, starting_seed], 
             outputs=[images_output_seed, zip_output_seed, promptA, prompt_beginner, prompt_denoise, prompt_perturb, prompt_circular, prompt_poke, prompt_guidance, prompt_negative],
         )
 
