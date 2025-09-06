@@ -33,9 +33,9 @@ model_path = "Lykon/dreamshaper-8"  # Main diffusion model
 inpaint_model_path = "Lykon/dreamshaper-8-inpainting"  # Model for inpainting
 
 # Default prompts
-prompt = "Self-portrait oil painting, a beautiful cyborg with golden hair, 8k"  # Default generation prompt
-promptA = "Self-portrait oil painting, a beautiful man with golden hair, 8k"  # First interpolation prompt
-promptB = "Self-portrait oil painting, a beautiful woman with golden hair, 8k"  # Second interpolation prompt
+prompt = "close-up view of a kindly old man wearing a tartan cap, standing under a tree"  # Default generation prompt
+promptA = "close-up view of a kindly old man wearing a tartan cap, standing under a tree" # First interpolation prompt
+promptB = "close-up view of a kindly old woman wearing a tartan cap, standing under a tree" # Second interpolation prompt
 
 # Content safety settings
 negative_prompt = "(nsfw), nude, naked, breasts, underwear, pornography, hentai, sexual, explicit, lewd, obscene, indecent, gore, blood, injury, mutilation, corpse, violence, weapon, gun, knife, killing, death, torture, drugs, narcotics, smoking, alcohol"

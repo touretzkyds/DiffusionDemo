@@ -90,7 +90,7 @@ with gr.Blocks(css="#step_size_circular {background-color: #FFFACD} #step_size_c
                     prompt_beginner = gr.Textbox(
                         lines=1,
                         label="Prompt",
-                        value="Self-portrait oil painting, a beautiful cyborg with golden hair, 8k",
+                        value="close-up view of a kindly old man wearing a tartan cap, standing under a tree",
                     )
 
                     # Seed selection with visualization
@@ -127,7 +127,7 @@ with gr.Blocks(css="#step_size_circular {background-color: #FFFACD} #step_size_c
                     prompt_denoise = gr.Textbox(
                         lines=1,
                         label="Prompt",
-                        value="Self-portrait oil painting, a beautiful cyborg with golden hair, 8k",
+                        value="close-up view of a kindly old man wearing a tartan cap, standing under a tree",
                     )
                     
                     # Control for number of denoising steps
@@ -225,7 +225,7 @@ with gr.Blocks(css="#step_size_circular {background-color: #FFFACD} #step_size_c
                     prompt_perturb = gr.Textbox(
                         lines=1,
                         label="Prompt",
-                        value="Self-portrait oil painting, a beautiful cyborg with golden hair, 8k",
+                        value="close-up view of a kindly old man wearing a tartan cap, standing under a tree",
                     )
                     
                     # Control for number of perturbed variations to create
@@ -294,7 +294,7 @@ with gr.Blocks(css="#step_size_circular {background-color: #FFFACD} #step_size_c
                     prompt_circular = gr.Textbox(
                         lines=1,
                         label="Prompt",
-                        value="Self-portrait oil painting, a beautiful cyborg with golden hair, 8k",
+                        value="close-up view of a kindly old man wearing a tartan cap, standing under a tree",
                     )
                     # Control for number of steps around the circle
                     num_images_circular = gr.Slider(
@@ -391,7 +391,7 @@ with gr.Blocks(css="#step_size_circular {background-color: #FFFACD} #step_size_c
                     prompt_poke = gr.Textbox(
                         lines=1,
                         label="Prompt",
-                        value="Self-portrait oil painting, a beautiful cyborg with golden hair, 8k",
+                        value="close-up view of a kindly old man wearing a tartan cap, standing under a tree",
                     )
                     # Control for number of inference steps per image
                     num_inference_steps_poke = gr.Slider(
@@ -517,7 +517,7 @@ with gr.Blocks(css="#step_size_circular {background-color: #FFFACD} #step_size_c
                     prompt_guidance = gr.Textbox(
                         lines=1,
                         label="Prompt",
-                        value="Self-portrait oil painting, a beautiful cyborg with golden hair, 8k",
+                        value="close-up view of a kindly old man wearing a tartan cap, standing under a tree",
                     )
                     # Control for number of inference steps per image
                     num_inference_steps_guidance = gr.Slider(
@@ -1245,13 +1245,13 @@ with gr.Blocks(css="#step_size_circular {background-color: #FFFACD} #step_size_c
                     promptA = gr.Textbox(
                         lines=1,
                         label="First Prompt",
-                        value="Self-portrait oil painting, a beautiful man with golden hair, 8k",
+                        value="close-up view of a kindly old man wearing a tartan cap, standing under a tree",
                     )
                     # Input for the ending prompt
                     promptB = gr.Textbox(
                         lines=1,
                         label="Second Prompt",
-                        value="Self-portrait oil painting, a beautiful woman with golden hair, 8k",
+                        value="close-up view of a kindly old woman wearing a tartan cap, standing under a tree",
                     )
                     # Control for number of intermediate steps
                     num_images_interpolate = gr.Slider(
@@ -1311,7 +1311,7 @@ with gr.Blocks(css="#step_size_circular {background-color: #FFFACD} #step_size_c
                     prompt_negative = gr.Textbox(
                         lines=1,
                         label="Prompt",
-                        value="Self-portrait oil painting, a beautiful cyborg with golden hair, 8k",
+                        value="close-up view of a kindly old man wearing a tartan cap, standing under a tree",
                     )
                     # Input for negative prompt (what to avoid)
                     neg_prompt = gr.Textbox(
