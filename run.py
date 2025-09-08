@@ -185,7 +185,7 @@ with gr.Blocks(css="#step_size_circular {background-color: #FFFACD} #step_size_c
                     
                     # Starting seed parameter
                     starting_seed = gr.Slider(
-                        minimum=0, maximum=100000, step=1, value=0, label="Starting Seed"
+                        minimum=0, maximum=100000, step=1, value=14, label="Starting Seed"
                     )
                     
                     # Control for number of different seeds to use
