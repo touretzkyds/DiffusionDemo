@@ -6,7 +6,7 @@ Diffusion Demo is an educational web application designed to help users understa
 
 ## Live Demo
 
-Try the application online: [diffusiondemo.org](https://diffusiondemo.org)
+Try the application online: [diffusiondemo.org](http://diffusiondemo.org)
 
 ## Features
 
