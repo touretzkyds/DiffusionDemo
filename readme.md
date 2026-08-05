@@ -5,6 +5,10 @@
 
 This repository provides an in-depth exploration of stable diffusion models, walking readers through the inner workings in a step-by-step manner. 
 
+## Live Demo
+
+Try the application online: [diffusiondemo.org](http://diffusiondemo.org)
+
 ## Getting Started
 
 To run the demo, click "Open in Colab". Follow the instructions to execute the code and visualize diffusion in action.
